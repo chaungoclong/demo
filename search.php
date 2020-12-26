@@ -2,9 +2,6 @@
 require_once 'common.php';
 $keyWord = input_get("q");
 $result = fetch_list("db_product", "pro_name LIKE('%$keyWord%')", ["*"], 1);
-echo "ok";
-echo "okk";
-echo "good number one";
 ?>
 <!DOCTYPE html>
 <html>
