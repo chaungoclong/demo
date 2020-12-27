@@ -89,3 +89,41 @@
 		}
 	}
 
+	/**
+	 * [get_display description]
+	 * @param  [type]  $data   [dữ liệu vào]
+	 * @param  [type]  $numCol [số cột trên hàng]
+	 * @param  integer $limit  [giới hạn số hàng]
+	 * @return [type]          [số hàng có thể có]
+	 */
+	function get_display($data, $numCol, $limit = 0) {
+		//số bản ghi
+		$numRecord = 0;
+		//số hàng
+		$numRow    = 0;
+
+		//dữ liệu rỗng trả về số hàng
+		if(!$data) return $numRow;
+		
+		//kiểu của dữ liệu truyền vào
+		$type = gettype($data);
+
+		//không phải object và array trả về số hàng
+		if($type === "object") {
+			$numRecord = $data->num_rows;
+		} else if($type === "array") {
+			$numRecord = count($data);
+		} else {
+			return $numRow;
+		}
+		
+		//số hàng bằng số bản ghi chia cho số cột
+		$numRow = ceil($numRecord / $numCol);
+
+		//nếu tồn tại giới hạn và số hàng lớn hơn giới hạn thì số hàng bằng giới hạn
+		if($limit && $numRow > $limit) {
+			$numRow = $limit;
+		}
+
+		return $numRow;
+	}
