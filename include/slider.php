@@ -1,5 +1,5 @@
 <!-- slide -->
-<div id="slide" class="carousel slide" data-ride="carousel" data-interval="1000">
+<div id="slide" class="carousel slide" data-ride="carousel" data-interval="3000">
   <!-- indicators -->
   <?php 
   $catID = $_GET['cat'] ?? null;
@@ -13,7 +13,7 @@
  } else {
   $getSlideSQL = "  
   SELECT * FROM db_slider
-  ORDER BY sld_id DESC
+  ORDER BY RAND()
   LIMIT 10
   ";
 }

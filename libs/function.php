@@ -96,29 +96,13 @@
 	 * @param  integer $limit  [giới hạn số hàng]
 	 * @return [type]          [số hàng có thể có]
 	 */
-	function get_display($data, $numCol, $limit = 0) {
-		//số bản ghi
-		$numRecord = 0;
-		//số hàng
-		$numRow    = 0;
-
-		//dữ liệu rỗng trả về số hàng
-		if(!$data) return $numRow;
-		
-		//kiểu của dữ liệu truyền vào
-		$type = gettype($data);
-
-		//không phải object và array trả về số hàng
-		if($type === "object") {
-			$numRecord = $data->num_rows;
-		} else if($type === "array") {
-			$numRecord = count($data);
-		} else {
+	function row_qty($numItem, $numCol, $limit = 0) {
+		$numRow = 0;
+		if($numItem === 0 || $numCol === 0) {
 			return $numRow;
 		}
-		
-		//số hàng bằng số bản ghi chia cho số cột
-		$numRow = ceil($numRecord / $numCol);
+
+		$numRow = ceil($numItem / $numCol);
 
 		//nếu tồn tại giới hạn và số hàng lớn hơn giới hạn thì số hàng bằng giới hạn
 		if($limit && $numRow > $limit) {
@@ -127,3 +111,4 @@
 
 		return $numRow;
 	}
+

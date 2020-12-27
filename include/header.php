@@ -1,5 +1,6 @@
 <!-- header -->
 <header id="header" class="">
+  <h1 id="test"></h1>
   <!--header top -->
   <div id="headerTop" class="container-fluid">
     <!-- header title -->
@@ -22,35 +23,16 @@
         <div id="headerSearch" class="col-4 d-flex align-items-center p-0">
           <!-- form search -->
           <form id="formSearch" action="search.php" method="GET" class="form-inline d-flex">
-            <input id="boxSearch" type="search" name="q" placeholder="tìm kiếm..." class="form-control">
+            <input id="boxSearch" type="search" name="q" placeholder="tìm kiếm..." class="form-control"
+              value="<?= isset($_GET['q'] ) ? $_GET['q'] : ''; ?>" autocomplete = "off"
+            >
             <button id="btnSearch" class="btn btn-primary">
               <i class="fas fa-search"></i>
             </button>
           </form>
           <!-- list of ajax search -->
-          <ul id="ajaxSearch" class="list-group">
-            <!-- <li class="ajax_search_item list-group-item p-0">
-              <a href="" class="d-flex align-items-center">
-                <span class="item_result_img">
-                  <img src="https://www.dungplus.com/wp-content/uploads/2019/12/girl-xinh-1-480x600.jpg" alt="" height="60px  " class="float-left mr-3">
-                </span>
-                <span class="item_result_text">
-                  <h3>name</h3>
-                  <span>1.000.000 $</span>
-                </span>
-              </a>
-            </li>
-            <li class="ajax_search_item list-group-item p-0">
-              <a href="" class="d-flex align-items-center">
-                <span class="item_result_img">
-                  <img src="https://www.dungplus.com/wp-content/uploads/2019/12/girl-xinh-1-480x600.jpg" alt="" height="60px  " class="float-left mr-3">
-                </span>
-                <span class="item_result_text">
-                  <h3>name</h3>
-                  <span>1.000.000 $</span>
-                </span>
-              </a>
-            </li> -->
+          <ul id="ajaxSearch" class="list-group" style="max-height: 400px; overflow-y:scroll;">
+            
           </ul>
         </div>
         <!-- header link -->
