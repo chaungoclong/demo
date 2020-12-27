@@ -1,93 +1,93 @@
 <?php 
-	
+
 	//lấy giá trị của biến $_POST có key = $key
-	function input_post($key) {
-		return isset($_POST[$key]) ? trim($_POST[$key]) : "";
-	}
+function input_post($key) {
+	return isset($_POST[$key]) ? trim($_POST[$key]) : "";
+}
 
 	//lấy giá trị của biến $_GET có key = $key
-	function input_get($key) {
-		return isset($_GET[$key]) ? trim($_GET[$key]) : "";
-	}
+function input_get($key) {
+	return isset($_GET[$key]) ? trim($_GET[$key]) : "";
+}
 
 	//hàm tạo url(chỉ dùng để điều hướng thanh menu)
-	function base_url($path = '') {
-		return "http://localhost/do_an_1/" . $path;
-	}
+function base_url($path = '') {
+	return "http://localhost/do_an_1/" . $path;
+}
 
 	//hàm chuyển hướng
-	function redirect($path) {
-		header("Location:{$path}");
-	}
+function redirect($path) {
+	header("Location:{$path}");
+}
 
 	//hàm trả về ngày tháng hiện tại
-	function now(){
-		return date('Y-m-d H:i:s');
-	}
+function now(){
+	return date('Y-m-d H:i:s');
+}
 
 	//hàm check dữ liệu 
-	function check_input($value){
-		$value = stripslashes($value);
-		$value = htmlspecialchars($value);
-		$value = trim($value);
-		return $value;
-	}
+function check_input($value){
+	$value = stripslashes($value);
+	$value = htmlspecialchars($value);
+	$value = trim($value);
+	return $value;
+}
 
 	//hàm thay thế phần tử đầu tiên
-	function replace_first($search, $replace, $string) {
-		return implode($replace, explode($search, $string, 2));
-	}
+function replace_first($search, $replace, $string) {
+	return implode($replace, explode($search, $string, 2));
+}
 
 	//hàm tạo link
-	function create_link($uri, $data = []) {
-		$string = '';
-		foreach ($data as $key => $value) {
-			if($value != '') {
-				$string .= "&{$key}={$value}";
-			}
-		}
-		echo $uri . replace_first("&", "?", $string);
-	}
-
-	function leap_Year($year) {
-		return $year % 4 == 0 && ($year % 100 != 0 || $year % 400 == 0);
-	}
-
-	function read_date($time) {
-		
-		$second = 1;
-		$minute = 60;
-		$hour   = 3600;
-		$day    = 86400;
-		$week   = 7 * $day;
-		$month  = 30 * $day;
-		$year   = leap_Year(date("Y")) ? 366 * $day : 365 * $day;
-		$word   = "";
-
-		$time = time() - $time;
-		if($time / $year >= 1) {
-			return $word = (int)($time / $year) . " năm trước";
-
-		} else if($time / $month  >= 1) {
-			return $word = (int)($time / $month) . " tháng trước";
-
-		} else if($time / $week >= 1) {
-			return $word = (int)($time / $week) . " tuần trước";
-
-		} else if($time / $day  >= 1) {
-			return $word = (int)($time / $day) . " ngày trước";
-
-		} else if($time / $hour >= 1) {
-			return $word = (int)($time / $hour) . " giờ trước";
-
-		} else if($time / $minute  >= 1) {
-			return $word = (int)($time / $minute) . " phút trước";
-
-		} else if($time / $second  >= 1) {
-			return $word = (int)($time / $second) . " giây trước";
-
+function create_link($uri, $data = []) {
+	$string = '';
+	foreach ($data as $key => $value) {
+		if($value != '') {
+			$string .= "&{$key}={$value}";
 		}
 	}
+	echo $uri . replace_first("&", "?", $string);
+}
+
+function leap_Year($year) {
+	return $year % 4 == 0 && ($year % 100 != 0 || $year % 400 == 0);
+}
+
+function read_date($time) {
+
+	$second = 1;
+	$minute = 60;
+	$hour   = 3600;
+	$day    = 86400;
+	$week   = 7 * $day;
+	$month  = 30 * $day;
+	$year   = leap_Year(date("Y")) ? 366 * $day : 365 * $day;
+	$word   = "";
+
+	$time = time() - $time;
+	if($time / $year >= 1) {
+		return $word = (int)($time / $year) . " năm trước";
+
+	} else if($time / $month  >= 1) {
+		return $word = (int)($time / $month) . " tháng trước";
+
+	} else if($time / $week >= 1) {
+		return $word = (int)($time / $week) . " tuần trước";
+
+	} else if($time / $day  >= 1) {
+		return $word = (int)($time / $day) . " ngày trước";
+
+	} else if($time / $hour >= 1) {
+		return $word = (int)($time / $hour) . " giờ trước";
+
+	} else if($time / $minute  >= 1) {
+		return $word = (int)($time / $minute) . " phút trước";
+
+	} else if($time / $second  >= 1) {
+		return $word = (int)($time / $second) . " giây trước";
+
+	}
+}
 
 	/**
 	 * [get_display description]
@@ -110,5 +110,32 @@
 		}
 
 		return $numRow;
+	}
+
+
+	 /**
+	  * [up_file hàm upload file]
+	  * @param  [type] $file      [file từ thẻ input]
+	  * @param  [type] $folder    [tệp cần tải lên]
+	  * @param  [type] $extension [đuôi file được chấp nhận]
+	  * @return [type]            [nếu tải lên thành công trả về tên mới của file : false]
+	  */
+	function up_file($file, $folder, $extension){
+		//kiểm tra lỗi
+		if($file['error']) { return false;}
+
+		//kiểm tra đuôi file
+		$file_type = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+		if(!in_array($file_type, $extension)) { return false;}
+
+		$file_name = time() . rand() . "." . $file_type;
+		$file_path = $folder . $file_name;
+		$file_tmp = $file['tmp_name'];
+
+		//tải file vào folder
+		if(move_uploaded_file($file_tmp, $file_path)){
+			return $file_name;
+		}
+		return false;
 	}
 

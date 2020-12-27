@@ -43,4 +43,4 @@
     </li>
   </ul>
 </nav>
-<!-- /navbar
+<!-- /navbar -->
