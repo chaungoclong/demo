@@ -3,13 +3,8 @@
   <h2 class="text-center mb-3">Danh mục</h2>
   <?php
   $listCat = fetch_tbl("db_category", 2);
-  $numCol  = 4;
-  $numRow  = 0;
-  $numCat  = 0;
-  if($listCat) {
-  $numCat = $listCat->num_rows;
-  $numRow = ceil($numCat / $numCol);
-  }
+  $numCol = 4;
+  $numRow = get_display($listCat, $numCol);
   ?>
   <!-- ?in số hàng? -->
   <?php for ($i = 0; $i < $numRow; $i++): ?>
@@ -60,18 +55,13 @@
     ORDER BY pro_id DESC
     ";
     $listPro = get_list($getProSQL, 2);
-    $numPro  = 0; //số sản phẩm lấy về
-    $numRow  = 0; //số hàng
     $numCol  = 4; //số cột trên hàng
-    $limit   = 8; //giới hạn số sản phẩm được in ra của 1 thể loại trên trang chủ
-    if($listPro) {
-    $numPro = $listPro->num_rows;
-    $numRow = ceil($numPro / $numCol);
-    }
+    $limit   = 2; //giới hạn số sản phẩm được in ra của 1 thể loại trên trang chủ
+    $numRow  = get_display($listPro, $numCol, $limit); //số hàng
     ?>
     <!-- list products bar -->
     <div class="product_bar bg-info px-2 py-2 d-flex justify-content-between">
-      <span class="badge  bg-faded"><?= $numPro; ?> sản phẩm</span>
+      <span class="badge  bg-faded"><?= $listPro->num_rows; ?> sản phẩm</span>
       <a href="<?= create_link(base_url("product.php"), ["cat"=> $cat["cat_id"]]); ?>" class="badge badge-pill bg-danger">Xem tất cả</a>
     </div>
     <!-- ?hiển thị danh sách sản phẩm của danh mục? -->
@@ -112,7 +102,6 @@
       <!-- ------------------------------------/product ----------------------------------- -->
       <?php
       $countCol++;
-      $printed++;
       if($countCol == $numCol) {
       break;
       }
@@ -121,6 +110,7 @@
       <?php endwhile ?>
     </div>
     <?php
+    $printed++;
     if($printed == $limit) {
     break;
     }
