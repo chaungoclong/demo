@@ -70,12 +70,12 @@
         <!--------------------------------------------list product------------------------------------->
         <?php for ($i = 0; $i < $numRow; $i++): ?>
           <?php $countCol = 0; ?>
-          <div class="card-group">
+          <div class="card-group shadow">
             <?php while ($pro = $listPro->fetch_assoc()): ?>
               <!-- ?nếu sản phẩm active thì in ? -->
               <?php if ($pro['pro_active']): ?>
                 <!-- ------------------------------------product ----------------------------------- -->
-                <div class="card text-center shadow" style="max-width: 25%;">
+                <div class="card text-center" style="max-width: 25%;">
                   <?php if ($pro['pro_qty'] == 0): ?>
                     <span class="product_status badge badge-pill badge-warning">Sale out</span>
                   <?php endif ?>

@@ -208,6 +208,18 @@ body {
 }
 /*/category*/
 
+/*list brand*/
+#listBrand {
+    padding: 20px 85px !important;
+}
+
+#listBrand a{
+    width: 12.5%;
+    border-radius: 0px;
+}
+
+/*/list brand*/
+
 /*product*/
 
 .product h2 {

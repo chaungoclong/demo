@@ -1,49 +1,51 @@
+<?php require_once '../common.php'; ?>
+
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title></title>
-    <link rel="stylesheet" href="../dist/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="../assets/font/css/all.css">
-    <link rel="stylesheet" href="../assets/css/home.css">
-    <script src="../dist/jquery/jquery-3.5.1.js"></script>
-    <script src="../assets/js/home.js"></script>
-    <script src="../dist/popper/popper.min.js"></script>
-    <script src="../dist/bootstrap/js/bootstrap.js"></script>
-  </head>
-  <body>
-    <!-- header -->
-    <header id="header" class="">
-      <!--header top -->
-      <div id="headerTop" class="container-fluid">
-        <!-- header title -->
-        <p id="headerTitle" class="text-center m-0 p-2">
-          trang mua hàng trực tuyến thương hiệu chính hãng
-        </p>
-      </div>
-      <!-- /header top -->
-      <hr class="bg-light m-0 p-0">
-      <!-- header midle -->
-      <div id="headerMidle">
-        <!-- header midle content -->
-        <div id="headerMidleContent" class="container-fluid">
-          <div class="row m-0">
-            <!-- logo -->
-            <div class="col-3 p-0">
-              <a id="headerLogo" href="" class="navbar-brand">LongVietMobile</a>
-            </div>
-            <!-- search box -->
-            <div id="headerSearch" class="col-4 d-flex align-items-center p-0">
-              <!-- form search -->
-              <form id="formSearch" action="template/index.php" method="GET" class="form-inline d-flex">
-                <input id="boxSearch" type="search" name="q" placeholder="tìm kiếm..." class="form-control">
-                <button id="btnSearch" name="btnSearch" class="btn btn-primary">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title></title>
+  <link rel="stylesheet" href="../dist/bootstrap/css/bootstrap.css">
+  <link rel="stylesheet" href="../assets/font/css/all.css">
+  <link rel="stylesheet" href="../assets/css/home.css">
+  <script src="../dist/jquery/jquery-3.5.1.js"></script>
+  <script src="../assets/js/home.js"></script>
+  <script src="../dist/popper/popper.min.js"></script>
+  <script src="../dist/bootstrap/js/bootstrap.js"></script>
+</head>
+<body>
+  <!-- header -->
+  <header id="header" class="">
+    <!--header top -->
+    <div id="headerTop" class="container-fluid">
+      <!-- header title -->
+      <p id="headerTitle" class="text-center m-0 p-2">
+        trang mua hàng trực tuyến thương hiệu chính hãng
+      </p>
+    </div>
+    <!-- /header top -->
+    <hr class="bg-light m-0 p-0">
+    <!-- header midle -->
+    <div id="headerMidle">
+      <!-- header midle content -->
+      <div id="headerMidleContent" class="container-fluid">
+        <div class="row m-0">
+          <!-- logo -->
+          <div class="col-3 p-0">
+            <a id="headerLogo" href="" class="navbar-brand">LongVietMobile</a>
+          </div>
+          <!-- search box -->
+          <div id="headerSearch" class="col-4 d-flex align-items-center p-0">
+            <!-- form search -->
+            <form id="formSearch" action="template/index.php" method="GET" class="form-inline d-flex">
+              <input id="boxSearch" type="search" name="q" placeholder="tìm kiếm..." class="form-control">
+              <button id="btnSearch" name="btnSearch" class="btn btn-primary">
                 <i class="fas fa-search"></i>
-                </button>
-              </form>
-              <!-- list of ajax search -->
-              <ul id="ajaxSearch" class="list-group">
+              </button>
+            </form>
+            <!-- list of ajax search -->
+            <ul id="ajaxSearch" class="list-group">
                 <!-- <li class="ajax_search_item list-group-item p-0">
                   <a href="" class="d-flex align-items-center">
                     <span class="item_result_img">
@@ -197,6 +199,53 @@
       </a>
     </div>
     <!-- /slide -->
+    <!-- list brand -->
+    <div id="listBrand" class="py-3" style="">
+      <div class="d-flex justify-content-start flex-wrap">
+        <a class="card" href="">
+          <?= base_url('image/pixel_logo.png'); ?>
+          <img src="<?= base_url('image/pixel_logo.png'); ?>" alt="">
+        </a>
+         <a class="card" href="">
+          <img src="https://cdn.tgdd.vn/Brand/1/Nokia42-b_21.jpg" alt="">
+        </a>
+         <a class="card" href="">
+          <img src="https://cdn.tgdd.vn/Brand/1/Nokia42-b_21.jpg" alt="">
+        </a>
+         <a class="card" href="">
+          <img src="https://cdn.tgdd.vn/Brand/1/Nokia42-b_21.jpg" alt="">
+        </a>
+         <a class="card" href="">
+          <img src="https://cdn.tgdd.vn/Brand/1/Nokia42-b_21.jpg" alt="">
+        </a>
+         <a class="card" href="">
+          <img src="https://cdn.tgdd.vn/Brand/1/Nokia42-b_21.jpg" alt="">
+        </a>
+         <a class="card" href="">
+          <img src="https://cdn.tgdd.vn/Brand/1/Nokia42-b_21.jpg" alt="">
+        </a>
+         <a class="card" href="">
+          <img src="https://cdn.tgdd.vn/Brand/1/Nokia42-b_21.jpg" alt="">
+        </a>
+         <a class="card" href="">
+          <img src="https://cdn.tgdd.vn/Brand/1/Nokia42-b_21.jpg" alt="">
+        </a>
+         <a class="card" href="">
+          <img src="https://cdn.tgdd.vn/Brand/1/Nokia42-b_21.jpg" alt="">
+        </a>
+         <a class="card" href="">
+          <img src="https://cdn.tgdd.vn/Brand/1/Nokia42-b_21.jpg" alt="">
+        </a>
+         <a class="card" href="">
+          <img src="https://cdn.tgdd.vn/Brand/1/Nokia42-b_21.jpg" alt="">
+        </a>
+         <a class="card" href="">
+          <img src="https://cdn.tgdd.vn/Brand/1/Nokia42-b_21.jpg" alt="">
+        </a>
+       
+      </div>
+    </div>
+    <!-- /list brand -->
     <!-- category -->
     <section id="category" class="py-5">
       <h2 class="text-center mb-3">Danh mục</h2>
@@ -252,7 +301,6 @@
         </div>
         <!-- list products -->
         <div class="card-group">
-          
           <div class="card text-center">
             <span class="product_status badge badge-pill badge-warning">Sale out</span>
             <a href="">
@@ -343,7 +391,6 @@
               <a href="" class="btn btn-default btn-danger"><i class="far fa-heart"></i></a>
             </div>
           </div>
-          
           <div class="card text-center">
             <span class="product_status badge badge-pill badge-warning">Sale out</span>
             <a href="">
@@ -404,7 +451,6 @@
         </div>
         <!-- list products -->
         <div class="card-group">
-          
           <div class="card text-center">
             <span class="product_status badge badge-pill badge-warning">Sale out</span>
             <a href="">
@@ -484,7 +530,6 @@
         </div>
         <!-- list products -->
         <div class="card-group">
-          
           <div class="card text-center">
             <span class="product_status badge badge-pill badge-warning">Sale out</span>
             <a href="">
@@ -570,9 +615,9 @@
                 </li>
               </ul>
               <h5 class="card-title text-uppercase">
-              <a href="">
-                Trên tay OPPO A15: Giá chỉ 3.49 triệu đã có thiết kế trẻ trung, màn hình lớn 6.52 inch và 3 camera đa chức năng
-              </a>
+                <a href="">
+                  Trên tay OPPO A15: Giá chỉ 3.49 triệu đã có thiết kế trẻ trung, màn hình lớn 6.52 inch và 3 camera đa chức năng
+                </a>
               </h5>
               <p class="card-text">
                 đại chiến ở phân khúc giá rẻ bao giờ mới có thể ngừng lại, khi rất nhiều hãng vẫn cứ liên tục cho ra mắt những chiếc điện thoại giá rẻ? OPPO như thường lệ lại tiếp tục ra mắt OPPO A15 với thiết kế trẻ trung.
@@ -596,12 +641,12 @@
                 </li>
               </ul>
               <h5 class="card-title text-uppercase">
-              <a href="">
-                Vũng Tàu hợp tác cùng Viettel điều hành đô thị thông minh với 1.100 camera, kịp thời xử lý vi phạm và phản ánh của người dân
-              </a>
+                <a href="">
+                  Vũng Tàu hợp tác cùng Viettel điều hành đô thị thông minh với 1.100 camera, kịp thời xử lý vi phạm và phản ánh của người dân
+                </a>
               </h5>
               <p class="card-text">
-               Chiều ngày 21/12, theo thông tin từ báo Tuổi Trẻ chia sẻ thì TP Vũng Tàu đã đưa vào sử dụng trung tâm điều hành đô thị thông minh.
+                Chiều ngày 21/12, theo thông tin từ báo Tuổi Trẻ chia sẻ thì TP Vũng Tàu đã đưa vào sử dụng trung tâm điều hành đô thị thông minh.
               </p>
               <a href="" class="btn btn-default btn-primary">Xem thêm<i class="fas fa-angle-double-right"></i></a>
             </div>
@@ -622,12 +667,12 @@
                 </li>
               </ul>
               <h5 class="card-title text-uppercase">
-              <a href="">
-                Google Pixel 5 Pro lộ ảnh thực tế với camera selfie ẩn dưới màn hình, có thể dùng chip Snapdragon 865 cùng bộ nhớ RAM 8GB
-              </a>
+                <a href="">
+                  Google Pixel 5 Pro lộ ảnh thực tế với camera selfie ẩn dưới màn hình, có thể dùng chip Snapdragon 865 cùng bộ nhớ RAM 8GB
+                </a>
               </h5>
               <p class="card-text">
-               Hình ảnh thực tế Google Pixel 5 Pro mới đây đã xuất hiện trên các trang mạng, điều thú vị là màn hình của smartphone này không có lỗ khoét hay notch nào để chứa camera.
+                Hình ảnh thực tế Google Pixel 5 Pro mới đây đã xuất hiện trên các trang mạng, điều thú vị là màn hình của smartphone này không có lỗ khoét hay notch nào để chứa camera.
               </p>
               <a href="" class="btn btn-default btn-primary">Xem thêm<i class="fas fa-angle-double-right"></i></a>
             </div>
@@ -636,7 +681,6 @@
       </div>
     </section>
     <!-- /news -->
-    
     <!-- footer -->
     <footer id="footer">
       <!-- footer top -->
@@ -701,4 +745,4 @@
     </footer>
     <!-- /footer -->
   </body>
-</html>
+  </html>
