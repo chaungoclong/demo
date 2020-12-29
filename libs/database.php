@@ -137,7 +137,7 @@
 		db_connect();
 
 		global $connect;
-		$row   = [];
+		$row    = [];
 		$result = $connect->query($sql);
 
 		if(!$result) {
@@ -159,7 +159,7 @@
 		db_connect();
 
 		global $connect;
-		$row   = [];
+		$row    = [];
 		$sql    = "SELECT " . implode(",", $column) . " FROM {$table} WHERE " . $condition;
 		$result = $connect->query($sql);
 
@@ -187,8 +187,8 @@
 		}
 
 		$column = array_keys($data);
-		$value = array_values($data);
-		$sql = "INSERT INTO {$table}(" . implode(",", $column) . ") VALUES('" . implode("','", $value) . "')";
+		$value  = array_values($data);
+		$sql    = "INSERT INTO {$table}(" . implode(",", $column) . ") VALUES('" . implode("','", $value) . "')";
 		return $connect->query($sql);
 	}
 
@@ -233,6 +233,39 @@
 
 		global $connect;
 		return $connect->query($sql);
+	}
+
+	/**
+	 * [safeQuery hàm chạy câu truy vấn an toàn hơn]
+	 * @param  [string] $sql    [câu sql với giá trị các trường được để là ?]
+	 * @param  array  $param [] [mảng chứa giá trị các trường]
+	 * @return [array / null]   [không lỗi trả về một mảng kết quả : null]
+	 */
+	function s_query($sql, $param = []) {
+		db_connect();
+		global $connect;
+		$stmt = $connect->prepare($sql);
+		$numField = count($param);
+
+		//nếu các trường có giá trị truyền vào thì liên kết giá trị với các trường
+		if($numField) {
+			$stmt->bind_param(str_repeat("s", $numField), ...$param);
+		}
+
+		if($stmt->execute()) {
+			return $stmt->get_result()->fetch_all(MYSQLI_BOTH);
+		}
+		return null;
+	}
+
+	//hàm lấy ra một hàng
+	function s_row($sql, $param = []) {
+		return s_query($sql, $param)[0] ?? []; 
+	}
+
+	//hàm lấy ra một ô
+	function s_cell($sql, $param = []) {
+		return s_row($sql, $param)[0];
 	}
 
 

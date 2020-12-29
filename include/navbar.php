@@ -1,8 +1,7 @@
 <!-- navbar -->
-<nav id="navbar" class="navbar-expand-sm bg-light navbar-light sticky-top">
+<nav id="navbar" class="navbar-expand-sm navbar-light sticky-top py-2">
   <?php
   $currentPage = basename($_SERVER["PHP_SELF"], ".php");
-  echo $_SERVER['SCRIPT_NAME'];
   ?>
   <ul class="navbar-nav">
     <li class="<?= $currentPage == 'index' ? 'nav-item active' : 'nav-item'; ?>">

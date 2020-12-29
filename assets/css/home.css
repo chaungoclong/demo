@@ -12,7 +12,7 @@ body {
 }
 
 #header {
-    background: #1fb5d4 ;
+    background: #000 ;
 }
     /*header top*/
 
@@ -63,7 +63,7 @@ body {
                 position: absolute;
                 top: 90%;
                 width: 100%;
-                z-index: 9999;
+                z-index: 999999999999999;
             }
 
             #ajaxSearch li a {
@@ -119,9 +119,10 @@ body {
 /*navbar*/
 
     #navbar {
+       background: #fed101;
        padding-left: 85px;
        padding-right: 85px;
-       z-index: 10000000000000000;
+       z-index: 10000000;
     }
 
     #navbar .navbar-nav .dropdown .dropdown-menu {

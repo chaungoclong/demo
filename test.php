@@ -50,8 +50,22 @@
 	// var_dump($row);
 	// echo gettype($result);
 	// echo fetch_tbl("db_product", 0);
-	$link = "http://localhost/do_an_1/product.php";
-	$currentLink = create_link(base_url("product.php"), ["page"=>"{page}"]);
-	//paginate($currentLink, 20, 1, 4);
-	//echo str_replace("page", "123", $currentLink);
-	echo "hello";
+	// $link = "http://localhost/do_an_1/product.php";
+	// $currentLink = create_link(base_url("product.php"), ["page"=>"{page}"]);
+	// //paginate($currentLink, 20, 1, 4);
+	// //echo str_replace("page", "123", $currentLink);
+	// echo "hello";
+	// 
+	$test = s_query('select pro_id from db_product where cat_id = ? and bra_id = 3', [1]);
+	var_dump($test);
+	echo "<br><br><br>";
+
+	$test = s_row('select * from db_product where cat_id = ? and bra_id = 3', [1]);
+	var_dump($test);
+	echo "<br><br><br>";
+
+	$test = s_cell('select pro_name from db_product where cat_id = ? and bra_id = 3', [1]);
+	var_dump($test);
+
+
+
