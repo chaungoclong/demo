@@ -54,3 +54,4 @@
 	$currentLink = create_link(base_url("product.php"), ["page"=>"{page}"]);
 	//paginate($currentLink, 20, 1, 4);
 	//echo str_replace("page", "123", $currentLink);
+	echo "hello";
