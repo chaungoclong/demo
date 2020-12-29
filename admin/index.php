@@ -1,4 +1,4 @@
 <?php 
-    require_once '../general.php';
+   echo basename(__FILE__);
  ?>
  

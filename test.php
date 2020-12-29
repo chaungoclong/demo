@@ -50,4 +50,7 @@
 	// var_dump($row);
 	// echo gettype($result);
 	// echo fetch_tbl("db_product", 0);
-	echo "hello";
+	$link = "http://localhost/do_an_1/product.php";
+	$currentLink = create_link(base_url("product.php"), ["page"=>"{page}"]);
+	//paginate($currentLink, 20, 1, 4);
+	//echo str_replace("page", "123", $currentLink);

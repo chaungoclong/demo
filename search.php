@@ -1,10 +1,15 @@
 <?php
 require_once 'common.php';
+//từ khóa tìm kiếm
 $keyWord = input_get("q");
-$listResult = fetch_list("db_product", "pro_name LIKE('%$keyWord%')", ["*"], 2);
-$numResult = $listResult->num_rows ? $listResult->num_rows : 0;
-$numCol = 4;
-$numRow = row_qty($numResult, $numCol);
+//số lượng bản ghi
+$listRecord = fetch_list("db_product", "pro_active = 1 AND pro_name LIKE('%$keyWord%')", ["*"], 2);
+$numRecord = $listRecord->num_rows;
+//phân trang
+$currentLink = create_link(base_url("search.php"), ["q"=>$keyWord, "page"=>"{page}"]);
+$resultPerPage = 8;
+$currentPage = input_get("page") ? input_get("page") : 1;
+$page = paginate($currentLink, $numRecord, $currentPage, $resultPerPage);
 ?>
 <!DOCTYPE html>
 <html>
@@ -24,10 +29,19 @@ $numRow = row_qty($numResult, $numCol);
     <?php
     require_once RF . '/include/header.php';
     require_once RF . '/include/navbar.php';
-    // require_once RF . '/include/slider.php';
+        // require_once RF . '/include/slider.php';
     ?>
-    <!-- in ket qua -->
+    <!-- hiển thị sản phẩm sau khi search -> phân trang -->
     <?php
+    $listResult = fetch_list(
+        "db_product",
+        "pro_active = 1 AND pro_name LIKE('%$keyWord%') LIMIT {$page['limit']} OFFSET {$page['offset']}",
+        ["*"],
+        2
+    );
+    $numResult = $listResult->num_rows;
+    $numCol = 4;
+    $numRow = row_qty($numResult, $numCol);
     ?>
     <section class="product py-5">
         <h2 class="text-center mb-3">found <?= $numResult; ?> results match</h2>
@@ -52,10 +66,9 @@ $numRow = row_qty($numResult, $numCol);
                             <div class="card-body">
                                 <!-- thông tin sản phẩm -->
                                 <h5 class="card-title"><a href=""><?= $result['pro_name']; ?></a></h5>
-
-                                <?php 
-                                    $cat = fetch_rows("db_category", "cat_id = '{$result["cat_id"]}'", ["cat_name"]);
-                                 ?>
+                                <?php
+                                $cat = fetch_rows("db_category", "cat_id = '{$result["cat_id"]}'", ["cat_name"]);
+                                ?>
                                 <p class="text-uppercase"><?= $cat['cat_name']; ?></p>
                                 <h6 class="text-danger"><?= number_format($result['pro_price'], 2, ',', '.'); ?> &#8363;</h6>
                                 <hr>
@@ -81,6 +94,11 @@ $numRow = row_qty($numResult, $numCol);
             <?php endfor ?>
         </div>
     </section>
+    
+    <!-- phân trang -->
+    <?php 
+        echo $page['html'];
+     ?>
     <!-- /product -->
     <?php
     require_once RF . '/include/footer.php';

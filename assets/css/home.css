@@ -121,7 +121,7 @@ body {
     #navbar {
        padding-left: 85px;
        padding-right: 85px;
-       z-index: 100;
+       z-index: 10000000000000000;
     }
 
     #navbar .navbar-nav .dropdown .dropdown-menu {
@@ -145,7 +145,7 @@ body {
         padding-left: 0px !important;
     }
 
-   #navbar .active a {
+   #navbar .active>a {
     color:red !important;
    }
     /*/navbar*/
@@ -211,6 +211,8 @@ body {
 /*list brand*/
 #listBrand {
     padding: 20px 85px !important;
+    position: relative
+    z-index:-1;
 }
 
 #listBrand a{

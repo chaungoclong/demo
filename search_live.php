@@ -1,7 +1,7 @@
 <?php
 require_once 'common.php';
 	//lấy từ khóa tìm kiếm
-$keyWord = input_get("q");
+$keyWord = input_get("q") ? input_get("q") : "";
 	//lấy kết quả
 $listResult = fetch_list("db_product", "pro_name LIKE('%$keyWord%')", ["*"], 1);
 	//in kết quả

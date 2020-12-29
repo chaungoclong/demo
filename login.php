@@ -52,7 +52,7 @@ require_once 'common.php';
 
                     </form>
                     <!-- /form login -->
-                    <p>Chưa có tài khoản?<a href="<?= base_url('register.php'); ?>"> Đăng ký</a></p>
+                    <p>Chưa có tài khoản?<a href="<?= base_url('sign_up.php'); ?>"> Đăng ký</a></p>
                 </div>
             </div>
             <!-- /login box -->
