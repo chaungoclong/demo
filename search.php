@@ -1,9 +1,11 @@
 <?php
 require_once 'common.php';
 //từ khóa tìm kiếm
-$keyWord = input_get("q");
+$keyWord = "%" . input_get("q") . "%";
+//câu sql lấy kêt quả tìm kiếm
+$getResultSQL = "SELECT * FROM db_product WHERE pro_active = 1  AND pro_name LIKE(?)";
 //số lượng bản ghi
-$listRecord = fetch_list("db_product", "pro_active = 1 AND pro_name LIKE('%$keyWord%')", ["*"], 2);
+$listRecord = db_get($getResultSQL, [$keyWord], 1);
 $numRecord = $listRecord->num_rows;
 //phân trang
 $currentLink = create_link(base_url("search.php"), ["q"=>$keyWord, "page"=>"{page}"]);

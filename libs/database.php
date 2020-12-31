@@ -228,20 +228,20 @@
 	}
 
 	//hàm chạy các câu sql không lấy về kết quả (insert, delete, update)
-	function db_run($sql) {
-		db_connect();
+	// function db_run($sql) {
+	// 	db_connect();
 
-		global $connect;
-		return $connect->query($sql);
-	}
+	// 	global $connect;
+	// 	return $connect->query($sql);
+	// }
 
 	/**
-	 * [safeQuery hàm chạy câu truy vấn an toàn hơn]
+	 * [safeQuery hàm chạy câu truy vấn lấy về kết quả]
 	 * @param  [string] $sql    [câu sql với giá trị các trường được để là ?]
 	 * @param  array  $param [] [mảng chứa giá trị các trường]
 	 * @return [array / null]   [không lỗi trả về một mảng kết quả : null]
 	 */
-	function s_query($sql, $param = []) {
+	function db_get($sql, $param = [], $mode = 0) {
 		db_connect();
 		global $connect;
 		$stmt = $connect->prepare($sql);
@@ -252,15 +252,55 @@
 			$stmt->bind_param(str_repeat("s", $numField), ...$param);
 		}
 
+		/**
+		 * thực thi thành công câu SQL trả về kết quả theo chế độ lấy: trả về null
+		 * +trả về null vì sử dụng toán tử ?? ở hàm s_row
+		 */
 		if($stmt->execute()) {
-			return $stmt->get_result()->fetch_all(MYSQLI_BOTH);
+			switch ($mode) {
+				//0: trả về kết quả đã được chuyển về mảng
+				case 0:
+					$result = $stmt->get_result()->fetch_all(MYSQLI_BOTH);
+					break;
+
+				//1: trả về kết quả ở dạng đối tượng
+				case 1:
+					$result = $stmt->get_result();
+					break;
+
+				//trả về số bản ghi của kết quả
+				case 2:
+					$result = $stmt->get_result()->num_rows;
+					break;
+				
+				//mặc định: $mode = 0
+				default:
+					$result = $stmt->get_result()->fetch_all(MYSQLI_BOTH);
+					break;
+			}
+			return $result;
 		}
 		return null;
 	}
 
+	//hàm chạy câu truy vấn không lấy về kết quả (insert, update, delete)
+	function db_run($sql, ...$param) {
+		db_connect();
+		global $connect;
+
+		$stmt = $connect->prepare($sql);
+
+		$numField = count($param);
+		if($numField) {
+			$stmt->bind_param(str_repeat("s", $numField), ...$param);
+		} 
+
+		return $stmt->execute();
+	}
+
 	//hàm lấy ra một hàng
 	function s_row($sql, $param = []) {
-		return s_query($sql, $param)[0] ?? []; 
+		return db_get($sql, $param)[0] ?? []; 
 	}
 
 	//hàm lấy ra một ô
