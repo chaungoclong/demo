@@ -99,8 +99,8 @@ $page = paginate($currentLink, $numRecord, $currentPage, $resultPerPage);
     
     <!-- phân trang -->
     <?php 
-        echo $page['html'];
-     ?>
+    echo $page['html'];
+    ?>
     <!-- /product -->
     <?php
     require_once RF . '/include/footer.php';

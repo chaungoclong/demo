@@ -28,12 +28,18 @@ require_once 'common.php';
                 
                 <div class="card-body p-5 d-flex flex-column align-items-center">
                     <!-- form login -->
-                    <form action="" method="GET"class="form_validate">
+                    <form action="" method="GET"class="form_validate" name="formLogin">
                         <!-- user -->
                         <div class="form-group mb-3">
-                            <label for="email"><i class="fas fa-user fa-lg"></i><span class="ml-3 field_name">Email / số điện thoại:</span></label>
-                            <input type="text" id="email" name="email" class="form-control shadow" placeholder="Email / số điện thoại">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <label for="user" class="input-group-text"><i class="fas fa-user fa-lg"></i></label>
+                                </div>
+                                <input type="text" id="user" name="user" class="form-control" placeholder="Email or Phone number">
+                            </div>
+                             <div class="alert-danger">hello</div>
                         </div>
+                        
 
                         <!-- password -->
                         <div class="form-group mb-3">

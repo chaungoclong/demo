@@ -27,73 +27,118 @@ require_once 'common.php';
             <hr class="m-0 bg-success">
             <div class="card-body p-5 d-flex flex-column align-items-center">
                 <!-- form register -->
-                <form action="" method="POST" id="formSignUp">
-                    <!-- name -->
-                    <div class="form-group mb-3">
-                        <label for="name"><i class="fas fa-user fa-lg"></i><span class="ml-3 field_name">Tên của bạn:</span></label>
-                        <input type="text" id="name" name="name" class="form-control shadow" placeholder="tên">
+                <form action="" method="POST" name="formSignUp">
+                    <!-- NAME -->
+                    <div class="form-group">
+                        <div class="input-group flex-nowrap">
+                            <div class="input-group-prepend">
+                                <label for="name" class="input-group-text"><i class="fas fa-user fa-lg"></i></label>
+                            </div>
+                            <input type="text" id="name" name="name" class="form-control border-danger" placeholder="name">
+                        </div>
+
+                        <div id="nameError" class="alert-danger"></div>
                     </div>
-                    <!-- dob -->
-                    <div class="form-group mb-3">
-                        <label for="dob"><i class="far fa-calendar-alt fa-lg"></i><span class="ml-3 field_name">Ngày sinh:</span></label>
-                        <input type="date" id="dob" name="dob" class="form-control shadow" placeholder="Ngày sinh">
+                    <!-- DOB -->
+                    <div class="form-group">
+                        <div class="input-group flex-nowrap mb-3">
+                            <div class="input-group-prepend">
+                                <label for="dob" class="input-group-text"><i class="far fa-calendar-alt fa-lg"></i></label>
+                            </div>
+                            <input type="date" id="dob" name="dob" class="form-control" placeholder="date of birth">
+                        </div>
+                        <div id="dobError" class="alert-danger">hello</div>
                     </div>
-                    <!-- gender -->
-                    <p class="my-3 d-inline-block"><i class="fas fa-mars-double fa-lg"></i></i><span class="ml-3 mr-5 field_name">Giới tính:</span></p>
-                    <div class="custom-control custom-radio custom-control-inline mb-3">
-                        <input type="radio" id="gender1" name="gender" class="custom-control-input" value="1">
-                        <label for="gender1" class="custom-control-label">Nam</label>
+                    <!-- GENDER -->
+                    <div class="form-group">
+                        <div class="custom-control custom-control-inline custom-radio mb-3 mr-5">
+                            <input type="radio" id="nam" name="gender" class="custom-control-input">
+                            <label for="nam" class="custom-control-label">Nam</label>
+                        </div>
+                        <div class="custom-control custom-control-inline custom-radio mb-3">
+                            <input type="radio" id="nu" name="gender" class="custom-control-input">
+                            <label for="nu" class="custom-control-label">Nữ</label>
+                        </div>
+                        <div id="genderError" class="alert-danger"></div>
                     </div>
-                    <div class="custom-control custom-radio custom-control-inline mb-3">
-                        <input type="radio" id="gender2" name="gender" class="custom-control-input" value="0">
-                        <label for="gender2" class="custom-control-label">Nữ</label>
+                    <!-- EMAIL -->
+                    <div class="form-group">
+                        <div class="input-group flex-nowrap mb-3">
+                            <div class="input-group-prepend">
+                                <label for="email" class="input-group-text"><i class="fas fa-envelope fa-lg"></i></label>
+                            </div>
+                            <input type="email" id="email" name="email" class="form-control" placeholder="email">
+                        </div>
+                        <div id="emailError" class="alert-danger"></div>
                     </div>
-                    <!-- email -->
-                    <div class="form-group mb-3">
-                        <label for="email"><i class="fas fa-envelope fa-lg"></i><span class="ml-3 field_name">Email:</span></label>
-                        <input type="email" id="email" name="email" class="form-control shadow" placeholder="Email">
+                    <!-- PHONE -->
+                    <div class="form-group">
+                        <div class="input-group flex-nowrap mb-3">
+                            <div class="input-group-prepend">
+                                <label for="phone" class="input-group-text"><i class="fas fa-phone-alt fa-lg"></i></label>
+                            </div>
+                            <input type="text" id="phone" name="phone" class="form-control" placeholder="phone">
+                        </div>
+                        <div id="phoneError" class="alert-danger"></div>
                     </div>
-                    <!-- phone -->
-                    <div class="form-group mb-3">
-                        <label for="phone"><i class="fas fa-phone-square-alt fa-lg"></i><span class="ml-3 field_name">Điện thoại:</span></label>
-                        <input type="text" id="phone" name="phone" class="form-control shadow" placeholder="số điện thoại">
+                    <!-- PASSWORD-->
+                    <div class="form-group">
+                        <div class="input-group flex-nowrap mb-3">
+                            <div class="input-group-prepend">
+                                <label for="pass" class="input-group-text"><i class="fas fa-lock fa-lg"></i></label>
+                            </div>
+                            <input type="password" id="pass" name="pass" class="form-control" placeholder="password">
+                        </div>
+                        <div id="passError" class="alert-danger"></div>
                     </div>
-                    <!-- password -->
-                    <div class="form-group mb-3">
-                        <label for="password"><i class="fas fa-lock fa-lg"></i><span class="ml-3 field_name">Mật khẩu:</span></label>
-                        <input type="password" id="password" name="password" class="form-control shadow" placeholder="mật khẩu">
+                    <!-- CONFIRM PASSWORD -->
+                    <div class="form-group">
+                        <div class="input-group flex-nowrap mb-3">
+                            <div class="input-group-prepend">
+                                <label for="repass" class="input-group-text"><i class="fas fa-lock fa-lg"></i></label>
+                            </div>
+                            <input type="password" id="repass" name="repass" class="form-control" placeholder="confirm password">
+                        </div>
+                        <div id="rePassError" class="alert-danger"></div>
                     </div>
-                    <!-- re-password -->
-                    <div class="form-group mb-3">
-                        <label for="re_pass"><i class="fas fa-lock fa-lg"></i><span class="ml-3 field_name">Xác nhận mật khẩu:</span></label>
-                        <input type="password" id="re_pass" name="re_pass" class="form-control shadow" placeholder="xác nhận mật khẩu">
-                    </div>
-                    <!-- avatar -->
+
+                    <!-- AVATAR -->
                     <div class="custom-file mb-3 mt-2">
-                        <input type="file" id="avatar" name="avatar" class="custom-file-input shadow" multiple="">
+                        <input type="file" id="avatar" name="avatar[]" class="custom-file-input shadow" multiple="">
                         <label for="avatar" class="custom-file-label field_name">Ảnh đại diện:</label>
                     </div>
                     <!-- show image selected -->
-                    <div class="w-100" id="showImg">
+                    <div class="w-100" id="showImg"></div>
 
-                    </div>
                     <button class="btn btn-primary btn-block mb-3 shadow" id="btnSignUp" name="btnSignUp">ĐĂNG KÝ</button>
-
                     <script>
                         $(document).ready(function() {
                             $('#formSignUp').on('submit', function(e) {
                                 e.preventDefault();
-                                var data = $(this).serialize();
-                                $.post(
-                                    "process_sign_up.php",
-                                    data,
-                                    function(res) {
-                                        console.log(res);
+                                // var file = $('#avatar')[0].files;
+                                var data = new FormData();
+                                $.each($('#avatar')[0].files, function(k, v) {
+                                    data.append(k, v);
+                                });
+
+                                $.each($('#formSignUp').serializeArray(), function(k, obj) {
+                                    data.append(obj.name, obj.value);
+                                });
+                                
+                                $.ajax({
+                                    url: "process_sign_up.php",
+                                    type: "POST",
+                                    data: data,
+                                    dataType: "text",
+                                    processData: false,
+                                    contentType: false,
+                                    cache: false,
+                                    success: function(res) {
+                                        alert(res);
                                     }
-                                );
+                                });
                             });
                         });
-
                     </script>
                 </form>
                 <!-- /form register -->

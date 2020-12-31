@@ -371,7 +371,7 @@ body {
 .register_box input[type=text],
 .register_box input[type=password],
 .register_box input[type=email],
-.register_box input[type=files],
+.register_box input[type=file],
 .register_box input[type=date],
 .register_box button {
     height: 45px;
