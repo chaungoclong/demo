@@ -23,7 +23,7 @@ $page = paginate($currentLink, $numRecord, $currentPage, $resultPerPage);
     <link rel="stylesheet" href="assets/font/css/all.css">
     <link rel="stylesheet" href="assets/css/home.css">
     <script src="dist/jquery/jquery-3.5.1.js"></script>
-    <script src="assets/js/home.js"></script>
+    <script src="assets/js/common.js"></script>
     <script src="dist/popper/popper.min.js"></script>
     <script src="dist/bootstrap/js/bootstrap.js"></script>
 </head>

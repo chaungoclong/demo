@@ -1,9 +1,10 @@
 <?php
 require_once 'common.php';
 	//lấy từ khóa tìm kiếm
-$keyWord = input_get("q") ? input_get("q") : "";
+$keyWord = "%" . input_get("q") . "%";
 	//lấy kết quả
-$listResult = fetch_list("db_product", "pro_name LIKE('%$keyWord%')", ["*"], 1);
+$getResultSQL = "SELECT * FROM db_product WHERE pro_active = 1 AND pro_name LIKE(?)";
+$listResult = db_get($getResultSQL, [$keyWord]);
 	//in kết quả
 foreach ($listResult as $key => $result): ?>
 	<li class="ajax_search_item list-group-item p-0">

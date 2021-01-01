@@ -129,7 +129,7 @@ body {
     #navbar .navbar-nav .dropdown .dropdown-menu {
         position: absolute;
         top: 90%;
-        z-index: 200;
+        z-index: 300;
     }
 
      #navbar ul li {
@@ -360,12 +360,6 @@ body {
     /*text-shadow: 6px 6px 0px rgba(0,0,0,0.2);*/
     color: #0069D9; !important;
     font-weight: bolder;
-}
-
-.register_box .field_name {
-    font-size: 18px;
-    font-weight: bold;
-    color:grey !important   ;
 }
 
 .register_box input[type=text],

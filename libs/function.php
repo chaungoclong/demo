@@ -20,13 +20,18 @@ function now(){
 	return date('Y-m-d H:i:s');
 }
 	//hàm check dữ liệu
-function check_input($value){
+function data_input($value){
+	db_connect();
+	global $connect;
+
+	$value = $connect->real_escape_string($value);
 	$value = stripslashes($value);
 	$value = htmlspecialchars($value);
 	$value = trim($value);
 	return $value;
 }
-	//hàm thay thế phần tử đầu tiên
+	
+//hàm thay thế phần tử đầu tiên
 function replace_first($search, $replace, $string) {
 	return implode($replace, explode($search, $string, 2));
 }
