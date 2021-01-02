@@ -24,17 +24,11 @@ $(document).ready(function() {
     		$("#ajaxSearch").html("");
     	}
     });
-
-    //hiển thị ảnh khi chọn
-    $('#avatar').on('change', function() {
-       $('#showImg').html("");
-       showImg(this, "#showImg", ".custom-file-label");
-   });
 });
 
 
     //hàm hiển thị ảnh khi chọn
-    function showImg(input, storeImg, storeNameImg) {
+    function showImg(input, storeImg, mode = 0, storeNameImg = "") {
             //lấy số lượng file trong thẻ input
             var numberFile = input.files.length;
             // console.log(numberFile);
@@ -56,8 +50,15 @@ $(document).ready(function() {
                 var url  = e.target.result;
                 var name = input.files[i].name;
                 var img  = $('<img >');
-                img.attr('src', url);
-                $(storeNameImg).text(name);
+                if(mode) {
+                  img.attr('src', url).css("border-radius", "5px").addClass("w-25");
+                } else {
+                  img.attr('src', url).addClass("w-100 h-100");
+                }
+                if(storeNameImg) {
+                  $(storeNameImg).text(name);
+                }
+
                 $(storeImg).append(img);
             }
 

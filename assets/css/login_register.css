@@ -1,0 +1,7 @@
+.wrapper_login_register input, button {
+	height: 45px;
+}
+
+.error_field {
+	border: 1px solid red;
+}
