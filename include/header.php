@@ -15,6 +15,7 @@
   <script src="assets/js/login_register.js"></script>
   <script src="dist/popper/popper.min.js"></script>
   <script src="dist/bootstrap/js/bootstrap.js"></script>
+  <script src="dist/ckeditor/ckeditor.js"></script>
 </head>
 <body>
   <!-- header -->
@@ -55,9 +56,9 @@
             </ul>
           </div>
           <!-- header link -->
-          <div id="headerLink" class="col-5">
+          <div id="headerLink" class="col-5 d-flex align-items-center pr-0">
             <!-- list link -->
-            <ul id="headerListLink" class="nav d-flex justify-content-around">
+            <ul id="headerListLink" class="nav d-flex justify-content-between pr-0">
               <li id="hotLine" class="nav-item">
                 <a href="" class="nav-link">
                   <span><i class="fas fa-phone-alt fa-lg"></i></span>
@@ -69,12 +70,17 @@
                 </a>
               </li>
               <li id="account" class="nav-item dropdown">
-                <?php if (is_login()) { ?>
+                <?php if (is_login()) {
+                  $id = $_SESSION['user_token']['id'];
+                  $info = getUserById($id);
+
+
+                 ?>
 
                   <a href="<?= base_url('account.php'); ?>" class="nav-link dropdown-toggle">
                     <span><i class="fas fa-user fa-lg"></i></span>
                     <span>
-                      <?= $_SESSION['user_token']['username']; ?>
+                      <?= $info['cus_name'];?>
                     </span>
                   </a>
                   <div class="dropdown-menu">
