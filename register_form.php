@@ -1,5 +1,5 @@
-<?php require_once 'common.php'; ?>
 <?php 
+require_once 'common.php';
 require_once RF . "/include/header.php";
 require_once RF . "/include/navbar.php";
 ?>
@@ -8,6 +8,7 @@ require_once RF . "/include/navbar.php";
 		<h2 class="text-center card-header">ĐĂNG KÍ TÀI KHOẢN</h2>
 		<div class="card-body">
 			<form action="	" method="POST" id="registerForm" style="width: 400px;">
+				<div  id="backErr" class="alert-danger"></div>
 				<!-- name -->
 				<div class="form-group mb-3">
 					<div class="input-group">
@@ -51,13 +52,16 @@ require_once RF . "/include/navbar.php";
 				
 
 				<!-- gender -->
-				<div class="custom-control custom-radio custom-control-inline mb-3">
-					<input type="radio" id="male" name="gender" class="custom-control-input">
-					<label for="male" class="custom-control-label">Nam</label>
-				</div>
-				<div class="custom-control custom-radio custom-control-inline mb-3">
-					<input type="radio" id="female" name="gender" class="custom-control-input">
-					<label for="female" class="custom-control-label">Nữ</label>
+				<div class="form-group mb-3">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" id="male" name="gender" class="custom-control-input" value="1">
+						<label for="male" class="custom-control-label">Nam</label>
+					</div>
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" id="female" name="gender" class="custom-control-input" value="0">
+						<label for="female" class="custom-control-label">Nữ</label>
+					</div>
+					<div id="genderErr" class="alert-danger"></div>
 				</div>
 
 				<!-- email -->
@@ -83,43 +87,49 @@ require_once RF . "/include/navbar.php";
 								<i class="fas fa-phone-alt fa-lg"></i>
 							</label>
 						</div>
-						<input type="text" id="email" name="phone" class="form-control" placeholder="phone">	
+						<input type="text" id="phone" name="phone" class="form-control" placeholder="phone">	
 					</div>
 					<div id="phoneErr" class="alert-danger">
 						
 					</div>
 				</div>
 
+				<!-- adddress -->
+				<div class="form-group mb-3">
+					<textarea name="address" id="address" class="form-control" placeholder="Địa chỉ"></textarea>
+					<div id="addressErr" class="alert-danger"></div>
+				</div>
+
 				<!-- password -->
 				<div class="form-group mb-3">
 					<div class="input-group">
 						<div class="input-group-prepend">
-							<label for="pwdRegistor" class="input-group-text">
+							<label for="pwdRegister" class="input-group-text">
 								<i class="fas fa-lock fa-lg"></i>
 							</label>
 						</div>
-						<input type="text" id="pwdRegistor" name="pwdRegistor" class="form-control" placeholder="password">	
+						<input type="text" id="pwdRegister" name="pwdRegister" class="form-control" placeholder="password">	
 					</div>
-					<div id="pwdRegistorErr" class="alert-danger"></div>
+					<div id="pwdRegisterErr" class="alert-danger"></div>
 				</div>
 
 				<!-- retype password -->
 				<div class="form-group mb-3">
 					<div class="input-group">
 						<div class="input-group-prepend">
-							<label for="rePwdRegistor" class="input-group-text">
+							<label for="rePwdRegister" class="input-group-text">
 								<i class="fas fa-lock fa-lg"></i>
 							</label>
 						</div>
-						<input type="text" id="rePwdRegistor" name="rePwdRegistor" class="form-control" placeholder="password">	
+						<input type="text" id="rePwdRegister" name="rePwdRegister" class="form-control" placeholder="password">	
 					</div>
-					<div id="rePwdRegistorErr" class="alert-danger"></div>
+					<div id="rePwdRegisterErr" class="alert-danger"></div>
 				</div>
 
 				<!-- avatar -->
 				<div class="upload w-100 bg-faded mb-3 text-center">
 					<h5 class="p-2">Ảnh đại diện</h5>
-					<input type="file" id="avatar" name="avatar" multiple="" class="form-control">
+					<input type="file" id="avatar" name="avatar" class="form-control">
 
 					<div id="imgSelectedBox" class="img_selected_box m-1 d-flex flex-wrap">
 					</div>
@@ -133,18 +143,21 @@ require_once RF . "/include/navbar.php";
 							});
 						});
 					</script>
+					<div id="avatarErr" class="alert-danger"></div>
 				</div>
 				<!-- registor button -->
 				<button class="btn btn-primary btn-block mb-3">ĐĂNG KÝ</button>
 
 				<p class="text-center">Đã có tài khoản? <a href="<?= base_url("login_form.php"); ?>">đăng nhập</a></p>
 			</form>
+			<div class="container" id="result"></div>
 
 			<script>
+				//submit form
 				$(function() {
 					$('#registerForm').on('submit', function(e) {
 						e.preventDefault();
-						registor();
+						register();
 					})
 				})
 			</script>
@@ -153,13 +166,3 @@ require_once RF . "/include/navbar.php";
 </div>
 
 <?php require_once RF . '/include/footer.php'; ?>
-<script>
-	$(document).ready(function() {
-		$('#dob').on('change', function() {
-			console.log($(this).val());
-			console.log(isDate(formatDate($(this).val())));
-		});
-		var email = "long123@gmail.com";
-		console.log(isEmail(email));
-	});
-</script>

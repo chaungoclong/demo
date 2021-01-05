@@ -27,12 +27,12 @@
 	}
 
 	//hàm đăng nhập
-	function set_login($id, $username, $role = 3) {
+	function set_login($id, $email, $role = 3) {
 		start_session();
 		set_session("user_token", [
-			"id"        => $id,
-			"username" =>$username,
-			"role"     =>$role
+			"id"    => $id,
+			"email" =>$email,
+			"role"  =>$role
 		]);
 	}
 
@@ -75,14 +75,17 @@
 			$field = "cus_id";
 		}
 
-		$sql = "SELECT * FROM {$fromTable} WHERE $field = '{$id}'";
-		$result = $connect->query($sql);
-		if(!$result) {
-			die($connect->error);
-		}
-		$data = $result->fetch_all(MYSQLI_ASSOC);
+		$sql = "SELECT * FROM {$fromTable} WHERE $field = ?";
+		$data = s_row($sql, [$id]);
 		
 		return $data;
+	}
+
+	
+	function deleteCookie($key) {
+		if(isset($_COOKIE[$key])) {
+			setcookie($key, '', time() - 1);
+		}
 	}
 
 

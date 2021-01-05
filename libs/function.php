@@ -13,22 +13,11 @@ function base_url($path = '') {
 }
 	//hàm chuyển hướng
 function redirect($path) {
-	header("Location:{$path}");
+	header("Location:" . base_url($path));
 }
 	//hàm trả về ngày tháng hiện tại
 function now(){
 	return date('Y-m-d H:i:s');
-}
-	//hàm check dữ liệu
-function data_input($value){
-	db_connect();
-	global $connect;
-
-	$value = $connect->real_escape_string($value);
-	$value = stripslashes($value);
-	$value = htmlspecialchars($value);
-	$value = trim($value);
-	return $value;
 }
 	
 //hàm thay thế phần tử đầu tiên
@@ -225,4 +214,57 @@ function read_date($time) {
 			"offset" => $offsetItem,
 			"limit"  => $itemPerPage
 		];
+	}
+
+	//hàm check dữ liệu
+	function data_input($value){
+		db_connect();
+		global $connect;
+		$value = htmlspecialchars(stripcslashes(trim($value)));
+		$value = $connect->real_escape_string($value);
+		return $value;
+	}
+
+	function check_email($string) {
+		$pattern = '/^[a-z][a-z0-9_\.]{5,32}@[a-z0-9]{2,}(\.[a-z0-9]{2,4}){1,2}$/';
+		return preg_match($pattern, $string);
+	}
+
+	function check_date($string) {
+		$pattern = '/^[12]\d{3}-(0[1-9]|1[12])-(0[1-9]|[12]\d|3[01])$/';
+		return preg_match($pattern, $string);
+	}
+
+	function formatDate($string) {
+		return implode('-', array_reverse(explode('-', $string)));
+	}
+
+	function check_name($string) {
+		$pattern = '/^([a-zA-Z]{3,10}\s?)+$/';
+		return preg_match($pattern, $string);
+	}
+
+	function check_password($string) {
+		$pattern = '/^[a-zA-Z0-9+-\@\*\#]{8,32}$/';
+		return preg_match($pattern, $string);
+	}
+
+	function check_phone($string) {
+		$pattern = '/^(84|0[3|5|7|8|9])+([0-9]{8})$/';
+		return preg_match($pattern, $string);
+	}
+
+	function emailExist($table, $fieldName, $email) {
+		$sql = "select {$fieldName} from {$table} where {$fieldName} = ?";
+		return db_get($sql, [$email], 2);
+	}
+
+	function phoneExist($table, $fieldName, $phone) {
+		$sql = "select {$fieldName} from {$table} where {$fieldName} = ?";
+		return db_get($sql, [$phone], 2);
+	}
+
+	function userExist($table, $fieldName, $user) {
+		$sql = "select {$fieldName} from {$table} where {$fieldName} = ?";
+		return db_get($sql, [$user], 2);
 	}

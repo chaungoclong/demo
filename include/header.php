@@ -73,12 +73,10 @@
                 <?php if (is_login()) {
                   $id = $_SESSION['user_token']['id'];
                   $info = getUserById($id);
-
-
                  ?>
 
                   <a href="<?= base_url('account.php'); ?>" class="nav-link dropdown-toggle">
-                    <span><i class="fas fa-user fa-lg"></i></span>
+                    <span><img src="image/<?= $info['cus_avatar']; ?>" alt="" style="width: 30px;  height: 30px; border-radius: 50%;"></span>
                     <span>
                       <?= $info['cus_name'];?>
                     </span>

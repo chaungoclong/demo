@@ -82,6 +82,10 @@ body {
             }
 
             /*header link*/
+            #headerListLink>li {
+                max-width: 33%;
+                /*overflow: hidden;*/
+            }
             #headerListLink>li,  #headerListLink>li>a {
                 display: flex;
                 align-items: center;
@@ -97,7 +101,7 @@ body {
 
             #account .dropdown-menu {
                 position: absolute;
-                top: 90%;
+                top: 80%;
                 z-index: 200;
             }
 
@@ -174,8 +178,7 @@ body {
 
 /*category*/
 #category .card-deck {
-    padding-left: 85px;
-    padding-right: 85px;
+    
 }
 
 #category .card-group .card-body {
@@ -206,14 +209,13 @@ body {
 }
 
 .list_product_body {
-    padding-left: 85px;
-    padding-right: 85px;
+   
 }
 /*/category*/
 
 /*list brand*/
 #listBrand {
-    padding: 20px 85px !important;
+    padding: 20px 0px !important;
     position: relative
     z-index:-1;
 }
@@ -266,8 +268,7 @@ body {
 }
 
 #news .list_news {
-    padding-left: 85px;
-    padding-right: 85px;
+   
 }
 
 #news .card h5 {
@@ -293,4 +294,42 @@ body {
 
 /*/footer*/
 /*=================================================login.php==============================================*/
+.get_quantity {
+    border: 1px solid black;
+    height: 40px;
+    width: 160px;
+    padding: 0;
+    margin: 0;
+}
+
+#plus, #minus, #quantity {
+    border-radius: 0px;
+    border: none;
+    height: 100%;
+}
+
+#plus {
+    border-right: 1px solid black;
+}
+
+#minus {
+    border-left: 1px solid black;
+}
+
+#plus, #minus {
+    width: 40px;
+    background: grey;
+}
+
+#quantity {
+    width: 80px;
+}
+
+#quantity:focus {
+    outline: none;
+}
+
+#btn_add_card {
+    width: 160px;
+}
 
