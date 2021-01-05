@@ -260,7 +260,7 @@
 			switch ($mode) {
 				//0: trả về kết quả đã được chuyển về mảng
 				case 0:
-					$result = $stmt->get_result()->fetch_all(MYSQLI_BOTH);
+					$result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 					break;
 
 				//1: trả về kết quả ở dạng đối tượng
@@ -275,7 +275,7 @@
 				
 				//mặc định: $mode = 0
 				default:
-					$result = $stmt->get_result()->fetch_all(MYSQLI_BOTH);
+					$result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 					break;
 			}
 			return $result;
@@ -305,7 +305,8 @@
 
 	//hàm lấy ra một ô
 	function s_cell($sql, $param = []) {
-		return s_row($sql, $param)[0];
+		$result = s_row($sql, $param);
+		return array_shift($result);
 	}
 
 

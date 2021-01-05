@@ -32,15 +32,26 @@ require_once RF . "/include/navbar.php";
 								<i class="fas fa-calendar fa-lg"></i>
 							</label>
 						</div>
-						<input type="text" id="dob" name="dob" class="form-control" placeholder="dd-mm-yyyy">	
+						<input type="text" id="dob" name="dob" class="form-control" placeholder="dd-mm-yyyy" autocomplete="off">	
 
 						<script>
-							//show date picker
+							/**
+							 *input: return input tag
+							 *inst: an object that including datepicker
+							 *dpDiv : a attribute of inst , it is datepicker
+							 */
+							
 							$(document).ready(function() {
 								$('#dob').datepicker({
-									dateFormat: "dd-mm-yy",
-									changeMonth: true,
-									changeYear: true
+									beforeShow: function (input, inst) {
+										console.log(input, inst);
+										setTimeout(function () {
+											inst.dpDiv.css({
+												top: 405,
+												left: 519
+											});
+										},0);
+									}
 								});
 							});
 						</script>

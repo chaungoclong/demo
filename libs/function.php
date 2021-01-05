@@ -268,3 +268,7 @@ function read_date($time) {
 		$sql = "select {$fieldName} from {$table} where {$fieldName} = ?";
 		return db_get($sql, [$user], 2);
 	}
+
+	function vd($value) {
+		echo "<pre>" . print_r($value, true) . "</pre>";
+	}

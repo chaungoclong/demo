@@ -1,75 +1,104 @@
-<?php 
+<?php
 require_once 'common.php';
 require_once 'include/header.php';
 require_once 'include/navbar.php';
 ?>
 <main>
+	<!-- In thông tin sản phẩm có id = id nhận được -->
+	<?php
+		//ID nhận được
+	$proID = data_input(input_get("proid"));
+		//lấy sản phẩm có ID nhận được
+	$getOneProSQL = "SELECT * FROM db_product WHERE pro_id = ?";
+	$product = s_row($getOneProSQL, [$proID]);
+	
+	//lấy các ảnh của sản phẩm, thể loại, hãng
+	if(!empty($product)) {
+		$getImgProSQL = "SELECT img_url FROM db_image WHERE pro_id = ? LIMIT 4";
+		$listImg = db_get($getImgProSQL, [$proID]);
+		
+		$getCatProSQL = "SELECT cat_name FROM db_category WHERE cat_id = ?";
+		$category = s_cell($getCatProSQL, [$product['cat_id']]);
+		
+		$getBraProSQL = "SELECT bra_name FROM db_brand WHERE bra_id = ?";
+		$brand = s_cell($getBraProSQL, [$product['bra_id']]);
+	}
+	?>
 	<div style="padding-left: 85px; padding-right: 85px;" class="">
 		<h1 class="text-center mt-3">PRODUCT DETAIL</h1>
 		<section>
 			<div class="row p-0 m-0 bg-light">
 				<!-- product image wrapper -->
 				<div id="product_image" class="col-6 p-3">
-
 					<!-- product image content -->
 					<div class="card text-center py-3 h-100">
 						<div class="row p-0 m-0">
 							<div class="col-12 mb-3">
-								<img src="https://www.androidcentral.com/sites/androidcentral.com/files/styles/large_wm_brw/public/article_images/2020/10/google-pixel-5-hands-on-15.jpg" alt="" class="card-img-top" style="border-radius: 5px;">
+								<img src="<?= $product['pro_img']; ?>" alt="" class="big_img card-img-top w-75" style="border-radius: 5px;">
 							</div>
 							<div class="col-12">
 								<div class="row">
-									<div class="col-3">
-										<img src="https://www.androidcentral.com/sites/androidcentral.com/files/styles/large_wm_brw/public/article_images/2020/10/google-pixel-5-hands-on-15.jpg" class="img-fluid" alt="" style="border-radius: 5px;">
-									</div>
-									<div class="col-3">
-										<img src="https://www.androidcentral.com/sites/androidcentral.com/files/styles/large_wm_brw/public/article_images/2020/10/google-pixel-5-hands-on-15.jpg" class="img-fluid" alt="" style="border-radius: 5px;">
-									</div>
-									<div class="col-3">
-										<img src="https://www.androidcentral.com/sites/androidcentral.com/files/styles/large_wm_brw/public/article_images/2020/10/google-pixel-5-hands-on-15.jpg" class="img-fluid" alt="" style="border-radius: 5px;">
-									</div>
-									<div class="col-3">
-										<img src="https://www.androidcentral.com/sites/androidcentral.com/files/styles/large_wm_brw/public/article_images/2020/10/google-pixel-5-hands-on-15.jpg" class="img-fluid" alt="" style="border-radius: 5px;">
-									</div>
+									<?php if (!empty($listImg)): ?>
+										<?php foreach ($listImg as $key => $img): ?>
+											<div class="col-3">
+												<img src="<?= $img['img_url']; ?>" class="small_img img-fluid" alt="" style="border-radius: 5px;">
+											</div>
+										<?php endforeach ?>
+									<?php endif ?>
 								</div>
 							</div>
 						</div>
 					</div>
 					<!-- /product image content -->
-
 				</div>
 				<!-- /product image wrapper -->
-
 				<div class="col-6 p-3">
 					<div class="card h-100">
 						<div class="card-body">
-							<h2 style="color:blue;" class="card-title"><strong>Google Pixel 4</strong></h2>
+							<!-- product name -->
+							<h2 style="color:blue;" class="card-title">
+								<strong>
+									<?= ucwords(strtolower($product['pro_name'])); ?>
+								</strong>
+							</h2>
 							<hr>
-							<h3 class="card-text my-4" style="color:red;"><strong>10.000.000</strong></h3>
-
+							<h3 class="card-text my-4" style="color:red;">
+								<strong>
+									<?= !empty($product['pro_price']) ?
+									number_format($product['pro_price'], 0, ",", ".") : ""; ?>
+									&#8363;
+								</strong>
+							</h3>
 							<div class="table-responsive mb-3">
 								<table class="table table-sm table-borderless mb-0">
 									<tr>
 										<th class="pl-0 w-25" scope="row"><strong>Loại sản phẩm:</strong></th>
-										<td>SMARTPHONE</td>
+										<td><?= !empty($category) ? $category : ""; ?></td>
 									</tr>
 									<tr>
 										<th class="pl-0 w-25" scope="row"><strong>Hãng sản xuất:</strong></th>
-										<td>GOOGLE</td>
+										<td><?= !empty($brand) ? $brand : ""; ?></td>
 									</tr>
 									<tr>
 										<th class="pl-0 w-25" scope="row"><strong>Màu:</strong></th>
-										<td>Đen</td>
+										<td>
+											<?= !empty($product['pro_color']) ?
+											$product['pro_color'] : ""; ?>
+										</td>
 									</tr>
 									<tr>
 										<th class="pl-0 w-25" scope="row"><strong>Tình trạng:</strong></th>
-										<td>Còn hàng</td>
+										<td>
+											<?= $product['pro_qty'] ?
+											"còn hàng(" . $product['pro_qty'] . " sản phẩm)": "hết hàng"; ?>
+										</td>
 									</tr>
 								</table>
 							</div>
 							<hr>
 							<p>
-								Lorem ipsum dolor sit amet, consectetur, adipisicing elit. Praesentium provident eius error atque cum id mollitia ad fuga. Nobis commodi non sed amet. Molestiae voluptate unde, quae. Ipsum, ab, impedit!
+								<?= !empty($product['pro_short_desc']) ?
+								$product['pro_short_desc'] : ""; ?>
 							</p>
 							<hr>
 							<div class="action border-1">
@@ -84,10 +113,12 @@ require_once 'include/navbar.php';
 							<script>
 								//tăng giảm số lượng sản phẩm
 								$(function() {
+									$('.small_img').on('click', function() {
+										$('.big_img').attr("src", $(this).attr("src"));
+									});
 									var quantity = document.getElementById("quantity");
 									var minus = document.getElementById("minus");
 									var plus = document.getElementById("plus");
-
 									minus.onclick = () => {
 										let number = parseInt(quantity.value);
 										if(number - 1 >= 0) {
@@ -96,7 +127,6 @@ require_once 'include/navbar.php';
 											quantity.value = 0;
 										}
 									}
-
 									plus.onclick = () => {
 										let number = parseInt(quantity.value);
 										if(number + 1 <= 10) {
@@ -105,21 +135,20 @@ require_once 'include/navbar.php';
 											quantity.value = 1;
 										}
 									}
-
 									quantity.oninput = function() {
 										let valInt = parseInt(this.value);
 										if(!isNaN(valInt)) {
 											this.value = valInt;
 										}
 									}
-
-
 									$('#btn_add_card').on('click', function() {
-
 										let proid = <?php echo input_get("proid"); ?>;
+										let amount = parseInt(<?php echo $product['pro_qty']; ?>);
 										let number = parseInt(quantity.value);
 										if(isNaN(number) || number === 0) {
 											alert("vui lòng chọn hàng");
+										} else if(isNaN(amount) || amount === 0) {
+											alert("hết hàng");
 										} else {
 											$.post(
 												"card.php",
@@ -130,11 +159,9 @@ require_once 'include/navbar.php';
 												"text"
 												);
 										}
+							// console.log(proid);
 
-										// console.log(proid);
-
-										
-									});
+						});
 								});
 							</script>
 						</div>
@@ -142,195 +169,145 @@ require_once 'include/navbar.php';
 				</div>
 			</div>
 		</section>
-
 		<!-- tab info -->
-		<section class="mt-5">
-			<!-- Nav tabs -->
-			<ul class="nav nav-tabs" role="tablist">
+		<section id="tab_info">
+			<!-- tab index -->
+			<ul class="nav nav-justified nav-tabs">
 				<li class="nav-item">
-					<a class="nav-link active" data-toggle="tab" href="#home">MÔ TẢ</a>
+					<a href="#desc" class="nav-link active" data-toggle="tab">MÔ TẢ</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" data-toggle="tab" href="#menu1">THÔNG SỐ</a>
+					<a href="#info" class="nav-link" data-toggle="tab">THÔNG SỐ KỸ THUẬT</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" data-toggle="tab" href="#menu2">ĐÁNH GIÁ</a>
+					<a href="#review" class="nav-link" data-toggle="tab">ĐÁNH GIÁ</a>
 				</li>
 			</ul>
-
-			<!-- Tab panes -->
+			<!-- tab content -->
 			<div class="tab-content">
-				<div id="home" class="container tab-pane active"><br>
-					<h2 style='margin: 0px 0px 10px; padding: 0px; font: bold 20px / 1.3em Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; color: rgb(51, 51, 51); outline: none; zoom: 1; display: block; overflow: hidden; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>Tr&ocirc;ng ngoại h&igrave;nh kh&aacute; giống nhau, tuy nhi&ecirc;n&nbsp;<a href="https://www.thegioididong.com/dtdd/samsung-galaxy-note-10-plus" style='margin: 0px; padding: 0px; text-decoration: none; font: bold 20px / 18px Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; color: rgb(80, 168, 227); outline: none; zoom: 1;' target="_blank" title="Tham khảo điện thoại Samsung Galaxy Note 10+ chính hãng, giá rẻ" type="Tham khảo điện thoại Samsung Galaxy Note 10+ chính hãng, giá rẻ">Samsung Galaxy Note 10+</a> sở hữu kh&aacute; nhiều điểm kh&aacute;c biệt so với&nbsp;<a href="https://www.thegioididong.com/dtdd/samsung-galaxy-note-10" style='margin: 0px; padding: 0px; text-decoration: none; font: bold 20px / 18px Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; color: rgb(80, 168, 227); outline: none; zoom: 1;' target="_blank" title="Tham khảo điện thoại Samsung Galaxy Note 10 chính hãng, giá rẻ" type="Tham khảo điện thoại Samsung Galaxy Note 10 chính hãng, giá rẻ">Galaxy Note 10</a> v&agrave; đ&acirc;y được xem l&agrave; một trong những chiếc m&aacute;y đ&aacute;ng mua nhất trong năm 2019, đặc biệt d&agrave;nh cho những người th&iacute;ch một chiếc m&aacute;y m&agrave;n h&igrave;nh lớn, camera chất lượng h&agrave;ng đầu.</h2>
-					<h3 style='margin: 30px 0px 0px; padding: 0px; font: bold 20px / 1.3em Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; color: rgb(51, 51, 51); outline: none; zoom: 1; display: block; overflow: hidden; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>Camera đứng đầu thế giới</h3>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>DxOMark l&agrave; chuy&ecirc;n trang đ&aacute;nh gi&aacute; camera uy t&iacute;n thế giới mới đ&acirc;y đ&atilde; khẳng định, Galaxy Note 10+ l&agrave; chiếc smartphone c&oacute; camera tốt nhất hiện nay.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; text-align: center;'><a class="preventdefault" href="https://www.thegioididong.com/images/42/206176/samsung-galaxy-note-10-plus-tgdd-26.jpg" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);"><img alt="Điện thoại Samsung Galaxy Note 10+ | Giao diện camera sau" data-original="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-26.jpg" class="lazy" title="Điện thoại Samsung Galaxy Note 10+ | Giao diện camera sau" src="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-26.jpg" style="margin: 0 auto; text-align: center; display: block; padding: 0px; border: 0px; max-width: 100%; height: auto; max-height: 584px;"></a></p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>Galaxy Note 10+ c&oacute; camera ch&iacute;nh 12 MP với khẩu độ c&oacute; thể thay đổi từ F/1.5 &ndash; F/2.4, hỗ trợ&nbsp;<a href="https://www.thegioididong.com/hoi-dap/che-do-chong-rung-quang-hoc-ois-chup-anh-tren-sm-906416" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);" target="_blank" title="Tìm hiểu về công nghệ chống rung quang học OIS" type="Tìm hiểu về công nghệ chống rung quang học OIS">chống rung quang học OIS</a> v&agrave; tự động lấy n&eacute;t dual-pixel.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'><br></p>
-					<div class="slideArt owl-carousel owl-theme" style='margin: 0px 0px 10px; padding: 0px; display: block; position: relative; width: 750px; cursor: pointer; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; opacity: 1;'>
-						<div class="owl-wrapper-outer autoHeight" style="margin: 0px; padding: 0px; overflow: hidden; position: relative; width: 750px; transition: height 500ms ease-in-out 0s; height: 607px;">
-							<div class="owl-wrapper" style="margin: 0px; padding: 0px; display: block; position: relative; transform: translate3d(0px, 0px, 0px); backface-visibility: hidden; width: 4500px; left: 0px;">
-								<div class="owl-item" style="margin: 0px; padding: 0px; float: left; backface-visibility: hidden; transform: translate3d(0px, 0px, 0px); width: 750px;">
-									<div class="item" style="margin: 0px; padding: 0px; text-align: center;"><img src="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-34.jpg" style="margin: 0 auto; text-align: center; display: block; padding: 0px; border: 0px; max-width: 100%; height: auto; max-height: 584px;"><span style="margin: 0px; padding: 0px;">Ảnh chụp g&oacute;c si&ecirc;u rộng 0.5x tr&ecirc;n Note 10</span></div>
-								</div>
-								<div class="owl-item" style="margin: 0px; padding: 0px; float: left; backface-visibility: hidden; transform: translate3d(0px, 0px, 0px); width: 750px;">
-									<div class="item" style="margin: 0px; padding: 0px; text-align: center;"><img src="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-33.jpg" style="margin: 0 auto; text-align: center; display: block; padding: 0px; border: 0px; max-width: 100%; height: auto; max-height: 584px;"><span style="margin: 0px; padding: 0px;">Ảnh chụp g&oacute;c rộng 1x tr&ecirc;n Note 10</span></div>
-								</div>
-								<div class="owl-item" style="margin: 0px; padding: 0px; float: left; backface-visibility: hidden; transform: translate3d(0px, 0px, 0px); width: 750px;">
-									<div class="item" style="margin: 0px; padding: 0px; text-align: center;"><img src="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-35.jpg" style="margin: 0 auto; text-align: center; display: block; padding: 0px; border: 0px; max-width: 100%; height: auto; max-height: 584px;"><span style="margin: 0px; padding: 0px;">Ảnh chụp g&oacute;c thường 2x tr&ecirc;n Note 10</span></div>
-								</div>
-							</div>
-						</div>
-						<div class="owl-controls clickable" style="margin: 0px; padding: 0px; user-select: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); text-align: center;">
-							<div class="owl-pagination" style="margin: 0px; padding: 0px;">
-								<div class="owl-page active" style="margin: 0px; padding: 0px; cursor: pointer; display: inline-block; zoom: 1;"><br></div>
-								<div class="owl-page" style="margin: 0px; padding: 0px; cursor: pointer; display: inline-block; zoom: 1;"><br></div>
-								<div class="owl-page" style="margin: 0px; padding: 0px; cursor: pointer; display: inline-block; zoom: 1;"><br></div>
-							</div>
-						</div>
-					</div>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'><br></p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>Tiếp theo l&agrave; cảm biến camera g&oacute;c si&ecirc;u rộng 16 MP khẩu độ F/2.2 c&ugrave;ng ống k&iacute;nh tele 12 MP khẩu độ F/2.1 v&agrave; n&oacute; cũng c&oacute; th&ecirc;m 1 cảm biến 3D ToF, điều m&agrave; Samsung Galaxy Note 10 kh&ocirc;ng được trang bị.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>Samsung đ&atilde; cải thiện c&aacute;c thuật to&aacute;n xử l&yacute; b&ecirc;n trong phần mềm gi&uacute;p m&aacute;y c&oacute; khả năng phơi s&aacute;ng tốt, nhất qu&aacute;n v&agrave; ch&iacute;nh x&aacute;c cho d&ugrave; trong điều kiện &aacute;nh s&aacute;ng thế n&agrave;o.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>Galaxy Note 10+ cũng hỗ trợ zoom quang 2x, n&oacute; c&oacute; thể chụp h&igrave;nh ảnh với m&agrave;u sắc sống động, độ chi tiết cao v&agrave; độ nhiễu thấp.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; text-align: center;'><a class="preventdefault" href="https://www.thegioididong.com/images/42/206176/samsung-galaxy-note-10-plus-tgdd-31.jpg" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);"><img alt="Điện thoại Samsung Galaxy Note 10+ | Ảnh chụp ban đêm" data-original="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-31.jpg" class="lazy" title="Điện thoại Samsung Galaxy Note 10+ | Ảnh chụp ban đêm" src="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-31.jpg" style="margin: 0 auto; text-align: center; display: block; padding: 0px; border: 0px; max-width: 100%; height: auto; max-height: 584px;"></a></p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>Galaxy Note 10+ cũng c&oacute; một t&iacute;nh năng mới l&agrave; Live Focus Video cho ph&eacute;p &aacute;p dụng hiệu ứng bokeh v&agrave;o c&aacute;c video quay được cũng như h&igrave;nh ảnh, c&ugrave;ng c&aacute;c hiệu ứng kh&aacute;c như thay đổi m&agrave;u ph&ocirc;ng nền.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; text-align: center;'><a class="preventdefault" href="https://www.thegioididong.com/images/42/206176/samsung-galaxy-note-10-plus-tgdd-32.jpg" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);"><img alt="Điện thoại Samsung Galaxy Note 10+ | Ảnh chụp ban đêm" data-original="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-32.jpg" class="lazy" title="Điện thoại Samsung Galaxy Note 10+ | Ảnh chụp ban đêm" src="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-32.jpg" style="margin: 0 auto; text-align: center; display: block; padding: 0px; border: 0px; max-width: 100%; height: auto; max-height: 584px;"></a></p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>Galaxy Note 10+ vẫn c&ograve;n những t&iacute;nh năng mới kh&aacute;c như chế độ AR cho ph&eacute;p vẽ l&ecirc;n c&aacute;c video gọi l&agrave; AR Doodle, t&iacute;nh năng ph&oacute;ng to mic để thu &acirc;m thanh r&otilde; hơn ở từng phần cụ thể của cảnh khi đang quay video.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; text-align: center;'><a class="preventdefault" href="https://www.thegioididong.com/images/42/206176/samsung-galaxy-note-10-plus-tgdd-30.jpg" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);"><img alt="Điện thoại Samsung Galaxy Note 10+ | Ảnh chụp thiếu sáng" data-original="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-30.jpg" class="lazy" title="Điện thoại Samsung Galaxy Note 10+ | Ảnh chụp thiếu sáng" src="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-30.jpg" style="margin: 0 auto; text-align: center; display: block; padding: 0px; border: 0px; max-width: 100%; height: auto; max-height: 584px;"></a></p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>Galaxy Note 10+ c&oacute; t&iacute;nh năng Si&ecirc;u chống rung cực ấn tượng, gi&uacute;p người d&ugrave;ng c&oacute; được những thước phim mượt m&agrave;, giảm thiểu tối đa sự giật lag ảnh hưởng tới sự tập trung khi xem.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'><br></p>
-					<div allowfullscreen="" class="video" frameborder="0" height="315" src="https://www.youtube.com/embed/ZjEDIbFEtcI" style='margin: 0px auto; padding: 0px; max-width: 100%; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;' width="560"><iframe src="https://www.youtube.com/embed/ZjEDIbFEtcI?rel=0&enablejsapi=1&origin=https%3A%2F%2Fwww.thegioididong.com" frameborder="0" allowfullscreen="" data-gtm-yt-inspected-1070012_61="true" data-gtm-yt-inspected-1070012_79="true" style="margin: 0px; padding: 0px; width: 750px; min-height: 422px;"></iframe></div>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'><br></p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>Camera selfie 10 MP ở mặt trước với t&iacute;nh năng l&agrave;m đẹp được t&iacute;ch hợp sẵn hứa hẹn sẽ kh&ocirc;ng l&agrave;m người d&ugrave;ng phải thất vọng với chất lượng ảnh mang lại.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'><a class="preventdefault" href="https://www.thegioididong.com/images/42/206176/samsung-galaxy-note-10-plus-blue-g2_800x600.jpg" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);"><img alt=" Galaxy Note 10+ | Camera selfie 10 MP" data-original="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-blue-g2_800x600.jpg" class="lazy" title=" Galaxy Note 10+ | Camera selfie 10 MP" src="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-blue-g2_800x600.jpg" style="margin: 0 auto; text-align: center; display: block; padding: 0px; border: 0px; max-width: 100%; height: auto; max-height: 584px;"></a></p>
-					<h3 style='margin: 30px 0px 0px; padding: 0px; font: bold 20px / 1.3em Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; color: rgb(51, 51, 51); outline: none; zoom: 1; display: block; overflow: hidden; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>C&ocirc;ng nghệ sạc nhanh&nbsp;Superfast Charge 45W</h3>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>Samsung Galaxy Note 10+ ch&iacute;nh l&agrave;&nbsp;<a href="https://www.thegioididong.com/dtdd" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);" target="_blank" title="Tham khảo giá điện thoại smartphone chính hãng">smartphone</a> duy nhất tại thời điểm hiện tại hỗ trợ sạc nhanh l&ecirc;n tới 45W của Samsung.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; text-align: center;'><a class="preventdefault" href="https://www.thegioididong.com/images/42/206176/samsung-galaxy-note-10-plus-tgdd-23.jpg" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);"><img alt="Điện thoại Samsung Galaxy Note 10+ | Khả năng sạc nhanh trên Type-C" data-original="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-23.jpg" class="lazy" title="Điện thoại Samsung Galaxy Note 10+ | Khả năng sạc nhanh trên Type-C" src="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-23.jpg" style="margin: 0 auto; text-align: center; display: block; padding: 0px; border: 0px; max-width: 100%; height: auto; max-height: 584px;"></a></p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>C&ocirc;ng nghệ sạc nhanh Superfast Charge mới n&agrave;y cung cấp nhiều năng lượng hơn so với chuẩn sạc xuất hiện tr&ecirc;n c&aacute;c flagship&nbsp;<a href="https://www.thegioididong.com/dtdd-samsung" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);" target="_blank" title="Tham khảo giá điện thoại smartphone Samsung chính hãng">Samsung</a> trước đ&acirc;y.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; text-align: center;'><a class="preventdefault" href="https://www.thegioididong.com/images/42/206176/samsung-galaxy-note-10-plus-tgdd-21.jpg" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);"><img alt="Điện thoại Samsung Galaxy Note 10+ | Khả năng sạc nhanh" data-original="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-21.jpg" class="lazy" title="Điện thoại Samsung Galaxy Note 10+ | Khả năng sạc nhanh" src="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-21.jpg" style="margin: 0 auto; text-align: center; display: block; padding: 0px; border: 0px; max-width: 100%; height: auto; max-height: 584px;"></a></p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>Nhanh gấp ba lần Adaptive Fast Charge v&agrave; nhanh hơn 6 lần so với sạc qua cổng USB ti&ecirc;u chuẩn.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>C&ocirc;ng nghệ sạc si&ecirc;u nhanh n&agrave;y gi&uacute;p bạn c&oacute; thể sạc đầy vi&ecirc;n pin c&oacute; dung lượng 4300 mAh của m&aacute;y chỉ trong chưa đầy một giờ đồng hồ.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; text-align: center;'><a class="preventdefault" href="https://www.thegioididong.com/images/42/206176/samsung-galaxy-note-10-plus-tgdd-12.jpg" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);"><img alt="Điện thoại Samsung Galaxy Note 10+ | Khả năng sạc nhanh" data-original="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-12.jpg" class="lazy" title="Điện thoại Samsung Galaxy Note 10+ | Khả năng sạc nhanh" src="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-12.jpg" style="margin: 0 auto; text-align: center; display: block; padding: 0px; border: 0px; max-width: 100%; height: auto; max-height: 584px;"></a></p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>Khi m&agrave; dung lượng pin đang tụt lại ph&iacute;a sau so với những cải tiến về camera hay cấu h&igrave;nh th&igrave; việc hỗ trợ c&ocirc;ng nghệ&nbsp;<a href="https://www.thegioididong.com/dtdd-sac-pin-nhanh" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);" target="_blank" title="Tham khảo giá điện thoại smartphone sạc pin nhanh">sạc nhanh</a> đến như vậy cũng sẽ gi&uacute;p người d&ugrave;ng Samsung phần n&agrave;o bớt được thời gian chờ đợi nạp năng lượng cho m&aacute;y.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; text-align: center;'><a class="preventdefault" href="https://www.thegioididong.com/images/42/206176/samsung-galaxy-note-10-plus-tgdd-10.jpg" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);"><img alt="Điện thoại Samsung Galaxy Note 10+ | Khả năng sạc nhanh" data-original="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-10.jpg" class="lazy" title="Điện thoại Samsung Galaxy Note 10+ | Khả năng sạc nhanh" src="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-10.jpg" style="margin: 0 auto; text-align: center; display: block; padding: 0px; border: 0px; max-width: 100%; height: auto; max-height: 584px;"></a></p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>Bạn cũng cần lưu &yacute; l&agrave; m&aacute;y chỉ đi k&egrave;m với cục sạc 25W v&agrave; để sử dụng c&ocirc;ng nghệ sạc nhanh tối đa n&agrave;y th&igrave; bạn phải mua th&ecirc;m củ sạc 45W b&ecirc;n ngo&agrave;i nhưng d&ugrave; sao hỗ trợ sạc nhanh tới 45W đ&atilde; l&agrave; điểm cộng qu&aacute; lớn so với những chiếc m&aacute;y đầu bảng kh&aacute;c.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>Xem th&ecirc;m:&nbsp;<a href="https://www.thegioididong.com/tin-tuc/danh-gia-samsung-galaxy-note-10--flagship-cao-cap-voi-dua-than-s-pen-1185800" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);" target="_blank" title="Đánh giá Samsung Galaxy Note 10+" type="Đánh giá Samsung Galaxy Note 10+">Đ&aacute;nh gi&aacute; Samsung Galaxy Note 10+: Flagship cao cấp với &apos;đũa thần&apos; S-Pen</a></p>
-					<h3 style='margin: 30px 0px 0px; padding: 0px; font: bold 20px / 1.3em Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; color: rgb(51, 51, 51); outline: none; zoom: 1; display: block; overflow: hidden; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>M&agrave;n h&igrave;nh lớn thoải m&aacute;i sử dụng</h3>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>Samsung Galaxy Note 10+ l&agrave; một chiếc điện thoại rất lớn, rất c&oacute; thể l&agrave; chiếc điện thoại lớn nhất bạn từng sử dụng, với m&agrave;n h&igrave;nh AMOLED Infinity-O 6.8 inch c&oacute; độ ph&acirc;n giải 3.040 x 1.440 pixels (498 ppi).</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; text-align: center;'><a class="preventdefault" href="https://www.thegioididong.com/images/42/206176/samsung-galaxy-note-10-plus-tgdd-7.jpg" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);"><img alt="Điện thoại Samsung Galaxy Note 10+ | Thiết kế màn hình lớn" data-original="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-7.jpg" class="lazy" title="Điện thoại Samsung Galaxy Note 10+ | Thiết kế màn hình lớn" src="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-7.jpg" style="margin: 0 auto; text-align: center; display: block; padding: 0px; border: 0px; max-width: 100%; height: auto; max-height: 584px;"></a></p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>C&ocirc;ng nghệ m&agrave;n h&igrave;nh&nbsp;<a href="https://www.thegioididong.com/hoi-dap/cong-nghe-ma-hinh-dynamic-amoled-co-gi-noi-bat-1151123" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);" target="_blank" title="Tìm hiểu màn hình Dynamic AMOLED">Dynamic AMOLED</a> ti&ecirc;n tiến n&agrave;y c&ograve;n cho ra m&agrave;n h&igrave;nh &iacute;t &aacute;nh s&aacute;ng xanh hơn nhằm gi&uacute;p mắt thoải m&aacute;i.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; text-align: center;'><a class="preventdefault" href="https://www.thegioididong.com/images/42/206176/samsung-galaxy-note-10-plus-tgdd-14.jpg" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);"><img alt="Điện thoại Samsung Galaxy Note 10+ | Màn hình phủ lớp HDR10+" data-original="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-14.jpg" class="lazy" title="Điện thoại Samsung Galaxy Note 10+ | Màn hình phủ lớp HDR10+" src="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-14.jpg" style="margin: 0 auto; text-align: center; display: block; padding: 0px; border: 0px; max-width: 100%; height: auto; max-height: 584px;"></a></p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>M&agrave;n h&igrave;nh hỗ trợ cả nội dung HDR10+ v&igrave; thế c&aacute;c chương tr&igrave;nh phim ảnh, game v&agrave; c&aacute;c nội dung kh&aacute;c được hiển thị rất đẹp.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; text-align: center;'><a class="preventdefault" href="https://www.thegioididong.com/images/42/206176/samsung-galaxy-note-10-plus-tgdd-20.jpg" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);"><img alt="Điện thoại Samsung Galaxy Note 10+ | Màn hình" data-original="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-20.jpg" class="lazy" title="Điện thoại Samsung Galaxy Note 10+ | Màn hình" src="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-20.jpg" style="margin: 0 auto; text-align: center; display: block; padding: 0px; border: 0px; max-width: 100%; height: auto; max-height: 584px;"></a></p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>Với thiết kế những cạnh tr&ograve;n ở mặt sau khiến điện thoại rất thoải m&aacute;i khi cầm, trong trường hợp bạn c&oacute; b&agrave;n tay đủ lớn để cầm v&agrave; giữ n&oacute;.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>Mặt sau của Note 10+ được l&agrave;m bằng k&iacute;nh, c&ograve;n khung th&igrave; được l&agrave;m bằng kim loại, mang đến sự tinh tế v&agrave; sang trọng cho điện thoại.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; text-align: center;'><a class="preventdefault" href="https://www.thegioididong.com/images/42/206176/samsung-galaxy-note-10-plus-tgdd-24.jpg" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);"><img alt="Điện thoại Samsung Galaxy Note 10+ | Màn hình" data-original="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-24.jpg" class="lazy" title="Điện thoại Samsung Galaxy Note 10+ | Màn hình" src="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-24.jpg" style="margin: 0 auto; text-align: center; display: block; padding: 0px; border: 0px; max-width: 100%; height: auto; max-height: 584px;"></a></p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>Galaxy Note 10+ c&oacute; hỗ trợ chuẩn chống nước, chống bụi IP68 v&igrave; thế c&oacute; thể sử dụng ở b&atilde;i biển m&agrave; kh&ocirc;ng sợ bắn nước hay c&aacute;c x&acirc;m nhập v&agrave;o c&aacute;c cổng kết nối.</p>
-					<h3 style='margin: 30px 0px 0px; padding: 0px; font: bold 20px / 1.3em Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; color: rgb(51, 51, 51); outline: none; zoom: 1; display: block; overflow: hidden; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>B&uacute;t S Pen ng&agrave;y c&agrave;ng nhiều t&iacute;nh năng</h3>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>S Pen ch&iacute;nh l&agrave; một trong những yếu tố cốt l&otilde;i khiến d&ograve;ng Galaxy Note trở n&ecirc;n đặc biệt v&agrave; hấp dẫn.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; text-align: center;'><a class="preventdefault" href="https://www.thegioididong.com/images/42/206176/samsung-galaxy-note-10-plus-tgdd-29.jpg" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);"><img alt="Điện thoại Samsung Galaxy Note 10+ |Trải nghiệm Bút S-Pen" data-original="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-29.jpg" class="lazy" title="Điện thoại Samsung Galaxy Note 10+ |Trải nghiệm Bút S-Pen" src="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-29.jpg" style="margin: 0 auto; text-align: center; display: block; padding: 0px; border: 0px; max-width: 100%; height: auto; max-height: 584px;"></a></p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>B&uacute;t S Pen c&oacute; nhiều t&iacute;nh năng hơn b&uacute;t cảm ứng stylus th&ocirc;ng thường, từ ghi ch&uacute; nhanh bằng c&aacute;ch viết tr&ecirc;n m&agrave;n h&igrave;nh kh&oacute;a, đến chụp ảnh từ xa với S Pen.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; text-align: center;'><a class="preventdefault" href="https://www.thegioididong.com/images/42/206176/samsung-galaxy-note-10-plus-tgdd-28.jpg" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);"><img alt="Điện thoại Samsung Galaxy Note 10+ | Khe cắm bút S-Pen" data-original="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-28.jpg" class="lazy" title="Điện thoại Samsung Galaxy Note 10+ | Khe cắm bút S-Pen" src="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-28.jpg" style="margin: 0 auto; text-align: center; display: block; padding: 0px; border: 0px; max-width: 100%; height: auto; max-height: 584px;"></a></p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>Giờ đ&acirc;y b&uacute;t S Pen tr&ecirc;n Note 10+ đ&atilde; được n&acirc;ng cấp, v&agrave; hiện tại đ&atilde; hỗ trợ điều khiển bằng cử chỉ.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>T&iacute;nh năng n&agrave;y cho ph&eacute;p người d&ugrave;ng điều khiển một số ứng dụng của Samsung như camera,&hellip; từ xa m&agrave; kh&ocirc;ng cần chạm v&agrave;o điện thoại.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; text-align: center;'><a class="preventdefault" href="https://www.thegioididong.com/images/42/206176/samsung-galaxy-note-10-plus-tgdd-17.jpg" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);"><img alt="Điện thoại Samsung Galaxy Note 10+ | Bút S-Pen" data-original="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-17.jpg" class="lazy" title="Điện thoại Samsung Galaxy Note 10+ | Bút S-Pen" src="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-17.jpg" style="margin: 0 auto; text-align: center; display: block; padding: 0px; border: 0px; max-width: 100%; height: auto; max-height: 584px;"></a></p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>V&iacute; dụ ứng dụng camera tr&ecirc;n m&aacute;y hỗ trợ kết nối với S Pen, cho ph&eacute;p bạn biến b&uacute;t S Pen th&agrave;nh c&ocirc;ng cụ gi&uacute;p bạn điều chỉnh ống k&iacute;nh camera, thay đổi m&agrave;u sắc, zoom,... giống như đang thao t&aacute;c bằng tay.</p>
-					<h3 style='margin: 30px 0px 0px; padding: 0px; font: bold 20px / 1.3em Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; color: rgb(51, 51, 51); outline: none; zoom: 1; display: block; overflow: hidden; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>Nhiều trang bị cao cấp kh&aacute;c nữa</h3>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>Samsung Galaxy Note 10+ vẫn sở hữu cho m&igrave;nh cảm biến v&acirc;n tay si&ecirc;u &acirc;m b&ecirc;n dưới m&agrave;n h&igrave;nh với tốc độ cải tiến r&otilde; rệt.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; text-align: center;'><a class="preventdefault" href="https://www.thegioididong.com/images/42/206176/samsung-galaxy-note-10-plus-tgdd-27.jpg" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);"><img alt="Điện thoại Samsung Galaxy Note 10+ | Cảm biến vân tay" data-original="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-27.jpg" class="lazy" title="Điện thoại Samsung Galaxy Note 10+ | Cảm biến vân tay" src="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-27.jpg" style="margin: 0 auto; text-align: center; display: block; padding: 0px; border: 0px; max-width: 100%; height: auto; max-height: 584px;"></a></p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>Bạn sẽ kh&ocirc;ng phải hi sinh bất cứ bộ phận n&agrave;o tr&ecirc;n thiết kế của m&aacute;y m&agrave; vẫn c&oacute; thể trải nghiệm&nbsp;<a href="https://www.thegioididong.com/dtdd-bao-mat-van-tay" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);" target="_blank" title="Tham khảo điện thoại có bảo mật vân tay tại Thế Giới Di Động">bảo mật v&acirc;n tay</a> ở mặt trước rất thuận tiện v&agrave; dễ d&agrave;ng.</p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; text-align: center;'><a class="preventdefault" href="https://www.thegioididong.com/images/42/206176/samsung-galaxy-note-10-plus-tgdd-22.jpg" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);"><img alt="Điện thoại Samsung Galaxy Note 10+ | Thời lượng pin" data-original="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-22.jpg" class="lazy" title="Điện thoại Samsung Galaxy Note 10+ | Thời lượng pin" src="https://cdn.tgdd.vn/Products/Images/42/206176/samsung-galaxy-note-10-plus-tgdd-22.jpg" style="margin: 0 auto; text-align: center; display: block; padding: 0px; border: 0px; max-width: 100%; height: auto; max-height: 584px;"></a></p>
-					<p style='margin: 10px 0px; padding: 0px; margin-block: 0px; margin-inline: 0px; text-rendering: geometricprecision; display: block; color: rgb(51, 51, 51); font-family: Helvetica, Arial, "DejaVu Sans", "Liberation Sans", Freesans, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;'>T&iacute;nh năng sạc ngược kh&ocirc;ng d&acirc;y vẫn xuất hiện tr&ecirc;n Galaxy Note 10+ gi&uacute;p bạn c&oacute; thể biến chiếc m&aacute;y th&agrave;nh một cục&nbsp;<a href="https://www.thegioididong.com/dtdd-sac-khong-day" style="margin: 0px; padding: 0px; text-decoration: none; color: rgb(80, 168, 227);" target="_blank" title="Tham khảo điện thoại có sạc không dây tại Thế Giới Di Động">sạc kh&ocirc;ng d&acirc;y</a> di động bất cứ l&uacute;c n&agrave;o.</p>
+				<div id="desc" class="active tab-pane bg-light">
+					<h1>MÔ TẢ</h1>
+					<?= !empty($product['pro_desc']) ? $product['pro_desc'] : "";  ?>
 				</div>
-				<div id="menu1" class="container tab-pane fade"><br>
-					<h3>Menu 1</h3>
-					<p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+				<div id="info" class="tab-pane fade bg-light">
+					<h1>THÔNG SỐ KỸ THUẬT</h1>
 				</div>
-				<div id="menu2" class="container tab-pane fade"><br>
-					<h3>Menu 2</h3>
-					<p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
+				<div id="review" class="tab-pane fade bg-light">
+					<h1>ĐÁNH GIÁ</h1>
 				</div>
 			</div>
 		</section>
 		<!-- /tab info -->
-
 		<!-- product -->
+		<?php
+		$getRelatedProSQL = "
+		SELECT * FROM db_product
+		WHERE cat_id = ? AND pro_id != ?
+		";
+		$listRelatedPro = db_get(
+			$getRelatedProSQL,
+			[$product['cat_id'], $product['pro_id']]
+		);
+		//vd($listRelatedPro);
+		?>
 		<section class="product py-5">
 			<h2 class="text-center mb-3">SẢN PHẨM LIÊN QUAN</h2>
 			<div class="list_product_body">
 				<!-- list products bar -->
 				<div class="product_bar bg-info px-2 py-2 d-flex justify-content-between">
-					<span class="badge  bg-faded">100 products</span>
-					<a href="" class="badge badge-pill bg-danger">Show all</a>
+					<span class="badge  bg-faded">
+						<?= !empty($listRelatedPro) ? count($listRelatedPro) : "0"; ?>
+						sản phẩm liên quan
+					</span>
+					<a href="
+						<?php
+							echo create_link(
+								base_url("product.php"),
+								['cat' => $product['cat_id']]
+							);
+						?>
+					"
+					class="badge badge-pill bg-danger">Xem tất cả</a>
 				</div>
 				<!-- list products -->
 				<div class="card-group">
-					<div class="card text-center">
-						<span class="product_status badge badge-pill badge-warning">Sale out</span>
-						<a href="">
-							<img src="https://cdn.tgdd.vn/Products/Images/44/226169/apple-macbook-air-2020-i3-11ghz-8gb-256gb-mwtj2sa-600x600.jpg" alt="" class="card-img-top">
-						</a>
-						<div class="card-body">
-							<h5 class="card-title"><a href="">MacBook Air 2020</a></h5>
-							<p class="text-uppercase">laptop</p>
-							<h6 class="text-danger">28.990.000 &#8363;</h6>
+					<?php if (!empty($listRelatedPro)): ?>
+						<?php
+						$limit = 4;
+						$count = 0;
+						?>
+						<?php foreach ($listRelatedPro as $key => $relatedPro): ?>
+							<div class="card text-center" style="max-width: 25%;">
+								<?php if (empty($relatedPro['pro_qty'])): ?>
+									<span class="product_status badge badge-pill badge-warning">
+										bán hết
+									</span>
+								<?php endif ?>
+								<a href="
+									<?php
+										echo create_link(
+											base_url("product_detail.php"),
+											['proid' => $relatedPro['pro_id']]
+										);
+									?>
+								">
+								<img src="<?= $relatedPro['pro_img']; ?>" alt="" class="card-img-top">
+							</a>
+							<div class="card-body">
+								<h5 class="card-title">
+									<a href="
+										<?php
+											echo create_link(
+												base_url("product_detail.php"),
+												["proid" => $relatedPro['pro_id']]
+											);
+										?>
+									">
+									<?= $relatedPro['pro_name']; ?>
+								</a>
+							</h5>
+							<p class="text-uppercase">
+								<?= $category; ?>
+							</p>
+							<h6 class="text-danger">
+								<?= number_format($relatedPro['pro_price'], 0, ",", "."); ?>
+								&#8363;
+							</h6>
 							<hr>
-							<a href="" class="btn btn-default btn-success">Add to card</a>
-							<a href="" class="btn btn-default btn-primary">Detail</a>
-							<a href="" class="btn btn-default btn-danger"><i class="far fa-heart"></i></a>
+							<?php if (!empty($relatedPro['pro_qty'])): ?>
+								<a href="" class="btn btn-default btn-success">Add to card</a>
+							<?php endif ?>
+							<a href="
+								<?php
+									echo create_link(
+										base_url("product_detail.php"),
+										["proid" => $relatedPro['pro_id']]
+									);
+								?>
+							"
+							class="btn btn-default btn-primary">Detail</a>
+							<a href="
+								<?php
+									echo create_link(
+										base_url("wishlist.php"),
+										["proid" => $relatedPro['pro_id']]
+									);
+								?>
+							" class="btn btn-default btn-danger"><i class="far fa-heart"></i></a>
 						</div>
 					</div>
-					<div class="card text-center">
-						<span class="product_status badge badge-pill badge-warning">Sale out</span>
-						<a href="">
-							<img src="https://cdn.tgdd.vn/Products/Images/44/226169/apple-macbook-air-2020-i3-11ghz-8gb-256gb-mwtj2sa-600x600.jpg" alt="" class="card-img-top">
-						</a>
-						<div class="card-body">
-							<h5 class="card-title"><a href="">MacBook Air 2020</a></h5>
-							<p class="text-uppercase">laptop</p>
-							<h6 class="text-danger">28.990.000 &#8363;</h6>
-							<hr>
-							<a href="" class="btn btn-default btn-success">Add to card</a>
-							<a href="" class="btn btn-default btn-primary">Detail</a>
-							<a href="" class="btn btn-default btn-danger"><i class="far fa-heart"></i></a>
-						</div>
-					</div>
-					<div class="card text-center">
-						<span class="product_status badge badge-pill badge-warning">Sale out</span>
-						<a href="">
-							<img src="https://cdn.tgdd.vn/Products/Images/44/226169/apple-macbook-air-2020-i3-11ghz-8gb-256gb-mwtj2sa-600x600.jpg" alt="" class="card-img-top">
-						</a>
-						<div class="card-body">
-							<h5 class="card-title"><a href="">MacBook Air 2020</a></h5>
-							<p class="text-uppercase">laptop</p>
-							<h6 class="text-danger">28.990.000 &#8363;</h6>
-							<hr>
-							<a href="" class="btn btn-default btn-success">Add to card</a>
-							<a href="" class="btn btn-default btn-primary">Detail</a>
-							<a href="" class="btn btn-default btn-danger"><i class="far fa-heart"></i></a>
-						</div>
-					</div>
-					<div class="card text-center">
-						<span class="product_status badge badge-pill badge-warning">Sale out</span>
-						<a href="">
-							<img src="https://cdn.tgdd.vn/Products/Images/44/226169/apple-macbook-air-2020-i3-11ghz-8gb-256gb-mwtj2sa-600x600.jpg" alt="" class="card-img-top">
-						</a>
-						<div class="card-body">
-							<h5 class="card-title"><a href="">MacBook Air 2020</a></h5>
-							<p class="text-uppercase">laptop</p>
-							<h6 class="text-danger">28.990.000 &#8363;</h6>
-							<hr>
-							<a href="" class="btn btn-default btn-success">Add to card</a>
-							<a href="" class="btn btn-default btn-primary">Detail</a>
-							<a href="" class="btn btn-default btn-danger"><i class="far fa-heart"></i></a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
-		<!-- /product -->
+					<?php
+						++$count;
+						if($count === $limit) {
+							break;
+						}
+					?>
+				<?php endforeach ?>
+			<?php endif ?>
+		</div>
 	</div>
+</section>
+<!-- /product -->
+</div>
 </main>
-
 <?php require_once 'include/footer.php'; ?>

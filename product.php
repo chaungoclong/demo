@@ -1,10 +1,10 @@
-<?php
-require_once 'common.php';
-require_once RF . '/include/header.php';
-require_once RF . '/include/navbar.php';
-require_once RF . '/include/slider.php';
-?>
-<?php
+	<?php
+	require_once 'common.php';
+	require_once RF . '/include/header.php';
+	require_once RF . '/include/navbar.php';
+	require_once RF . '/include/slider.php';
+	?>
+	<?php
 /**
 * [tạo câu sql lấy các hãng tương ứng với danh mục. nếu không có danh mục hiện hết]
 */
@@ -104,44 +104,51 @@ $catName = fetch_rows("db_category", "cat_id = '{$cat}'", ["*"]);
 						<!-- ------------------------------------product ----------------------------------- -->
 						<div class="card text-center" style="max-width: 25%;">
 							<?php if ($pro['pro_qty'] == 0): ?>
-								<span class="product_status badge badge-pill badge-warning">Sale out</span>
+								<span class="product_status badge badge-pill badge-warning">Bán hết</span>
 							<?php endif ?>
 							<a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $pro["pro_id"]]); ?>'>
 								<img src="<?= $pro['pro_img']; ?>" alt="" class="card-img-top">
 							</a>
 							<div class="card-body">
 								<!-- thông tin sản phẩm -->
-								<h5 class="card-title"><a href=""><?= $pro['pro_name']; ?></a></h5>
-								<?php
-								$catName = fetch_rows("db_category", "cat_id = '{$pro["cat_id"]}'", ["cat_name"]);
-								?>
-								<p class="text-uppercase"><?= $catName['cat_name']; ?></p>
-								<h6 class="text-danger"><?= number_format($pro['pro_price'], 2, ',', '.'); ?> &#8363;</h6>
-								<hr>
-								<!-- thêm vào giỏ hàng -->
-								<?php if ($pro['pro_qty']): ?>
-									<a href='<?= create_link(base_url("card.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-success">Add to card</a>
-								<?php endif ?>
-								<!-- xem chi tiết sản phẩm -->
-								<a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-primary">Detail</a>
-								<!-- danh sách yêu thích -->
-								<a href='<?= create_link(base_url("wishlist.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-danger"><i class="far fa-heart"></i></a>
+								<h5 class="card-title"><a href=" 
+									<?php
+									echo create_link(
+									base_url("product_detail.php"),
+									['proid' => $pro['pro_id']]
+									);
+									?>
+									"><?= $pro['pro_name']; ?></a></h5>
+									<?php
+									$catName = fetch_rows("db_category", "cat_id = '{$pro["cat_id"]}'", ["cat_name"]);
+									?>
+									<p class="text-uppercase"><?= $catName['cat_name']; ?></p>
+									<h6 class="text-danger"><?= number_format($pro['pro_price'], 2, ',', '.'); ?> &#8363;</h6>
+									<hr>
+									<!-- thêm vào giỏ hàng -->
+									<?php if ($pro['pro_qty']): ?>
+										<a href='<?= create_link(base_url("card.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-success">Thêm vào giỏ</a>
+									<?php endif ?>
+									<!-- xem chi tiết sản phẩm -->
+									<a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-primary">Chi tiết</a>
+									<!-- danh sách yêu thích -->
+									<a href='<?= create_link(base_url("wishlist.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-danger"><i class="far fa-heart"></i></a>
+								</div>
 							</div>
-						</div>
-						<!-- ------------------------------------/product ----------------------------------- -->
-						<?php
-						$countCol++ ;
-						if($countCol == $numCol) {
-							break;
-						}
-						?>
-					<?php endwhile ?>
-				</div>
-			<?php endfor ?>
-		</div>
-	</section>
-	<!-- /product -->
-</div>
+							<!-- ------------------------------------/product ----------------------------------- -->
+							<?php
+							$countCol++ ;
+							if($countCol == $numCol) {
+								break;
+							}
+							?>
+						<?php endwhile ?>
+					</div>
+				<?php endfor ?>
+			</div>
+		</section>
+		<!-- /product -->
+	</div>
 </main>
 <!-- phân trang -->
 <?php
