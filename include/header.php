@@ -13,6 +13,7 @@
   <script src="dist/jquery/jquery-ui.min.js"></script>
   <script src="assets/js/common.js"></script>
   <script src="assets/js/login_register.js"></script>
+  <script src="assets/js/cart.js"></script>
   <script src="dist/popper/popper.min.js"></script>
   <script src="dist/bootstrap/js/bootstrap.js"></script>
   <script src="dist/ckeditor/ckeditor.js"></script>
@@ -20,7 +21,6 @@
 <body>
   <!-- header -->
   <header id="header" class="">
-    <h1 id="test"></h1>
     <!--header top -->
     <div id="headerTop" class="container-fluid">
       <!-- header title -->
@@ -103,7 +103,7 @@
 
               </li>
               <li id="shoppingCart" class="nav-item">
-                <a href="<?= !is_login() ? base_url('login.php') : base_url('card.php'); ?>" class="nav-link">
+                <a href="<?= !is_login() ? base_url('login_form.php') : base_url('view_cart.php'); ?>" class="nav-link">
                   <span class="position-relative">
                     <i class="fas fa-shopping-cart fa-lg"></i>
                     <span id="shoppingCartIndex" class="position-absolute badge badge-primary badge-pill">1</span>

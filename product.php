@@ -127,7 +127,7 @@ $catName = fetch_rows("db_category", "cat_id = '{$cat}'", ["*"]);
 									<hr>
 									<!-- thêm vào giỏ hàng -->
 									<?php if ($pro['pro_qty']): ?>
-										<a href='<?= create_link(base_url("card.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-success">Thêm vào giỏ</a>
+										<button class="btn_add_cart btn btn-success" data-pro-id="<?= $pro['pro_id']; ?>">Thêm vào giỏ</button>
 									<?php endif ?>
 									<!-- xem chi tiết sản phẩm -->
 									<a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-primary">Chi tiết</a>
@@ -150,6 +150,33 @@ $catName = fetch_rows("db_category", "cat_id = '{$cat}'", ["*"]);
 		<!-- /product -->
 	</div>
 </main>
+<script>
+	$(function() {
+		$('.btn_add_cart').on('click', function() {
+			let proID = $(this).data('pro-id');
+			let quantity = 1;
+			let action = "add";
+			let data = {proid:proID, quantity:quantity, action:action};
+
+			let sendCart = $.ajax({
+				url: "cart.php",
+				method: "POST",
+				data: data,
+				dataType: "json"
+			});
+
+			//thành công
+			sendCart.done(function(res) {
+				alert(res.notice);
+			})
+
+			//thất bại
+			sendCart.fail(function(a, b, c) {
+				console.log(a, b, c);
+			})
+		});
+	})
+</script>
 <!-- phân trang -->
 <?php
 echo $page['html'];

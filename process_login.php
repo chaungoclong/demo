@@ -9,8 +9,8 @@ if($_SERVER['REQUEST_METHOD'] == "POST" && !empty($_POST)) {
 	//VALIDATE
 	if(empty($user) || empty($pwd)) {
 		echo 1;
-	} else if((!check_phone($user) && !check_email($user)) 
-		|| !check_password($pwd)) {
+	} else if((!check_phone($user) 
+		&& !check_email($user)) || !check_password($pwd)) {
 		echo 2;
 	} else {
 		//nếu không có lỗi đăng nhập

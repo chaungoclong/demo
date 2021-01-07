@@ -43,6 +43,9 @@ require_once RF . "/include/navbar.php";
 							
 							$(document).ready(function() {
 								$('#dob').datepicker({
+									dateFormat: 'dd-mm-yy',
+									changeMonth: true,
+									changeYear: true,
 									beforeShow: function (input, inst) {
 										console.log(input, inst);
 										setTimeout(function () {
@@ -53,6 +56,10 @@ require_once RF . "/include/navbar.php";
 										},0);
 									}
 								});
+
+								$('#dob').change(function() {
+									console.log($(this).val());
+								})
 							});
 						</script>
 					</div>

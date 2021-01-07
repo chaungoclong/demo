@@ -24,6 +24,7 @@ require_once 'include/navbar.php';
 		$brand = s_cell($getBraProSQL, [$product['bra_id']]);
 	}
 	?>
+	
 	<div style="padding-left: 85px; padding-right: 85px;" class="">
 		<h1 class="text-center mt-3">PRODUCT DETAIL</h1>
 		<section>
@@ -54,6 +55,7 @@ require_once 'include/navbar.php';
 				<!-- /product image wrapper -->
 				<div class="col-6 p-3">
 					<div class="card h-100">
+						<div id="notice" class="card-header text-center"></div>
 						<div class="card-body">
 							<!-- product name -->
 							<h2 style="color:blue;" class="card-title">
@@ -103,65 +105,48 @@ require_once 'include/navbar.php';
 							<hr>
 							<div class="action border-1">
 								<div class="get_quantity d-flex mb-3">
-									<button id="minus" class="btn"><i class="fas fa-minus"></i></button>
-									<input type="number" min="0" id="quantity" name="quantity" value="1" class="text-center">
-									<button id="plus" class=" btn"><i class="fas fa-plus"></i></button>
+									<button class="minus btn"><i class="fas fa-minus"></i></button>
+									<input type="number" min="0" name="quantity" value="1" class="quantity text-center">
+									<button class="plus btn"><i class="fas fa-plus"></i></button>
 								</div>
-								<button id="btn_add_card" class="btn btn-primary"><strong>THÊM VÀO GIỎ</strong></button>
-								<button id="btn_wishlist" class="btn btn-danger"><strong><i class="fas fa-heart"></i></strong></button>
+								<button class="btn_add_cart btn btn-primary"><strong>THÊM VÀO GIỎ</strong></button>
+								<button class="btn_wishlist btn btn-danger"><strong><i class="fas fa-heart"></i></strong></button>
 							</div>
 							<script>
 								//tăng giảm số lượng sản phẩm
 								$(function() {
-									$('.small_img').on('click', function() {
-										$('.big_img').attr("src", $(this).attr("src"));
-									});
-									var quantity = document.getElementById("quantity");
-									var minus = document.getElementById("minus");
-									var plus = document.getElementById("plus");
-									minus.onclick = () => {
-										let number = parseInt(quantity.value);
-										if(number - 1 >= 0) {
-											--quantity.value;
-										} else if(isNaN(number)) {
-											quantity.value = 0;
-										}
-									}
-									plus.onclick = () => {
-										let number = parseInt(quantity.value);
-										if(number + 1 <= 10) {
-											++quantity.value;
-										} else if(isNaN(number)) {
-											quantity.value = 1;
-										}
-									}
-									quantity.oninput = function() {
-										let valInt = parseInt(this.value);
-										if(!isNaN(valInt)) {
-											this.value = valInt;
-										}
-									}
-									$('#btn_add_card').on('click', function() {
-										let proid = <?php echo input_get("proid"); ?>;
-										let amount = parseInt(<?php echo $product['pro_qty']; ?>);
-										let number = parseInt(quantity.value);
-										if(isNaN(number) || number === 0) {
-											alert("vui lòng chọn hàng");
-										} else if(isNaN(amount) || amount === 0) {
-											alert("hết hàng");
-										} else {
-											$.post(
-												"card.php",
-												{"proid": proid, "quantity": $('#quantity').val()},
-												function(res) {
-													alert(res);
-												},
-												"text"
-												);
-										}
-							// console.log(proid);
+									//send cart
+									$('.btn_add_cart').on('click', function() {
+										let proID     = <?php echo input_get("proid"); ?>;
+										let qtyPro    = parseInt(<?php echo $product['pro_qty']; ?>);
+										let qtySelect = parseInt($('.quantity').val());
+										//console.log(qtySelected);
 
-						});
+										if(isNaN(qtyPro) || qtyPro <= 0) {
+											alert("sale out");
+										} else if(isNaN(qtySelect) || qtySelect <= 0) {
+											alert("choose product");
+										} else {
+											let action = "add";
+											let data = {proid:proID, quantity:qtySelect, action:action};
+											let sendCart = $.ajax({
+												url: "cart.php",
+												data: data,
+												method: "POST",
+												dataType: "json"
+											});
+
+											//success
+											sendCart.done((res) => {
+												$('#notice').html(res.notice);
+											});
+
+											//error
+											sendCart.fail((a, b, c) => {
+												console.log(a, b, c);
+											});
+										}
+									});
 								});
 							</script>
 						</div>
@@ -220,12 +205,12 @@ require_once 'include/navbar.php';
 						sản phẩm liên quan
 					</span>
 					<a href="
-						<?php
-							echo create_link(
-								base_url("product.php"),
-								['cat' => $product['cat_id']]
-							);
-						?>
+					<?php
+					echo create_link(
+					base_url("product.php"),
+					['cat' => $product['cat_id']]
+					);
+					?>
 					"
 					class="badge badge-pill bg-danger">Xem tất cả</a>
 				</div>
@@ -244,24 +229,24 @@ require_once 'include/navbar.php';
 									</span>
 								<?php endif ?>
 								<a href="
-									<?php
-										echo create_link(
-											base_url("product_detail.php"),
-											['proid' => $relatedPro['pro_id']]
-										);
-									?>
+								<?php
+								echo create_link(
+								base_url("product_detail.php"),
+								['proid' => $relatedPro['pro_id']]
+								);
+								?>
 								">
 								<img src="<?= $relatedPro['pro_img']; ?>" alt="" class="card-img-top">
 							</a>
 							<div class="card-body">
 								<h5 class="card-title">
 									<a href="
-										<?php
-											echo create_link(
-												base_url("product_detail.php"),
-												["proid" => $relatedPro['pro_id']]
-											);
-										?>
+									<?php
+									echo create_link(
+									base_url("product_detail.php"),
+									["proid" => $relatedPro['pro_id']]
+									);
+									?>
 									">
 									<?= $relatedPro['pro_name']; ?>
 								</a>
@@ -278,29 +263,29 @@ require_once 'include/navbar.php';
 								<a href="" class="btn btn-default btn-success">Add to card</a>
 							<?php endif ?>
 							<a href="
-								<?php
-									echo create_link(
-										base_url("product_detail.php"),
-										["proid" => $relatedPro['pro_id']]
-									);
-								?>
+							<?php
+							echo create_link(
+							base_url("product_detail.php"),
+							["proid" => $relatedPro['pro_id']]
+							);
+							?>
 							"
 							class="btn btn-default btn-primary">Detail</a>
 							<a href="
-								<?php
-									echo create_link(
-										base_url("wishlist.php"),
-										["proid" => $relatedPro['pro_id']]
-									);
-								?>
+							<?php
+							echo create_link(
+							base_url("wishlist.php"),
+							["proid" => $relatedPro['pro_id']]
+							);
+							?>
 							" class="btn btn-default btn-danger"><i class="far fa-heart"></i></a>
 						</div>
 					</div>
 					<?php
-						++$count;
-						if($count === $limit) {
-							break;
-						}
+					++$count;
+					if($count === $limit) {
+						break;
+					}
 					?>
 				<?php endforeach ?>
 			<?php endif ?>

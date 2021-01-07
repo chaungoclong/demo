@@ -217,8 +217,10 @@ function validateRegister() {
 
 function register() {
 	console.log(validateRegister());
+
 	//nếu không có lỗi gửi sang file xử lý
 	if(validateRegister()) {
+
 		//dữ liệu gửi sang file xử lý
 		var data = new FormData();
 
@@ -241,7 +243,7 @@ function register() {
 		});
 
 		//gửi ajax lấy về phản hòi -> hiển thị thông báo
-		$.ajax({
+		var sendRegister = $.ajax({
 			url: "process_register.php",
 			type: "POST",
 			data: data,
@@ -249,33 +251,35 @@ function register() {
 			cache: false,
 			contentType: false,
 			processData: false,
-			success: function(res) {
-				console.log(res);
-				switch(res) {
-					case "1":
-						$('#backErr').text("Thiếu dữ liệu");
-						break;
-					case "2":
-						$('#backErr').text("Dữ liệu sai");
-						break;
-					case "3":
-						$('#backErr').text("Email đã tồn tại");
-						break;
-					case "4":
-						$('#backErr').text("Số điện thoại đã tồn tại");
-						break;
-					case "5":
-						$('#backErr').text("Đăng kí thành công");
-						window.location = "login_form.php";
-						break;
-					case "6":
-						$('#backErr').text("Đăng ký thất bại. Hãy thử lại");
-						break;
-				}
-			},
-			error: function (a, b, c) {
-				console.log(b);
+		});
+
+		sendRegister.done(function(res) {
+			console.log(res);
+			switch(res) {
+				case "1":
+					$('#backErr').text("Thiếu dữ liệu");
+					break;
+				case "2":
+					$('#backErr').text("Dữ liệu sai");
+					break;
+				case "3":
+					$('#backErr').text("Email đã tồn tại");
+					break;
+				case "4":
+					$('#backErr').text("Số điện thoại đã tồn tại");
+					break;
+				case "5":
+					$('#backErr').text("Đăng kí thành công");
+					window.location = "login_form.php";
+					break;
+				case "6":
+					$('#backErr').text("Đăng ký thất bại. Hãy thử lại");
+					break;
 			}
+		});
+
+		sendRegister.fail(function(a, b, c) {
+			console.log(a, b, c);
 		});
 	}
 
@@ -285,30 +289,35 @@ function register() {
 function login() {
 	if(validateLogin()) {
 		var data = $('#loginForm').serialize();
-		$.post(
-			"process_login.php",
-			data,
-			function(res) {
-				switch(res) {
-					case "1":
-						$('#backErr').text("Thiếu dữ liệu");
-						break;
-					case "2":
-						$('#backErr').text("Dữ liệu sai");
-						break;
-					case "5":
-						$('#backErr').text("Đăng nhập thành công");
-						window.location = "index.php";
-						break;
-					case "6":
-						$('#backErr').text("Đăng nhập thất bại. Hãy thử lại");
-						break;
-					case "8":
-						$('#backErr').text("Tài khoản của bạn bị khóa");
-						break;
-				}
-			},
-			"text"
-		);
+		var sendLogin = $.ajax({
+			url: 'process_login.php',
+			method: "POST",
+			data: data,
+			dataType: "text"
+		});
+
+		sendLogin.done(function(res) {
+			switch(res) {
+				case "1":
+					$('#backErr').text("Thiếu dữ liệu");
+					break;
+				case "2":
+					$('#backErr').text("Dữ liệu sai");
+					break;
+				case "5":
+					window.location = "index.php";
+					break;
+				case "6":
+					$('#backErr').text("Đăng nhập thất bại. Hãy thử lại");
+					break;
+				case "8":
+					$('#backErr').text("Tài khoản của bạn bị khóa");
+					break;
+			}
+		});
+
+		sendLogin.fail(function(a, b, c) {
+			console.log(a, b, c);
+		})
 	}
 }

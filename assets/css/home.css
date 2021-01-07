@@ -302,30 +302,30 @@ body {
     margin: 0;
 }
 
-#plus, #minus, #quantity {
+.plus, .minus, .quantity {
     border-radius: 0px;
     border: none;
     height: 100%;
 }
 
-#plus {
+.plus {
     border-right: 1px solid black;
 }
 
-#minus {
+.minus {
     border-left: 1px solid black;
 }
 
-#plus, #minus {
+.plus, .minus {
     width: 40px;
     background: grey;
 }
 
-#quantity {
+.quantity {
     width: 80px;
 }
 
-#quantity:focus {
+.quantity:focus {
     outline: none;
 }
 

@@ -171,7 +171,7 @@
     </nav>
     <!-- /navbar -->
     <!-- slide -->
-    <div id="slide" class="carousel slide" data-ride="carousel">
+    <div id="slide" class="carousel slide" data-ride="carousel" data-interval="1000">
       <!-- indicators -->
       <div class="carousel-indicators">
         <li data-target="#slide" data-slide-to="0" class="active"></li>

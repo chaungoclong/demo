@@ -56,19 +56,20 @@
 	// //echo str_replace("page", "123", $currentLink);
 	// echo "hello";
 	// 
-	$test = db_get('select pro_id from db_product where cat_id = ? and bra_id = 3', [1], 2);
-	var_dump($test);
-	echo "<br><br><br>";
+	// $test = db_get('select pro_id from db_product where cat_id = ? and bra_id = 3', [1], 2);
+	// var_dump($test);
+	// echo "<br><br><br>";
 
-	$test = s_row('select * from db_product where cat_id = ? and bra_id = 3', [1]);
-	var_dump($test);
-	echo "<br><br><br>";
+	// $test = s_row('select * from db_product where cat_id = ? and bra_id = 3', [1]);
+	// var_dump($test);
+	// echo "<br><br><br>";
 
-	$test = s_cell('select pro_name from db_product where cat_id = ? and bra_id = 3', [1]);
-	var_dump($test);
+	// $test = s_cell('select pro_name from db_product where cat_id = ? and bra_id = 3', [1]);
+	// var_dump($test);
 
-	$test = db_run("update db_product set pro_price = ? where pro_id = ?", 123, 5);
-	echo $test;
-
+	// $test = db_run("update db_product set pro_price = ? where pro_id = ?", 123, 5);
+	// echo $test;
+	$test = get_session("cart");
+	vd($test);
 
 
