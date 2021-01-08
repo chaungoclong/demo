@@ -78,7 +78,7 @@ $numRow = row_qty($numResult, $numCol);
                                         <hr>
                                         <!-- thêm vào giỏ hàng -->
                                         <?php if ($result['pro_qty']): ?>
-                                            <a href='<?= create_link(base_url("card.php"), ["proid"=> $result["pro_id"]]); ?>' class="btn btn-default btn-success">Add to card</a>
+                                            <button class="btn_add_cart_out btn btn-success" data-pro-id="<?= $result['pro_id']; ?>">Thêm vào giỏ</button>
                                         <?php endif ?>
                                         <!-- xem chi tiết sản phẩm -->
                                         <a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $result["pro_id"]]); ?>' class="btn btn-default btn-primary">Detail</a>

@@ -14,12 +14,12 @@ if(isset($_POST)) {
 	//tổng tiền các sản phẩm trong giỏ
 	$totalMoney = 0;
 	//tổng số lượng sản phẩm trong giỏ
-	$numCartItem = 0;
+	$totalItem = 0;
 	//số sản phẩm tối đa được mua
 	$proLimit = 10;
 	//kiểm tra đăng nhập
 	if(!is_login()) {
-		$notice = "<div class='alert-danger'>bạn chưa đăng nhập <a href='". base_url("login_form.php") ."'>  ĐĂNG NHẬP</a></div>";
+		$notice = "Bạn chưa đăng nhập";
 		echo json_encode([
 			'notice' => $notice
 		]);
@@ -31,9 +31,9 @@ if(isset($_POST)) {
 				//nếu số lượng của sản phẩm có id = proID khi thêm <= 10 ? thêm : lỗi
 				if($_SESSION['cart'][$proID] + $quantity <= $proLimit) {
 					$_SESSION['cart'][$proID] += $quantity;
-					$notice = "<div class='alert-danger'>bạn đã thêm $quantity sản phẩm vào giỏ hàng</div>";
+					$notice = "bạn đã thêm $quantity sản phẩm vào giỏ hàng";
 				} else {
-					$notice = "<div class='alert-danger'>tối đa 10 sản phẩm</div>";
+					$notice = "tối đa 10 sản phẩm";
 				}
 			}
 			//nếu giỏ hàng của sản phẩm có id = proID chưa tồn tại thì số lượng của sản phẩm đó = số lượng thêm vào
@@ -41,9 +41,9 @@ if(isset($_POST)) {
 				
 				if($quantity <= 10) {
 					$_SESSION['cart'][$proID] = $quantity;
-					$notice = "<div class='alert-danger'>bạn đã thêm $quantity sản phẩm vào giỏ hàng</div>";
+					$notice = "bạn đã thêm $quantity sản phẩm vào giỏ hàng";
 				} else {
-					$notice = "<div class='alert-danger'>tối đa 10 sản phẩm</div>";
+					$notice = "tối đa 10 sản phẩm";
 					}
 			}
 		}
@@ -58,16 +58,21 @@ if(isset($_POST)) {
 			unset($_SESSION['cart'][$proID]);
 		}
 
+		//ĐẾM SỐ SẢN PHẨM
+		foreach ($_SESSION['cart'] as $pro_id => $qty) {
+			$totalItem += $qty;
+		}
+
 		// start table
 		$html .= "
-		<table class='table table-sm'>
+		<table class='table table-hover table-borderless'>
 			<tr>
 				<th>ID</th>
-				<th>Ảnh</th>
-				<th>Số lượng</th>
-				<th>Giá</th>
-				<th>Tổng</th>
-				<th>Xóa</th>
+				<th class='text-center' colspan='2'>SẢN PHẨM</th>
+				<th class='text-center'>GIÁ</th>
+				<th class='text-center'>SỐ LƯỢNG</th>
+				<th class='text-center'>TỔNG</th>
+				<th class='text-center'>TÙY CHỌN</th>
 			</tr>
 			";
 			if(!empty($_SESSION['cart'])) {
@@ -79,29 +84,54 @@ if(isset($_POST)) {
 					$html .= "
 					<tr>
 						<td>" . $product['pro_id'] . "</td>
-						<td>" .$product['pro_name']. "</td>
-						<td><img src=" . $product['pro_img'] . " width='50px'></td>
+
 						<td>
+							<a href=''>
+								<img src=" . $product['pro_img'] . " width='50px' class='img-thumbnail'>
+							</a>
+						</td>
+
+						<td>
+							<h5>" .$product['pro_name']. "</h5>
+							<h5>" .$product['pro_color']. "</h5>
+						</td>
+
+						<td class='text-center'>" .
+							number_format($product['pro_price'], 0, ',', '.')
+							. " &#8363;
+						</td>
+
+						<td class='text-center'>
 							<input type='number' min='0' name='quantity' 
 							value=" . $qty . " class='quantity text-center' data-pro-id='" . $product['pro_id'] . "'>
 						</td>
-						<td>" .
-							number_format($product['pro_price'], 0, ',', '.')
-							. "
-						</td>
-						<td>" .number_format($product['pro_price'] * $qty, 0, ',', '.'). "</td>
-						<td>
-							<button class='delete btn btn-danger' id='" . $product['pro_id'] . "' data-pro-id='" .$product['pro_id']. "'>Xóa</button>
+
+						<td>" . number_format($product['pro_price'] * $qty, 0, ',', '.') . " &#8363;</td>
+
+						<td class='text-center'>
+							<button class='delete btn btn-danger' id='" . $product['pro_id'] . "' data-pro-id='" .$product['pro_id']. "'>
+								<i class='far fa-trash-alt'></i>
+							</button>
 						</td>
 					</tr>
 					";
 					$totalMoney += $product['pro_price'] * $qty;
 				}
+
 				$html .= "
 				<tr>
-					<td>Total</td>
-					<td colspan='6'>" . number_format($totalMoney, 0, ',', '.') . "</td>
+					<td colspan='5' class='text-right'><strong>TOTAL:</strong></td>
+					<td>" . number_format($totalMoney, 0, ',', '.') . " &#8363;</td>
+					<td></td>
 				</tr>
+				";
+			} else {
+				$html .= "   
+					<tr>
+						<td class='text-center' colspan='7'>
+							<h5>GIỎ HÀNG TRỐNG</h5>
+						</td>
+					</tr>
 				";
 			}
 		$html .= "</table>";
@@ -110,7 +140,8 @@ if(isset($_POST)) {
 		//in kết quả trả về
 		echo json_encode([
 			'notice' => $notice,
-			'html' => $html
+			'html' => $html,
+			'totalItem' => $totalItem
 		]);
 	}
 }

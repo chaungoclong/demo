@@ -103,10 +103,27 @@
 
               </li>
               <li id="shoppingCart" class="nav-item">
+                <?php 
+                    if(!is_login()) {
+                      delete_session("cart");
+                    }
+                 ?>
                 <a href="<?= !is_login() ? base_url('login_form.php') : base_url('view_cart.php'); ?>" class="nav-link">
                   <span class="position-relative">
                     <i class="fas fa-shopping-cart fa-lg"></i>
-                    <span id="shoppingCartIndex" class="position-absolute badge badge-primary badge-pill">1</span>
+                    <span id="shoppingCartIndex" class="position-absolute badge badge-primary badge-pill">
+                      <?php 
+                        if(!empty($_SESSION['cart'])) {
+                          $total = 0;
+                          foreach ($_SESSION['cart'] as $key => $value) {
+                            $total += $value;
+                          }
+                          echo $total;
+                        } else {
+                          echo 0;
+                        }
+                       ?>
+                    </span>
                   </span>
                   <span>
                     Giỏ hàng

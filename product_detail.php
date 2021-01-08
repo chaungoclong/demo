@@ -113,7 +113,6 @@ require_once 'include/navbar.php';
 								<button class="btn_wishlist btn btn-danger"><strong><i class="fas fa-heart"></i></strong></button>
 							</div>
 							<script>
-								//tăng giảm số lượng sản phẩm
 								$(function() {
 									//send cart
 									$('.btn_add_cart').on('click', function() {
@@ -123,9 +122,11 @@ require_once 'include/navbar.php';
 										//console.log(qtySelected);
 
 										if(isNaN(qtyPro) || qtyPro <= 0) {
-											alert("sale out");
+											alert("HẾT HÀNG");
 										} else if(isNaN(qtySelect) || qtySelect <= 0) {
-											alert("choose product");
+											alert("VUI LÒNG CHỌN ÍT NHẤT 1 SẢN PHẨM");
+										} else if(qtySelect > qtyPro) {
+											alert("SỐ LƯỢNG SẢN PHẨM KHÔNG ĐỦ");
 										} else {
 											let action = "add";
 											let data = {proid:proID, quantity:qtySelect, action:action};
@@ -139,6 +140,11 @@ require_once 'include/navbar.php';
 											//success
 											sendCart.done((res) => {
 												$('#notice').html(res.notice);
+												if(res.totalItem > 0) {
+													$('#shoppingCartIndex').text(res.totalItem);
+												} else {
+													$('#shoppingCartIndex').text(0);
+												}
 											});
 
 											//error

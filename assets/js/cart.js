@@ -45,4 +45,34 @@ $(function() {
         }
     });
 
+    //thêm sản phẩm ở các trang khác trang chi tiết sản phẩm
+    $('.btn_add_cart_out').on('click', function() {
+        let proID = $(this).data('pro-id');
+        let quantity = 1;
+        let action = "add";
+        let data = {proid:proID, quantity:quantity, action:action};
+
+        let sendCart = $.ajax({
+            url: "cart.php",
+            method: "POST",
+            data: data,
+            dataType: "json"
+        });
+
+            //thành công
+            sendCart.done(function(res) {
+                alert(res.notice);
+                if(res.totalItem > 0) {
+                    $('#shoppingCartIndex').text(res.totalItem);
+                } else {
+                    $('#shoppingCartIndex').text(0);
+                }
+            })
+
+            //thất bại
+            sendCart.fail(function(a, b, c) {
+                console.log(a, b, c);
+            })
+        });
+
 })
