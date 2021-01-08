@@ -38,7 +38,7 @@ $(function() {
             } else if (value > 10) {
                 this.value = 10;
             } else {
-            	this.value = value;
+                this.value = value;
             }
         } else {
             this.value = 1;
@@ -50,29 +50,58 @@ $(function() {
         let proID = $(this).data('pro-id');
         let quantity = 1;
         let action = "add";
-        let data = {proid:proID, quantity:quantity, action:action};
+        let data = { proid: proID, quantity: quantity, action: action };
 
-        let sendCart = $.ajax({
-            url: "cart.php",
-            method: "POST",
-            data: data,
-            dataType: "json"
-        });
+        //lấy số lượng sản phẩm 
+        let qtyPro = parseInt(
+            getAJax(
+                'get_cart.php',
+                'post',
+                'text',
+                { proid: proID, action: "pro_qty" }
+            )
+        );
+
+        //số lượng sản phẩm trong giỏ hàng
+        let qtyInCart = parseInt(
+            getAJax(
+                'get_cart.php',
+                'post',
+                'text',
+                { proid: proID, action: "pro_cart_qty" }
+            )
+        );
+
+        //nếu số lượng sản phẩm này thêm vào + số lượng sản phẩm này trong giỏ hàng 
+        //> số lượng sản phẩm này in ra thông báo lỗi
+        //nếu không thêm sản phẩm vào giỏ hàng
+        if (quantity + qtyInCart > qtyPro) {
+            alert("SỐ LƯỢNG SẢN PHẨM KHÔNG ĐỦ");
+        } else {
+            let sendCart = $.ajax({
+                url: "cart.php",
+                method: "POST",
+                data: data,
+                dataType: "json"
+            });
 
             //thành công
             sendCart.done(function(res) {
                 alert(res.notice);
-                if(res.totalItem > 0) {
+                if (res.totalItem > 0) {
                     $('#shoppingCartIndex').text(res.totalItem);
                 } else {
                     $('#shoppingCartIndex').text(0);
                 }
-            })
+            });
 
             //thất bại
             sendCart.fail(function(a, b, c) {
                 console.log(a, b, c);
-            })
-        });
+            });
+        }
 
-})
+
+    });
+
+});

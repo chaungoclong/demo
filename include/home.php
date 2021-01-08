@@ -79,23 +79,23 @@
                     <!-- ------------------------------------product ----------------------------------- -->
                     <div class="card text-center" style="max-width: 25%;">
                       <?php if ($pro['pro_qty'] == 0): ?>
-                        <span class="product_status badge badge-pill badge-warning">Sale out</span>
+                        <span class="product_status badge badge-pill badge-warning">Bán hết</span>
                       <?php endif ?>
                       <a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $pro["pro_id"]]); ?>'>
                         <img src="<?= $pro['pro_img']; ?>" alt="" class="card-img-top">
                       </a>
                       <div class="card-body">
                         <!-- thông tin sản phẩm -->
-                        <h6 class="card-title"><a href=""><?= $pro['pro_name']; ?></a></h6>
+                        <h5 class="card-title"><a href=""><?= $pro['pro_name']; ?></a></h5>
                         <p class="text-uppercase"><?= $cat['cat_name']; ?></p>
                         <h6 class="text-danger"><?= number_format($pro['pro_price'], 2, ',', '.'); ?> &#8363;</h6>
                         <hr>
                         <!-- thêm vào giỏ hàng -->
                         <?php if ($pro['pro_qty']): ?>
-                          <button class="btn_add_cart_out btn btn-success" data-pro-id="<?= $pro['pro_id']; ?>">Thêm vào giỏ</button>
+                          <a class="btn_add_cart_out btn btn-success text-light" data-pro-id="<?= $pro['pro_id']; ?>"><strong>THÊM VÀO GIỎ</strong></a>
                         <?php endif ?>
                         <!-- xem chi tiết sản phẩm -->
-                        <a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-primary">Detail</a>
+                        <a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-primary"><strong>CHI TIẾT</strong></a>
                         <!-- danh sách yêu thích -->
                         <a href='<?= create_link(base_url("wishlist.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-danger"><i class="far fa-heart"></i></a>
                       </div>

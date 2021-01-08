@@ -4,7 +4,8 @@ require_once RF . '/include/header.php';
 require_once RF . '/include/navbar.php';
 
 //từ khóa tìm kiếm
-$keyWord = "%" . input_get("q") . "%";
+$q = input_get('q');
+$keyWord = "%" . $q . "%";
 
 //câu sql lấy kêt quả tìm kiếm
 $getResultSQL = "SELECT * FROM db_product WHERE pro_active = 1  AND pro_name LIKE(?)";
@@ -14,7 +15,7 @@ $listRecord = db_get($getResultSQL, [$keyWord], 1);
 $numRecord = $listRecord->num_rows;
 
 //phân trang
-$currentLink = create_link(base_url("search.php"), ["q"=>$keyWord, "page"=>"{page}"]);
+$currentLink = create_link(base_url("search.php"), ["q"=>$q, "page"=>"{page}"]);
 $resultPerPage = 8;
 $currentPage = input_get("page") ? input_get("page") : 1;
 $page = paginate($currentLink, $numRecord, $currentPage, $resultPerPage);
@@ -35,8 +36,8 @@ $numRow = row_qty($numResult, $numCol);
 
 <main>
     <div style="padding-left: 85px; padding-right: 85px;">
-        <section class="product py-5">
-            <h2 class="text-center mb-3">found <?= $numRecord; ?> results match</h2>
+        <section class="product my-5 shadow">
+            <h2 class="text-center py-3">TÌM THẤY <?= $numRecord; ?> SẢN PHẨM</h2>
             <div class="list_product_body">
                 <!-- list products bar -->
                 <div class="product_bar bg-info px-2 py-2 d-flex justify-content-between">
@@ -78,10 +79,14 @@ $numRow = row_qty($numResult, $numCol);
                                         <hr>
                                         <!-- thêm vào giỏ hàng -->
                                         <?php if ($result['pro_qty']): ?>
-                                            <button class="btn_add_cart_out btn btn-success" data-pro-id="<?= $result['pro_id']; ?>">Thêm vào giỏ</button>
+                                            <a class="btn_add_cart_out btn btn-success text-light" data-pro-id="<?= $result['pro_id']; ?>">
+                                                <strong>THÊM VÀO GIỎ</strong>
+                                            </a>
                                         <?php endif ?>
                                         <!-- xem chi tiết sản phẩm -->
-                                        <a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $result["pro_id"]]); ?>' class="btn btn-default btn-primary">Detail</a>
+                                        <a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $result["pro_id"]]); ?>' class="btn btn-default btn-primary">
+                                            <strong>CHI TIẾT</strong>
+                                        </a>
                                         <!-- danh sách yêu thích -->
                                         <a href='<?= create_link(base_url("wishlist.php"), ["proid"=> $result["pro_id"]]); ?>' class="btn btn-default btn-danger"><i class="far fa-heart"></i></a>
                                     </div>

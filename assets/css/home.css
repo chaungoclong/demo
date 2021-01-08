@@ -4,6 +4,7 @@
 
 body {
     background: #f3f5f6;
+    font-family: 'Montserrat',sans-serif;
 }
 /*header*/
 #header .container-fluid {
@@ -333,3 +334,28 @@ body {
     width: 160px;
 }
 
+/*shoppping cart*/
+.cart_table_title {
+    color: #fff;
+}
+
+.cart_table tr td {
+    font-size: 16px;
+}
+
+.cart_table td, .cart_table td a , .cart_table td input {
+    font-weight: bolder;
+    /*font-size: 16px;*/
+}
+
+.cart_table td .unit {
+    color:red;
+}
+
+.cart_table .all_total td {
+    font-size: 16px;
+    font-weight: bolder;
+}
+.cart_table .all_total strong {
+    color:red;
+}

@@ -3,6 +3,7 @@ require_once 'common.php';
 require_once 'include/header.php';
 require_once 'include/navbar.php';
 ?>
+
 <main>
 	<!-- In thông tin sản phẩm có id = id nhận được -->
 	<?php
@@ -112,20 +113,41 @@ require_once 'include/navbar.php';
 								<button class="btn_add_cart btn btn-primary"><strong>THÊM VÀO GIỎ</strong></button>
 								<button class="btn_wishlist btn btn-danger"><strong><i class="fas fa-heart"></i></strong></button>
 							</div>
+
 							<script>
+
 								$(function() {
 									//send cart
 									$('.btn_add_cart').on('click', function() {
-										let proID     = <?php echo input_get("proid"); ?>;
+										//mã sản phẩm
+										var proID     = <?php echo $proID; ?>;
+										//số lượng sản phẩm
 										let qtyPro    = parseInt(<?php echo $product['pro_qty']; ?>);
+										//số lượng sản phẩm được chọn
 										let qtySelect = parseInt($('.quantity').val());
-										//console.log(qtySelected);
+										//số lượng sản phẩm này trong giỏ hàng
+										var qtyProInCart;
+
+										var qtyProInCart = parseInt(
+											getAJax(
+												'get_cart.php',
+												'post',
+												'text',
+												 {proid:proID, action:"pro_cart_qty"}
+											)
+										);
 
 										if(isNaN(qtyPro) || qtyPro <= 0) {
+											//nếu số lượng sản phẩm không hợp lệ || <= 0
 											alert("HẾT HÀNG");
 										} else if(isNaN(qtySelect) || qtySelect <= 0) {
+											//nếu số lượng sản phẩm được chọn không hợp lệ
+											//|| == 0
 											alert("VUI LÒNG CHỌN ÍT NHẤT 1 SẢN PHẨM");
-										} else if(qtySelect > qtyPro) {
+										} else if(qtySelect + qtyProInCart > qtyPro) {
+											//nếu sản phẩm đã có trong giỏ hàng: số lượng sản phẩm 
+											//được chọn + số sản phẩm trong giỏ hàng > số sản phẩm
+											//hiện có của sản phẩm
 											alert("SỐ LƯỢNG SẢN PHẨM KHÔNG ĐỦ");
 										} else {
 											let action = "add";
@@ -139,7 +161,7 @@ require_once 'include/navbar.php';
 
 											//success
 											sendCart.done((res) => {
-												$('#notice').html(res.notice);
+												alert(res.notice);
 												if(res.totalItem > 0) {
 													$('#shoppingCartIndex').text(res.totalItem);
 												} else {
@@ -265,26 +287,13 @@ require_once 'include/navbar.php';
 								&#8363;
 							</h6>
 							<hr>
-							<?php if (!empty($relatedPro['pro_qty'])): ?>
-								<a href="" class="btn btn-default btn-success">Add to card</a>
+							<?php if ($relatedPro['pro_qty']): ?>
+								<a class="btn_add_cart_out btn btn-success text-light" data-pro-id="<?= $relatedPro['pro_id']; ?>"><strong>THÊM VÀO GIỎ</strong></a>
 							<?php endif ?>
-							<a href="
-							<?php
-							echo create_link(
-							base_url("product_detail.php"),
-							["proid" => $relatedPro['pro_id']]
-							);
-							?>
-							"
-							class="btn btn-default btn-primary">Detail</a>
-							<a href="
-							<?php
-							echo create_link(
-							base_url("wishlist.php"),
-							["proid" => $relatedPro['pro_id']]
-							);
-							?>
-							" class="btn btn-default btn-danger"><i class="far fa-heart"></i></a>
+							<!-- xem chi tiết sản phẩm -->
+							<a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $relatedPro["pro_id"]]); ?>' class="btn btn-default btn-primary"><strong>CHI TIẾT</strong></a>
+							<!-- danh sách yêu thích -->
+							<a href='<?= create_link(base_url("wishlist.php"), ["proid"=> $relatedPro["pro_id"]]); ?>' class="btn btn-default btn-danger"><i class="far fa-heart"></i></a>
 						</div>
 					</div>
 					<?php

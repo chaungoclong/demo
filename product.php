@@ -77,7 +77,7 @@ $numCol  = 4;
 $numRow  = row_qty($numPro, $numCol);
 $catName = fetch_rows("db_category", "cat_id = '{$cat}'", ["*"]);
 ?>
-<section class="product py-5">
+<section class="product my-5 shadow">
 	<h2 class="text-center mb-3"><?= isset($catName["cat_name"]) ? $catName["cat_name"] : ""; ?></h2>
 	<div class="list_product_body">
 		<!-- list products bar -->
@@ -111,26 +111,36 @@ $catName = fetch_rows("db_category", "cat_id = '{$cat}'", ["*"]);
 							</a>
 							<div class="card-body">
 								<!-- thông tin sản phẩm -->
-								<h5 class="card-title"><a href=" 
+								<h5 class="card-title">
+									<a href=" 
 									<?php
 									echo create_link(
 									base_url("product_detail.php"),
 									['proid' => $pro['pro_id']]
 									);
 									?>
-									"><?= $pro['pro_name']; ?></a></h5>
+									"><?= $pro['pro_name']; ?>
+										
+									</a>
+								</h5>
+
 									<?php
 									$catName = fetch_rows("db_category", "cat_id = '{$pro["cat_id"]}'", ["cat_name"]);
 									?>
-									<p class="text-uppercase"><?= $catName['cat_name']; ?></p>
+
+									<p class="text-uppercase"><?= $catName['cat_name']; ?>
+									</p>
+
 									<h6 class="text-danger"><?= number_format($pro['pro_price'], 2, ',', '.'); ?> &#8363;</h6>
 									<hr>
 									<!-- thêm vào giỏ hàng -->
 									<?php if ($pro['pro_qty']): ?>
-										<button class="btn_add_cart_out btn btn-success" data-pro-id="<?= $pro['pro_id']; ?>">Thêm vào giỏ</button>
+										<a class="btn_add_cart_out btn btn-success text-light" data-pro-id="<?= $pro['pro_id']; ?>"><strong>THÊM VÀO GIỎ</strong></a>
 									<?php endif ?>
 									<!-- xem chi tiết sản phẩm -->
-									<a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-primary">Chi tiết</a>
+									<a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-primary">
+										<strong>CHI TIẾT</strong>
+									</a>
 									<!-- danh sách yêu thích -->
 									<a href='<?= create_link(base_url("wishlist.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-danger"><i class="far fa-heart"></i></a>
 								</div>
