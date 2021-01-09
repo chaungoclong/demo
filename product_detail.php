@@ -133,9 +133,9 @@ require_once 'include/navbar.php';
 												'get_cart.php',
 												'post',
 												'text',
-												 {proid:proID, action:"pro_cart_qty"}
-											)
-										);
+												{proid:proID, action:"pro_cart_qty"}
+												)
+											);
 
 										if(isNaN(qtyPro) || qtyPro <= 0) {
 											//nếu số lượng sản phẩm không hợp lệ || <= 0
@@ -267,7 +267,7 @@ require_once 'include/navbar.php';
 								<img src="<?= $relatedPro['pro_img']; ?>" alt="" class="card-img-top">
 							</a>
 							<div class="card-body">
-								<h5 class="card-title">
+								<h5 class="card-title text-uppercase">
 									<a href="
 									<?php
 									echo create_link(
@@ -279,21 +279,37 @@ require_once 'include/navbar.php';
 									<?= $relatedPro['pro_name']; ?>
 								</a>
 							</h5>
-							<p class="text-uppercase">
+							<p class="text-uppercase card-subtitle">
 								<?= $category; ?>
 							</p>
 							<h6 class="text-danger">
-								<?= number_format($relatedPro['pro_price'], 0, ",", "."); ?>
-								&#8363;
+								<strong>
+									<?= number_format($relatedPro['pro_price'], 0, ",", "."); ?>
+									&#8363;
+								</strong>
 							</h6>
 							<hr>
+							<!-- thêm vào giỏ hàng -->
 							<?php if ($relatedPro['pro_qty']): ?>
-								<a class="btn_add_cart_out btn btn-success text-light" data-pro-id="<?= $relatedPro['pro_id']; ?>"><strong>THÊM VÀO GIỎ</strong></a>
+
+								<a class="btn_add_cart_out btn btn-success text-light" data-pro-id="<?= $relatedPro['pro_id']; ?>"
+									data-toggle="tooltip" data-placement="top" title="Thêm vào giỏ hàng"
+									>
+									<i class="fas fa-cart-plus fa-lg"></i>
+								</a>
+
 							<?php endif ?>
+
 							<!-- xem chi tiết sản phẩm -->
-							<a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $relatedPro["pro_id"]]); ?>' class="btn btn-default btn-primary"><strong>CHI TIẾT</strong></a>
+							<a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $relatedPro["pro_id"]]); ?>' class="btn btn-default btn-primary" data-toggle="tooltip" data-placement="top" title="chi tiết sản phẩm">
+								<i class="far fa-eye fa-lg"></i>
+							</a>
+
 							<!-- danh sách yêu thích -->
-							<a href='<?= create_link(base_url("wishlist.php"), ["proid"=> $relatedPro["pro_id"]]); ?>' class="btn btn-default btn-danger"><i class="far fa-heart"></i></a>
+							<a href='<?= create_link(base_url("wishlist.php"), ["proid"=> $relatedPro["pro_id"]]); ?>' class="btn btn-default btn-danger"
+								data-toggle="tooltip" data-placement="top" title="Thêm vào danh sách yêu thích">
+								<i class="far fa-heart fa-lg"></i>
+							</a>
 						</div>
 					</div>
 					<?php

@@ -80,8 +80,8 @@ if(isset($_POST)) {
 		<table class='cart_table table table-hover table-borderless'>
 			<tr class='cart_table_title bg-info'>
 				<th width='5%'><strong>ID</strong></th>
-				<th width='50%' colspan='2'><strong>SẢN PHẨM</strong></th>
-				<th width='10%'><strong>GIÁ</strong></th>
+				<th width='45%' colspan='2'><strong>SẢN PHẨM</strong></th>
+				<th width='15%'><strong>GIÁ</strong></th>
 				<th width='10%'><strong>SỐ LƯỢNG</strong></th>
 				<th width='15%'><strong>TỔNG</strong></th>
 				<th width='10%' class='text-center'><strong>TÙY CHỌN</strong></th>

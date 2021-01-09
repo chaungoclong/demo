@@ -3,9 +3,11 @@
 }
 
 body {
-    background: #f3f5f6;
-    font-family: 'Montserrat',sans-serif;
+    background: #f3f5f6;  
+    font-family: Verdana,Geneva,sans-serif; 
+    font-size: 15px;
 }
+
 /*header*/
 #header .container-fluid {
     padding-left: 85px;
@@ -28,15 +30,10 @@ body {
             /*header logo*/
             #headerLogo {
                 text-decoration: none;
-                font-size: 35px;
+                font-size: 30px;
                 color: #fff;
                 font-weight: bolder;
             }
-
-    #hello {
-    }
-
-
 
             /*search*/
 
@@ -137,7 +134,7 @@ body {
     #navbar .navbar-nav .dropdown .dropdown-menu {
         position: absolute;
         top: 90%;
-        z-index: 300;
+        z-index: 500;
     }
 
      #navbar ul li {
@@ -237,15 +234,35 @@ body {
     color: var(--titleColor);
 }
 .product_bar span, .product_bar a {
-    font-size:15px;
+    font-size:14px;
     color:#fff;
 }
 .product .card {
-    display: flex;
+   /* display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center;*/
     position: relative;
 }
+
+.product .card .card-body {
+    padding: 20px 10px;
+}
+
+.product .card .card-body .card-title {
+    font-size: 13px;
+    font-weight: bolder;
+}
+
+.product .card .card-body .card-subtitle {
+    font-size: 15px;
+    font-weight: bolder;
+    margin-bottom: 8px;
+}
+
+.product .card .card-body .btn {
+    max-width: 150px;
+}
+
 .product .card .card-img-top {
     margin-top: 10px;
     width: 60%;
@@ -340,15 +357,16 @@ body {
 /*shoppping cart*/
 .cart_table_title {
     color: #fff;
+    font-size: 14px;
 }
 
 .cart_table tr td {
-    font-size: 16px;
+    font-size: 14px;
 }
 
-.cart_table td, .cart_table td a , .cart_table td input {
+.cart_table td, .cart_table td a , .cart_table td select {
     font-weight: bolder;
-    /*font-size: 16px;*/
+    font-size: 14px;
 }
 
 .cart_table td .unit {
@@ -356,10 +374,10 @@ body {
 }
 
 .cart_table .all_total td {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: bolder;
 }
 .cart_table .all_total strong {
     color:red;
 }
-#hello {}
+

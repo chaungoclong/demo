@@ -69,46 +69,60 @@ $numRow = row_qty($numResult, $numCol);
                                         <img src="<?= $result['pro_img']; ?>" alt="" class="card-img-top">
                                     </a>
                                     <div class="card-body">
+
                                         <!-- thông tin sản phẩm -->
                                         <h5 class="card-title"><a href=""><?= $result['pro_name']; ?></a></h5>
                                         <?php
-                                        $cat = fetch_rows("db_category", "cat_id = '{$result["cat_id"]}'", ["cat_name"]);
+                                            $cat = fetch_rows("db_category", "cat_id = '{$result["cat_id"]}'", ["cat_name"]);
                                         ?>
-                                        <p class="text-uppercase"><?= $cat['cat_name']; ?></p>
-                                        <h6 class="text-danger"><?= number_format($result['pro_price'], 2, ',', '.'); ?> &#8363;</h6>
+
+                                        <p class="text-uppercase card-subtitle"><?= $cat['cat_name']; ?></p>
+
+                                        <h6 class="text-danger">
+                                            <strong><?= number_format($result['pro_price'], 0, ',', '.'); ?> &#8363;</strong>
+                                        </h6>
                                         <hr>
                                         <!-- thêm vào giỏ hàng -->
                                         <?php if ($result['pro_qty']): ?>
-                                            <a class="btn_add_cart_out btn btn-success text-light" data-pro-id="<?= $result['pro_id']; ?>">
-                                                <strong>THÊM VÀO GIỎ</strong>
-                                            </a>
-                                        <?php endif ?>
-                                        <!-- xem chi tiết sản phẩm -->
-                                        <a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $result["pro_id"]]); ?>' class="btn btn-default btn-primary">
-                                            <strong>CHI TIẾT</strong>
+
+                                            <a class="btn_add_cart_out btn btn-success text-light" data-pro-id="<?= $result['pro_id']; ?>"
+                                            data-toggle="tooltip" data-placement="top" title="Thêm vào giỏ hàng"
+                                            >
+                                            <i class="fas fa-cart-plus fa-lg"></i>
                                         </a>
-                                        <!-- danh sách yêu thích -->
-                                        <a href='<?= create_link(base_url("wishlist.php"), ["proid"=> $result["pro_id"]]); ?>' class="btn btn-default btn-danger"><i class="far fa-heart"></i></a>
-                                    </div>
-                                </div>
-                                <!-- ------------------------------------/product ----------------------------------- -->
-                                <?php
-                                $countCol++ ;
-                                if($countCol == $numCol) {
-                                    break;
-                                }
-                                ?>
-                            <?php endwhile ?>
-                        </div>
-                    <?php endfor ?>
+
+                                    <?php endif ?>
+
+                                    <!-- xem chi tiết sản phẩm -->
+                                    <a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $result["pro_id"]]); ?>' class="btn btn-default btn-primary" data-toggle="tooltip" data-placement="top" title="chi tiết sản phẩm">
+                                      <i class="far fa-eye fa-lg"></i>
+                                  </a>
+
+                                  <!-- danh sách yêu thích -->
+                                  <a href='<?= create_link(base_url("wishlist.php"), ["proid"=> $result["pro_id"]]); ?>' class="btn btn-default btn-danger"
+                                      data-toggle="tooltip" data-placement="top" title="Thêm vào danh sách yêu thích">
+                                      <i class="far fa-heart fa-lg"></i>
+                                  </a>
+                              </div>
+                          </div>
+                          <!-- ------------------------------------/product ----------------------------------- -->
+                          <?php
+                          $countCol++ ;
+                          if($countCol == $numCol) {
+                            break;
+                        }
+                        ?>
+                    <?php endwhile ?>
                 </div>
-            </section>
+            <?php endfor ?>
         </div>
-    </main>
+    </section>
+</div>
+</main>
 
-    <?php
+<?php
 //phân trang
-    echo $page['html'];
+echo $page['html'];
 
-    require_once RF . '/include/footer.php';
-    ?>
+require_once RF . '/include/footer.php';
+?>

@@ -1,4 +1,8 @@
 $(document).ready(function() {
+
+    //active tooltips
+    $('[data-toggle="tooltip"]').tooltip();
+    
     //dropdown hover
     var dropdown = $('#navbar .dropdown, #account');
     $(dropdown).hover(function(e) {

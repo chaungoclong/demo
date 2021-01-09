@@ -74,10 +74,12 @@
               <?php $countCol = 0; ?>
               <div class="card-group shadow">
                 <?php while ($pro = $listPro->fetch_assoc()): ?>
+
                   <!-- ?nếu sản phẩm active thì in ? -->
                   <?php if ($pro['pro_active']): ?>
+
                     <!-- ------------------------------------product ----------------------------------- -->
-                    <div class="card text-center" style="max-width: 25%;">
+                    <div class="card text-center" style="width: 25%;">
                       <?php if ($pro['pro_qty'] == 0): ?>
                         <span class="product_status badge badge-pill badge-warning">Bán hết</span>
                       <?php endif ?>
@@ -85,104 +87,132 @@
                         <img src="<?= $pro['pro_img']; ?>" alt="" class="card-img-top">
                       </a>
                       <div class="card-body">
+
                         <!-- thông tin sản phẩm -->
-                        <h5 class="card-title"><a href=""><?= $pro['pro_name']; ?></a></h5>
-                        <p class="text-uppercase"><?= $cat['cat_name']; ?></p>
-                        <h6 class="text-danger"><?= number_format($pro['pro_price'], 2, ',', '.'); ?> &#8363;</h6>
-                        <hr>
-                        <!-- thêm vào giỏ hàng -->
-                        <?php if ($pro['pro_qty']): ?>
-                          <a class="btn_add_cart_out btn btn-success text-light" data-pro-id="<?= $pro['pro_id']; ?>"><strong>THÊM VÀO GIỎ</strong></a>
-                        <?php endif ?>
-                        <!-- xem chi tiết sản phẩm -->
-                        <a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-primary"><strong>CHI TIẾT</strong></a>
-                        <!-- danh sách yêu thích -->
-                        <a href='<?= create_link(base_url("wishlist.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-danger"><i class="far fa-heart"></i></a>
-                      </div>
-                    </div>
-                    <!-- ------------------------------------/product ----------------------------------- -->
-                    <?php
-                    $countCol++;
-                    if($countCol == $numCol) {
-                      break;
-                    }
-                    ?>
-                  <?php endif ?>
-                <?php endwhile ?>
-              </div>
+                        <h5 class="card-title text-uppercase">
+                          <a href="
+                            <?php
+                              echo create_link(
+                                base_url("product_detail.php"),
+                                ['proid' => $pro['pro_id']]
+                              );
+                            ?>
+                          ">
+                          <?= $pro['pro_name']; ?>
+                        </a>
+                      </h5>
+                      <p class="text-uppercase card-subtitle"><?= $cat['cat_name']; ?></p>
+                      <h6 class="text-danger">
+                        <strong><?= number_format($pro['pro_price'], 0, ',', '.'); ?> &#8363;</strong>
+                      </h6>
+                      <hr>
 
-            <?php endfor ?>
-            <!---------------------------------------/list product ------------------------------------------>
-          </div>
-        </section>
-      <?php endif ?>
-    <?php endforeach ?>
-    <!--===================================== /product ===================================-->
-    <!-- =====================================news =================================================== -->
-    <section  id="news" class="py-5">
-      <h2 class="text-center mb-3">Tin tức</h2>
-      <?php
-      $getNewsSQL = "
-      SELECT * FROM db_news
-      ORDER BY create_at DESC
-      ";
+                      <!-- thêm vào giỏ hàng -->
+                      <?php if ($pro['pro_qty']): ?>
 
-      $listNews = get_list($getNewsSQL, 2);
-      $numNews  = $listNews->num_rows ? $listNews->num_rows : 0;
-      $numCol   = 3;
-      $limit    = 2;
-      $numRow   = row_qty($numNews, $numCol, $limit);
-      ?>
-      <div class="list_news">
-        <?php for ($i = 0; $i < $numRow; $i++): ?>
-          <?php $countCol = 0; ?>
-          <!-- -----------------------------------row --------------------------------------------->
-          <div class="card-group">
-            <?php while ($news = $listNews->fetch_assoc()): ?>
-              <?php if ($news['news_active']): ?>
-                <div class="card" style="max-width: calc(100% / 3);">
-                  <a href='<?= create_link(base_url("news_detail.php"), ["newsid" => $news["news_id"]]); ?>'>
-                    <img src=" <?= $news['news_img']; ?>" alt="" class="card-img-top">
-                  </a>
-                  <div class="card-body">
-                    <ul class="card-title nav">
-                      <li class="nav-item mr-2">
-                        <i class="fas fa-calendar-alt"></i>
-                        <?php
-                        $time = strtotime($news['create_at']);
-                        ?>
-                        <span><?= read_date($time); ?></span>
-                      </li>
-                      <li class="nav-item">
-                        <i class="fas fa-user-edit"></i>
-                        <span><?= $news['create_by']; ?></span>
-                      </li>
-                    </ul>
-                    <h5 class="card-title text-uppercase">
-                      <a href='<?= create_link(base_url("news_detail.php"), ["newsid" => $news["news_id"]]); ?>'>
-                        <?= $news['news_title']; ?>
+                        <a class="btn_add_cart_out btn btn-success text-light" data-pro-id="<?= $pro['pro_id']; ?>"
+                          data-toggle="tooltip" data-placement="top" title="Thêm vào giỏ hàng"
+                          >
+                          <i class="fas fa-cart-plus fa-lg"></i>
+                        </a>
+
+                      <?php endif ?>
+
+                      <!-- xem chi tiết sản phẩm -->
+                      <a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-primary" data-toggle="tooltip" data-placement="top" title="chi tiết sản phẩm">
+                        <i class="far fa-eye fa-lg"></i>
                       </a>
-                    </h5>
-                    <p class="card-text">
-                      <?= $news['news_desc']; ?>
-                    </p>
-                    <a href='<?= create_link(base_url("news_detail.php"), ["newsid" => $news["news_id"]]); ?>' class="btn btn-default btn-primary">Xem thêm<i class="fas fa-angle-double-right"></i></a>
+                      
+                      <!-- danh sách yêu thích -->
+                      <a href='<?= create_link(base_url("wishlist.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-danger"
+                        data-toggle="tooltip" data-placement="top" title="Thêm vào danh sách yêu thích">
+                        <i class="far fa-heart fa-lg"></i>
+                      </a>
+                    </div>
                   </div>
-                </div>
-                <?php
-                $countCol++;
-                if($countCol == $numCol) {
-                  break;
-                }
-                ?>
-              <?php endif ?>
-            <?php endwhile ?>
-          </div>
+                  <!-- ------------------------------------/product ----------------------------------- -->
+                  <?php
+                  $countCol++;
+                  if($countCol == $numCol) {
+                    break;
+                  }
+                  ?>
+                <?php endif ?>
+              <?php endwhile ?>
+            </div>
 
-          <!-- --------------------------------------row --------------------------------------------- -->
-        <?php endfor ?>
-      </div>
-    </section>
+          <?php endfor ?>
+          <!---------------------------------------/list product ------------------------------------------>
+        </div>
+      </section>
+    <?php endif ?>
+  <?php endforeach ?>
+  <!--===================================== /product ===================================-->
+  <!-- =====================================news =================================================== -->
+  <section  id="news" class="py-5">
+    <h2 class="text-center mb-3">Tin tức</h2>
+    <?php
+    $getNewsSQL = "
+    SELECT * FROM db_news
+    ORDER BY create_at DESC
+    ";
+
+    $listNews = get_list($getNewsSQL, 2);
+    $numNews  = $listNews->num_rows ? $listNews->num_rows : 0;
+    $numCol   = 3;
+    $limit    = 2;
+    $numRow   = row_qty($numNews, $numCol, $limit);
+    ?>
+    <div class="list_news">
+      <?php for ($i = 0; $i < $numRow; $i++): ?>
+        <?php $countCol = 0; ?>
+        <!-- -----------------------------------row --------------------------------------------->
+        <div class="card-group">
+          <?php while ($news = $listNews->fetch_assoc()): ?>
+            <?php if ($news['news_active']): ?>
+              <div class="card" style="max-width: calc(100% / 3);">
+                <a href='<?= create_link(base_url("news_detail.php"), ["newsid" => $news["news_id"]]); ?>'>
+                  <img src=" <?= $news['news_img']; ?>" alt="" class="card-img-top">
+                </a>
+                <div class="card-body">
+                  <ul class="card-title nav">
+                    <li class="nav-item mr-2">
+                      <i class="fas fa-calendar-alt"></i>
+                      <?php
+                      $time = strtotime($news['create_at']);
+                      ?>
+                      <span><?= read_date($time); ?></span>
+                    </li>
+                    <li class="nav-item">
+                      <i class="fas fa-user-edit"></i>
+                      <span><?= $news['create_by']; ?></span>
+                    </li>
+                  </ul>
+                  <h5 class="card-title text-uppercase">
+                    <a href='<?= create_link(base_url("news_detail.php"), ["newsid" => $news["news_id"]]); ?>'>
+                      <?= $news['news_title']; ?>
+                    </a>
+                  </h5>
+                  <p class="card-text">
+                    <?= $news['news_desc']; ?>
+                  </p>
+                  <a href='<?= create_link(base_url("news_detail.php"), ["newsid" => $news["news_id"]]); ?>' class="btn btn-default btn-primary">Xem thêm<i class="fas fa-angle-double-right"></i></a>
+                </div>
+              </div>
+              <?php
+              $countCol++;
+              if($countCol == $numCol) {
+                break;
+              }
+              ?>
+            <?php endif ?>
+          <?php endwhile ?>
+        </div>
+
+        <!-- --------------------------------------row --------------------------------------------- -->
+      <?php endfor ?>
+    </div>
+  </section>
 <!-- ==================================================/news ======================================
   </div>
 </main>
