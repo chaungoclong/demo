@@ -54,7 +54,7 @@ $(function() {
 
         //lấy số lượng sản phẩm 
         let qtyPro = parseInt(
-            getAJax(
+            sendAjax(
                 'get_cart.php',
                 'post',
                 'text',
@@ -64,7 +64,7 @@ $(function() {
 
         //số lượng sản phẩm trong giỏ hàng
         let qtyInCart = parseInt(
-            getAJax(
+            sendAjax(
                 'get_cart.php',
                 'post',
                 'text',
@@ -90,6 +90,7 @@ $(function() {
                 alert(res.notice);
                 if (res.totalItem > 0) {
                     $('#shoppingCartIndex').text(res.totalItem);
+                    $('#modal_cart').show().find('.badge').text(res.totalItem);
                 } else {
                     $('#shoppingCartIndex').text(0);
                 }

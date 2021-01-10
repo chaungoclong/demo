@@ -147,7 +147,7 @@ if(isset($_POST)) {
 							. " <span class='unit'>&#8363;</span>
 						</td>
 						<td>
-							<select name='quantity' value='" . $qty . "' class='quantity text-center' 
+							<select name='quantity' value='" . $qty . "' class='quantity custom-select-sm' 
 							data-pro-id='" .$product['pro_id'] . "'>
 							"
 							. $option .

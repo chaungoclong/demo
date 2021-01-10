@@ -44,12 +44,16 @@ require_once RF . "/include/navbar.php";
 							$(document).ready(function() {
 								$('#dob').datepicker({
 									dateFormat: 'dd-mm-yy',
+									yearRange: "-100:2100",
+									changeMonth: true,
+									changeYear: true,
 									beforeShow: function (input, inst) {
+										$(".ui-datepicker-month").insertAfter(".ui-datepicker-year");
 										console.log(input, inst);
 										setTimeout(function () {
 											inst.dpDiv.css({
-												top: 397,
-												left: 550
+												top: 391,
+												left: 475
 											});
 										},0);
 									}

@@ -1,5 +1,65 @@
 <!-- footer -->
+<!-- button top -->
+<button id="btn_top" class="btn btn-warning position-fixed p-2" style="bottom: 90px; right: 15px; border-radius: 50%; z-index: 1000;display:none;">
+  <i class="fas fa-arrow-up fa-2x"></i>
+</button>
+<script>
+  $(function() {
+    $(window).scroll(function() {
+      if($(this).scrollTop() >= 50) {
+        $('#btn_top').show();
+      } else {
+        $('#btn_top').hide();
+      }
+    });
+
+    $('#btn_top').on('click', function() {
+      scrollToTop();
+    });
+    function scrollToTop() {
+      var scroll = $('html, body');
+      scroll.animate({ scrollTop: 0 }, 600, "swing");
+    }
+  });
+</script>
+<!-- button top -->
+
+<!-- modal shopping cart -->
+<?php if (is_login() && !empty($_SESSION['cart'])): ?>
+<div id="modal_cart" class="position-fixed border border-1 btn btn-info p-0" style="bottom: 10px; right: 10px; z-index: 1000; display:block;">
+  <a href="<?= base_url('view_cart.php'); ?>" class="d-block p-2 bg-info shadow-lg">
+    <span class="position-absolute badge badge-pill bg-danger text-light" style="right: -5px;  top: -13px; font-size: 14px; ">
+      <!-- in số lượng sản phẩm trong giỏ hàng -->
+      <?php 
+      if(!empty($_SESSION['cart'])) {
+        $total = 0;
+        foreach ($_SESSION['cart'] as $key => $value) {
+          $total += $value;
+        }
+        echo $total;
+      } else {
+        echo 0;
+      }
+      ?>
+    </span>
+    <span style="color:#EBFF41;"><i class="fas fa-shopping-cart fa-2x"></i></span>
+  </a>
+</div>
+<?php else: ?>
+ <div id="modal_cart" class="position-fixed border border-1 btn btn-info p-0" style="bottom: 10px; right: 10px; z-index: 1000; display:none;">
+  <a href="<?= base_url('view_cart.php'); ?>" class="d-block p-2 bg-info shadow-lg">
+    <span class="position-absolute badge badge-pill bg-danger text-light" style="right: -5px;  top: -13px; font-size: 14px; ">
+
+    </span>
+    <span style="color:#EBFF41;"><i class="fas fa-shopping-cart fa-2x"></i></span>
+  </a>
+</div>
+</div>
+<?php endif ?>
+<!-- /modal shopping cart -->
+
 <footer id="footer">
+
   <!-- footer top -->
   <div class="row py-4 d-flex align-items-start m-0">
     <!-- about -->

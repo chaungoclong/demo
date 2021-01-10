@@ -3,6 +3,7 @@ require_once 'common.php';
 require_once 'include/header.php';
 require_once 'include/navbar.php';
 ?>
+
 <main>
 	<div class="" style="padding-left: 85px; padding-right: 85px;">
 		<div class="card my-5 shadow" id="shopping-cart">
@@ -24,6 +25,7 @@ require_once 'include/navbar.php';
 						 * #nếu tồn tại giỏ hàng: lặp in ra các sản phẩm
 						 * $_SESSION['cart'] là 1 mảng 1 chiều với key = pro_id, value = số lượng sản phẩm
 						 * có id = pro_id
+						 * note: nếu chưa đăng nhập giỏ hàng sẽ bị xóa ở phần header
 						 */
 					 -->
 					<?php if (!empty($_SESSION['cart'])): ?>
@@ -70,7 +72,7 @@ require_once 'include/navbar.php';
 						</td>
 						<td>
 							<!-- ô thay đổi số lượng -->
-							<select name="quantity" value="<?= $qty; ?>" class="quantity text-center" data-pro-id="<?= $product['pro_id']; ?>">
+							<select name="quantity" value="<?= $qty; ?>" class="quantity custom-select-sm" data-pro-id="<?= $product['pro_id']; ?>">
 								<?php 
 									/**
 									 * #Giới hạn số lượng sản phẩm được
@@ -148,7 +150,17 @@ require_once 'include/navbar.php';
 
 	</div>
 	<script>
+		/**
+		 * kết quả trả về từ cart.php gồm thuộc tính tổng số sản phẩm trong giỏ hàng
+		 * -> cập nhật giá trị hiển thị trên icon giỏ hàng
+		 */
 		$(function() {
+			/**
+			 * giá trị hàng tổng số lượng  trong bảng giỏ hàng lấy từ chỉ số của
+			 * giỏ hàng trên thanh menu:
+			 * vì chỉ số của giỏ hàng trên thanh menu thay đổi ngay lập tức khi giỏ hàng
+			 * có sự thay đổi
+			 */
 			$('#totalItem').text($('#shoppingCartIndex').text() + "sản phẩm");
 			//thay đổi số lượng sản phẩm
 			$(document).on('change', '.quantity', function(e) {
@@ -168,6 +180,7 @@ require_once 'include/navbar.php';
 							$('#shopping-cart .card-body').html(res.html);
 							if(res.totalItem > 0) {
 								$('#shoppingCartIndex').text(res.totalItem);
+								$('#modal_cart').show().find('.badge').text(res.totalItem);
 							} else {
 								$('#shoppingCartIndex').text(0);
 							}
@@ -197,10 +210,12 @@ require_once 'include/navbar.php';
 							$('#shopping-cart .card-body').html(res.html);
 							if(res.totalItem > 0) {
 								$('#shoppingCartIndex').text(res.totalItem);
+								$('#modal_cart').show().find('.badge').text(res.totalItem);
 								$('.btn_check_out').show();
 							} else {
 								$('#shoppingCartIndex').text(0);
 								$('.btn_check_out').hide();
+								$('#modal_cart').hide();
 							}
 						});
 						//thất bại
@@ -213,4 +228,5 @@ require_once 'include/navbar.php';
 		</script>
 	</div>
 </main>
+
 <?php require_once 'include/footer.php'; ?>

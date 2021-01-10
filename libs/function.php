@@ -19,7 +19,7 @@ function redirect($path) {
 function now(){
 	return date('Y-m-d H:i:s');
 }
-	
+
 //hàm thay thế phần tử đầu tiên
 function replace_first($search, $replace, $string) {
 	return implode($replace, explode($search, $string, 2));
@@ -128,84 +128,84 @@ function read_date($time) {
 			$html .=
 			'
 			<nav aria-label="..." style="padding: 0px 85px;">
-				<ul class="pagination justify-content-center">
-					';
-				}
+			<ul class="pagination justify-content-center">
+			';
+		}
 				//thêm nút trang đầu tiên
-				if($currentPage > 1 &&  $totalPage > 1) {
+		if($currentPage > 1 &&  $totalPage > 1) {
 					//thay thế {page} bằng só thứ tự trang
-					$link = str_replace("{page}", 1, $currentLink);
-					$html .= '
-					<li class="page-item d-flex align-items-center">
-						<a class="page-link h-100" href="' . $link . '">' 
-							. "<i class='fas fa-angle-double-left'></i>" .
-						'</a>
-					</li>
-					';
-				}
+			$link = str_replace("{page}", 1, $currentLink);
+			$html .= '
+			<li class="page-item d-flex align-items-center">
+			<a class="page-link h-100" href="' . $link . '">' 
+			. "<i class='fas fa-angle-double-left'></i>" .
+			'</a>
+			</li>
+			';
+		}
 				//thêm nút trang trước
-				if($currentPage > 1 &&  $totalPage > 1) {
+		if($currentPage > 1 &&  $totalPage > 1) {
 					//thay thế {page} bằng só thứ tự trang
-					$link = str_replace("{page}", $currentPage - 1, $currentLink);
-					$html .= '
-					<li class="page-item d-flex align-items-center">
-						<a class="page-link h-100" href="' . $link . '">' 
-							. "<i class='fas fa-angle-left'></i>" .
-						'</a>
-					</li>
-					';
-				}
+			$link = str_replace("{page}", $currentPage - 1, $currentLink);
+			$html .= '
+			<li class="page-item d-flex align-items-center">
+			<a class="page-link h-100" href="' . $link . '">' 
+			. "<i class='fas fa-angle-left'></i>" .
+			'</a>
+			</li>
+			';
+		}
 				//thêm các nút phân trang ở giữa
-				for($i = 1; $i <= $totalPage; ++$i) {
+		for($i = 1; $i <= $totalPage; ++$i) {
 					//nếu khác trang hiện tại thì thêm thẻ a : thẻ span
-					if($i != $currentPage) {
+			if($i != $currentPage) {
 						//thay thế {page} bằng só thứ tự trang
-						$link = str_replace("{page}", $i , $currentLink);
-						$html .= '
-						<li class="page-item d-flex align-items-center">
-							<a class="page-link h-100" href="' . $link . '">' . $i . '</a>
-						</li>
-						';
-					} else {
-						$html .= '
-						<li class="page-item active">
-							<span class="page-link">'
-								. $i .
-								'<span class="sr-only">(current)</span>
-							</span>
-						</li>
-						';
-					}
-				}
+				$link = str_replace("{page}", $i , $currentLink);
+				$html .= '
+				<li class="page-item d-flex align-items-center">
+				<a class="page-link h-100" href="' . $link . '">' . $i . '</a>
+				</li>
+				';
+			} else {
+				$html .= '
+				<li class="page-item active">
+				<span class="page-link">'
+				. $i .
+				'<span class="sr-only">(current)</span>
+				</span>
+				</li>
+				';
+			}
+		}
 				//thêm nút trang tiếp theo
-				if($currentPage < $totalPage &&  $totalPage > 1) {
+		if($currentPage < $totalPage &&  $totalPage > 1) {
 					//thay thế {page} bằng só thứ tự trang
-					$link = str_replace("{page}", $currentPage + 1, $currentLink);
-					$html .= '
-					<li class="page-item">
-						<a class="page-link h-100" href="' . $link . '">' 
-							. "<i class='fas fa-angle-right'></i>" .
-						'</a>
-					</li>
-					';
-				}
+			$link = str_replace("{page}", $currentPage + 1, $currentLink);
+			$html .= '
+			<li class="page-item">
+			<a class="page-link h-100" href="' . $link . '">' 
+			. "<i class='fas fa-angle-right'></i>" .
+			'</a>
+			</li>
+			';
+		}
 				//thêm nút trang cuối cùng
-				if($currentPage < $totalPage &&  $totalPage > 1) {
+		if($currentPage < $totalPage &&  $totalPage > 1) {
 					//thay thế {page} bằng só thứ tự trang
-					$link = str_replace("{page}", $totalPage, $currentLink);
-					$html .= '
-					<li class="page-item d-flex align-items-center">
-						<a class="page-link h-100" href="' . $link . '">' 
-							. "<i class='fas fa-angle-double-right'></i>" .
-						'</a>
-					</li>
-					';
-				}
+			$link = str_replace("{page}", $totalPage, $currentLink);
+			$html .= '
+			<li class="page-item d-flex align-items-center">
+			<a class="page-link h-100" href="' . $link . '">' 
+			. "<i class='fas fa-angle-double-right'></i>" .
+			'</a>
+			</li>
+			';
+		}
 
 				//số trang > 0 hiện nút phân trang
-				if($totalPage) {
-					$html .= '
-				</ul>
+		if($totalPage) {
+			$html .= '
+			</ul>
 			</nav>
 			';
 		}
@@ -271,4 +271,25 @@ function read_date($time) {
 
 	function vd($value) {
 		echo "<pre>" . print_r($value, true) . "</pre>";
+	}
+
+	function checkCustomerBought($cusID, $proID) {
+		$sql = "SELECT db_order.cus_id FROM db_order JOIN db_order_detail
+		ON db_order.or_id = db_order_detail.or_id
+		WHERE db_order.cus_id = ? AND db_order.or_status = 5 AND db_order_detail.pro_id = ?
+		";
+
+		$result = s_row($sql, [$cusID, $proID]);
+
+		return $result;
+	}
+
+	function checkRateExist($cusID, $proID) {
+		$sql = "SELECT cus_id, pro_id FROM db_rate
+		WHERE cus_id = ? AND pro_id = ?
+		";
+
+		$result = db_get($sql, [$cusID, $proID], 2);
+
+		return $result;
 	}

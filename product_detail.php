@@ -129,7 +129,7 @@ require_once 'include/navbar.php';
 										var qtyProInCart;
 
 										var qtyProInCart = parseInt(
-											getAJax(
+											sendAJax(
 												'get_cart.php',
 												'post',
 												'text',
@@ -161,12 +161,14 @@ require_once 'include/navbar.php';
 
 											//success
 											sendCart.done((res) => {
-												alert(res.notice);
 												if(res.totalItem > 0) {
 													$('#shoppingCartIndex').text(res.totalItem);
+													$('#modal_cart').show().find('.badge').text(res.totalItem);
 												} else {
 													$('#shoppingCartIndex').text(0);
+													$('#modal_cart').hide();
 												}
+												alert(res.notice);
 											});
 
 											//error
@@ -182,8 +184,9 @@ require_once 'include/navbar.php';
 				</div>
 			</div>
 		</section>
+		
 		<!-- tab info -->
-		<section id="tab_info">
+		<section id="product_tab" class="border p-3 my-5">
 			<!-- tab index -->
 			<ul class="nav nav-justified nav-tabs">
 				<li class="nav-item">
@@ -193,24 +196,149 @@ require_once 'include/navbar.php';
 					<a href="#info" class="nav-link" data-toggle="tab">THÔNG SỐ KỸ THUẬT</a>
 				</li>
 				<li class="nav-item">
-					<a href="#review" class="nav-link" data-toggle="tab">ĐÁNH GIÁ</a>
+					<a href="#rate" class="nav-link" data-toggle="tab">ĐÁNH GIÁ</a>
 				</li>
 			</ul>
 			<!-- tab content -->
 			<div class="tab-content">
-				<div id="desc" class="active tab-pane bg-light">
-					<h1>MÔ TẢ</h1>
+				<div id="desc" class="active tab-pane p-3">
+					<h5>MÔ TẢ</h5>
 					<?= !empty($product['pro_desc']) ? $product['pro_desc'] : "";  ?>
 				</div>
-				<div id="info" class="tab-pane fade bg-light">
-					<h1>THÔNG SỐ KỸ THUẬT</h1>
+				<div id="info" class="tab-pane fadt p-3">
+					<h5>THÔNG SỐ KỸ THUẬT</h5>
 				</div>
-				<div id="review" class="tab-pane fade bg-light">
-					<h1>ĐÁNH GIÁ</h1>
+				<div id="rate" class="tab-pane fade py-3">
+					<h5>ĐÁNH GIÁ</h5>
+					<div class= "rate_wrapper row m-0">
+
+						<!-- display rate -->
+						<div class="display_rate col-7"></div>
+
+						<!-- send rate -->
+						<div class="send_rate col-5 position-relative">
+
+							<div class="send_rate_wrapper position-absolute" style="top:0; left: 0;">
+								
+								<!-- chọn số sao -->
+								<div class="choose_star mb-3">
+									<button class="btn starr m-1" data-rate="1" id="star_rate_1">
+										<i class="fas fa-star"></i>
+									</button>
+									<button class="btn starr m-1" data-rate="2" id="star_rate_2">
+										<i class="fas fa-star"></i>
+									</button>
+									<button class="btn  starr m-1" data-rate="3" id="star_rate_3">
+										<i class="fas fa-star"></i>
+									</button>
+									<button class="btn  starr m-1" data-rate="4" id="star_rate_4">
+										<i class="fas fa-star"></i>
+									</button>
+									<button class="btn  starr m-1" data-rate="5" id="star_rate_5">
+										<i class="fas fa-star"></i>
+									</button>
+								</div>
+
+								<!-- viết đánh giá -->
+								<div class="create_rate">
+									<form action="" id="formRate" class="w-100">
+										<div class="form-group">
+											<label for="rateContent">Bình luận:</label>
+											<textarea class="form-control" rows="5" cols="55" id="rateContent" name="rateContent"></textarea>
+											<input type="hidden" id="rateValue" name="rateValue">
+										</div>
+
+										<button  class="btn btn-primary" id="sendRate" type="button">SEND</button>
+									</form>
+
+									<script>
+										$(function() {
+											var proID = <?= $product['pro_id']; ?>;
+
+											//lấy bình luận ngay khi vào trang
+											fetchRate(proID);
+
+											//xử lý chọn sao
+											$('.starr').on('click', function() {
+
+												//danh sách sao
+												let listStar = $('.starr');
+
+												//giá trị của lần chọn trước
+												let valuePrev = $('#rateValue').val();
+
+												//giá trị của lần chọn này
+												let value = $(this).data('rate');
+
+												//thay đổi giá trị trong thẻ input
+												$('#rateValue').val(value);
+												
+												//bỏ trạng thái được chọn của tất cả các sao
+												for(let i = 0; i < 5; ++i) {
+													$(listStar[i]).removeClass('star_selected');
+												}
+
+												//đặt trạng thái được chọn cho các sao từ 0 -> value
+												for(let i = 0; i < value; ++i) {
+													$(listStar[i]).addClass('star_selected');
+												}
+											});
+
+											//XỬ LÝ THÊM , CẬP NHẬT ĐÁNH GIÁ
+											$('#sendRate').on('click', function() {
+
+												let checkLogin = <?= is_login() ? 1 : 0; ?>;
+												if(checkLogin == 0) {
+													alert("BẠN CHƯA ĐĂNG NHẬP");
+												} else {
+													let rateContent = $('#rateContent').val();
+													let rateValue = $('#rateValue').val();
+													let cusID = <?= 
+														isset($_SESSION['user_token']['id']) ?
+														$_SESSION['user_token']['id'] : 0; 
+													?>;
+													let proID = <?= $product['pro_id']; ?>;
+
+													if(rateContent == '') {
+														alert('VUI LÒNG NHẬP BÌNH LUẬN');
+													} else if(rateValue == '') {
+														alert('VUI LÒNG CHỌN SAO ĐÁNH GIÁ');
+													} else {
+
+														//kiểm tra đánh giá của người cusID về sản phẩm proID đã tồn tại chưa
+														let checkRateExist = rateExist(cusID, proID, "rate_exist");
+														if(checkRateExist) {
+															//cập nhât lại đánh giá nếu đánh giá đã tồn tại và người dùng muốn cập nhật
+															if(confirm("BẠN CÓ MUỐN CẬP NHẬT LẠI BÌNH LUẬN CỦA BẠN VỀ SẢN PHẨM NÀY")) {
+																let resultUpdate = setRate(
+																	cusID, proID, rateValue, rateContent, "update_rate"
+																);
+																alert(resultUpdate.msg);
+																fetchRate(proID);
+															}
+														} else {
+															//nếu đánh giá chưa tồn tại thì thêm mới đánh giá
+															let resultAdd = setRate(
+																cusID, proID, rateValue, rateContent, "add_rate"
+																);
+															alert(resultAdd.msg);
+															fetchRate(proID);
+														}
+													}
+												}
+											});
+										});	
+									</script>
+								</div>
+							</div>
+
+						</div>
+					</div>
 				</div>
 			</div>
 		</section>
 		<!-- /tab info -->
+
 		<!-- product -->
 		<?php
 		$getRelatedProSQL = "

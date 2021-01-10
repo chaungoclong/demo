@@ -73,7 +73,7 @@ function showImg(input, storeImg, mode = 0, storeNameImg = "") {
 }
 
 //get ajax
-function getAJax(url, method, type = 'text', data = {}) {
+function sendAJax(url, method, type = 'text', data = {}) {
     var result = false;
     $.ajax({
         url: url,
@@ -83,8 +83,11 @@ function getAJax(url, method, type = 'text', data = {}) {
         async: false
     }).done(function(res) {
         result = res;
-    })
+    }).fail(function(a, b, c) {
+        result = false;
+    });
     return result;
 }
+
 
 

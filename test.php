@@ -69,7 +69,14 @@
 
 	// $test = db_run("update db_product set pro_price = ? where pro_id = ?", 123, 5);
 	// echo $test;
-	$test = get_session("cart");
-	vd($test);
-
+	// $test = get_session("cart");
+	// vd($test);
+	$array = [""];
+	echo !$array;
+	$str = '0';
+	if($str) {
+		echo  "ok";
+	} else {
+		echo "no";
+	}
 

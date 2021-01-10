@@ -14,6 +14,7 @@
   <script src="assets/js/common.js"></script>
   <script src="assets/js/login_register.js"></script>
   <script src="assets/js/cart.js"></script>
+  <script src="assets/js/rate.js"></script>
   <script src="dist/popper/popper.min.js"></script>
   <script src="dist/bootstrap/js/bootstrap.js"></script>
   <script src="dist/ckeditor/ckeditor.js"></script>
@@ -104,6 +105,7 @@
               </li>
               <li id="shoppingCart" class="nav-item">
                 <?php 
+                    //nếu trạng thái = không đăng nhập : xóa giỏ hàng
                     if(!is_login()) {
                       delete_session("cart");
                     }
@@ -113,6 +115,8 @@
                     <i class="fas fa-shopping-cart fa-lg"></i>
                     <span id="shoppingCartIndex" class="position-absolute badge badge-primary badge-pill">
                       <?php 
+                      
+                        //in số lượng sản phẩm trong giỏ hàng
                         if(!empty($_SESSION['cart'])) {
                           $total = 0;
                           foreach ($_SESSION['cart'] as $key => $value) {
