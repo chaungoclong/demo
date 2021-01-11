@@ -54,7 +54,7 @@ $(function() {
 
         //lấy số lượng sản phẩm 
         let qtyPro = parseInt(
-            sendAjax(
+            sendAJax(
                 'get_cart.php',
                 'post',
                 'text',
@@ -64,7 +64,7 @@ $(function() {
 
         //số lượng sản phẩm trong giỏ hàng
         let qtyInCart = parseInt(
-            sendAjax(
+            sendAJax(
                 'get_cart.php',
                 'post',
                 'text',

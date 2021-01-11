@@ -416,15 +416,35 @@ select.quantity  {
 
 /*review*/
 
-.rate_wrapper {
-    max-height: 600px;
-    overflow-y: scroll;
+#formRate textarea {
+    padding-right:80px !important;
 }
+
+.send_rate {
+    border-radius: 10px;
+}
+
+.show_rate>.row {
+    border-radius: 10px;
+}
+
+.rate_edit {
+    color:red;
+}
+
+.star_rate, .avgStar {
+    color:yellow;
+}
+
+.rate_name {
+    font-weight: bolder;
+}
+
 .choose_star .btn {
-    width: 30px;
-    height: 30px;
+    width: 25px;
+    height: 25px;
     padding: 0;
-    border-radius: 50%;
+    border-radius: 10%;
     color:#fff;
     background: #000;
 }
