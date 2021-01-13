@@ -240,7 +240,7 @@ function read_date($time) {
 	}
 
 	function check_name($string) {
-		$pattern = '/^([a-zA-Z]{3,10}\s?)+$/';
+		$pattern = '/^([a-zA-Z]{1,10}\s?)+$/';
 		return preg_match($pattern, $string);
 	}
 
