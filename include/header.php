@@ -12,6 +12,7 @@
   <script src="dist/jquery/jquery-3.5.1.js"></script>
   <script src="dist/jquery/jquery-ui.min.js"></script>
   <script src="assets/js/common.js"></script>
+  <script src="assets/js/valid.js"></script>
   <script src="assets/js/login_register.js"></script>
   <script src="assets/js/cart.js"></script>
   <script src="assets/js/rate.js"></script>

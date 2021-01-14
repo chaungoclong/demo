@@ -11,18 +11,18 @@ require_once 'include/navbar.php';
 	$proID = data_input(input_get("proid"));
 		//lấy sản phẩm có ID nhận được
 	$getOneProSQL = "SELECT * FROM db_product WHERE pro_id = ?";
-	$product = s_row($getOneProSQL, [$proID]);
+	$product = s_row($getOneProSQL, [$proID], "i");
 	
 	//lấy các ảnh của sản phẩm, thể loại, hãng
 	if(!empty($product)) {
 		$getImgProSQL = "SELECT img_url FROM db_image WHERE pro_id = ? LIMIT 4";
-		$listImg = db_get($getImgProSQL, [$proID]);
+		$listImg = db_get($getImgProSQL, 0, [$proID], "i");
 		
 		$getCatProSQL = "SELECT cat_name FROM db_category WHERE cat_id = ?";
-		$category = s_cell($getCatProSQL, [$product['cat_id']]);
+		$category = s_cell($getCatProSQL, [$product['cat_id']], "i");
 		
 		$getBraProSQL = "SELECT bra_name FROM db_brand WHERE bra_id = ?";
-		$brand = s_cell($getBraProSQL, [$product['bra_id']]);
+		$brand = s_cell($getBraProSQL, [$product['bra_id']], "i");
 	}
 	?>
 	
@@ -214,7 +214,9 @@ require_once 'include/navbar.php';
 		";
 		$listRelatedPro = db_get(
 			$getRelatedProSQL,
-			[$product['cat_id'], $product['pro_id']]
+			0,
+			[$product['cat_id'], $product['pro_id']],
+			"ii"
 		);
 		//vd($listRelatedPro);
 		?>

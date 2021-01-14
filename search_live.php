@@ -4,7 +4,7 @@ require_once 'common.php';
 $keyWord = "%" . input_get("q") . "%";
 	//lấy kết quả
 $getResultSQL = "SELECT * FROM db_product WHERE pro_active = 1 AND pro_name LIKE(?)";
-$listResult = db_get($getResultSQL, [$keyWord]);
+$listResult = db_get($getResultSQL, 0, [$keyWord], "s");
 	//in kết quả
 foreach ($listResult as $key => $result): ?>
 	<li class="ajax_search_item list-group-item p-0">

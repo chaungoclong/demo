@@ -11,7 +11,9 @@ if($_SERVER['REQUEST_METHOD'] == "POST" && !empty($_POST)) {
 	$rePwd   = data_input(input_post("rePwdRegister"));
 	$file    = !empty($_FILES['avatar']) ? $_FILES['avatar'] : null;
 
-	if(!$name || !$dob || !$gender || !$email || !$phone || !$pwd || !$rePwd || !$address) {
+	if($name === false || $dob === false || $gender === false 
+		|| $email === false || $phone === false || $pwd === false 
+		|| $rePwd === false || $address === false) {
 		echo 1; //thiếu thông tin
 	} else if(!check_name($name) || !check_date($dob)
 		|| !check_password($pwd) || !check_email($email)
@@ -36,7 +38,11 @@ if($_SERVER['REQUEST_METHOD'] == "POST" && !empty($_POST)) {
 		";
 
 		//nếu thêm thành công 5 : 6
-		$add = db_run($addCustomerSQL, $name, $dob, $gender, $email, $phone, $pwd, $imgName, $address);
+		$add = db_run(
+			$addCustomerSQL,
+			[$name, $dob, $gender, $email, $phone, $pwd, $imgName, $address],
+			"ssisssss"
+		);
 		if($add) {
 			echo 5; //đăng ký thành công
 		} else {

@@ -22,7 +22,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST" && !empty($_POST)) {
 
 		//lấy thông tin của người dùng có tài mật khẩu tương ứng
 		//thông tin không trống và active = 1 => đăng nhập thành công
-		$info = s_row($loginSQL, [$user, $user, $pwd]);
+		$info = s_row($loginSQL, [$user, $user, $pwd], "sss");
 		if(!empty($info)) {
 			if($info['cus_active']) {
 				set_login($info['cus_id'], $info['cus_email']);

@@ -241,7 +241,7 @@
 	 * @param  array  $param [] [mảng chứa giá trị các trường]
 	 * @return [array / null]   [không lỗi trả về một mảng kết quả : null]
 	 */
-	function db_get($sql, $param = [], $mode = 0) {
+	function db_get($sql, $mode = 0, $param = [], $format = "") {
 		db_connect();
 		global $connect;
 		$stmt = $connect->prepare($sql);
@@ -249,7 +249,8 @@
 
 		//nếu các trường có giá trị truyền vào thì liên kết giá trị với các trường
 		if($numField) {
-			$stmt->bind_param(str_repeat("s", $numField), ...$param);
+			$format = ($format != "") ? $format : str_repeat("s", $numField);
+			$stmt->bind_param($format, ...$param);
 		}
 
 		/**
@@ -284,7 +285,7 @@
 	}
 
 	//hàm chạy câu truy vấn không lấy về kết quả (insert, update, delete)
-	function db_run($sql, ...$param) {
+	function db_run($sql, $param = [], $format = "") {
 		db_connect();
 		global $connect;
 
@@ -292,20 +293,21 @@
 
 		$numField = count($param);
 		if($numField) {
-			$stmt->bind_param(str_repeat("s", $numField), ...$param);
+			$format = ($format != "") ? $format : str_repeat("s", $numField);
+			$stmt->bind_param($format, ...$param);
 		} 
 
 		return $stmt->execute();
 	}
 
 	//hàm lấy ra một hàng
-	function s_row($sql, $param = []) {
-		return db_get($sql, $param)[0] ?? []; 
+	function s_row($sql, $param = [], $format = "") {
+		return db_get($sql, 0, $param, $format)[0] ?? []; 
 	}
 
 	//hàm lấy ra một ô
-	function s_cell($sql, $param = []) {
-		$result = s_row($sql, $param);
+	function s_cell($sql, $param = [], $format = "") {
+		$result = s_row($sql, $param, $format);
 		return array_shift($result);
 	}
 

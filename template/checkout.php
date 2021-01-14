@@ -16,7 +16,7 @@ require_once 'include/navbar.php';
 						<h5>THÔNG TIN THANH TOÁN</h5>
 					</div>
 					<div class="card-body">
-						<form action="" id="form_check_out">
+						<form action="">
 							<div class="form-group">
 								<label for="name">
 									<span><i class="fas fa-user"></i></span>
@@ -77,7 +77,7 @@ require_once 'include/navbar.php';
 									$getOneProSQL = "SELECT * FROM db_product
 									WHERE pro_id  = ?
 									";
-									$product = s_row($getOneProSQL, [$pro_id], "i");
+									$product = s_row($getOneProSQL, [$pro_id]);
 									?>
 
 									<!-- in sản phẩm -->
@@ -144,67 +144,6 @@ require_once 'include/navbar.php';
 
 <script>
 	$(function() {
-		$(document).on('click', '#btn_order', function() {
-			let test = true;
-
-			// xóa các class lỗi khỏi thẻ input
-			$('#name').removeClass('error_field');
-			$('#phone').removeClass('error_field');
-			$('#address').removeClass('error_field');
-
-			// đặt giá trị trong ô thông báo lỗi về ''
-			$('#rcvNameErr').text('');
-			$('#rcvPhoneErr').text('');
-			$('#rcvAddErr').text('');
-
-			// lấy giá trị
-			let name    = $('#name').val().trim();
-			let phone   = $('#phone').val().trim();
-			let address = $('#address').val().trim();
-
-
-			// validate name
-			if(name == '') {
-				$('#rcvNameErr').text('Name is required');
-				$('#name').addClass('error_field');
-				test = false;
-			} else if(!isName(name)) {
-				$('#rcvNameErr').text('Name is wrong');
-				$('#name').addClass('error_field');
-				test = false;
-			}
-
-			// validate phone
-			if(phone == '') {
-				$('#rcvPhoneErr').text('Phone is required');
-				$('#phone').addClass('error_field');
-				test = false;
-			} else if(!isPhone(phone)) {
-				$('#rcvPhoneErr').text('Phone is wrong');
-				$('#phone').addClass('error_field');
-				test = false;
-			}
-
-			// validate address
-			if(address == '') {
-				$('#rcvAddErr').text('Address is required');
-				$('#address').addClass('error_field');
-				test = false;
-			}
-
-			if(!test) {
-				$('.error_field').first().focus();
-			} else {
-				let data = $('#form_check_out').serialize();
-				let sendAjax = sendAJax(
-					'process_check_out.php',
-					'post',
-					'text',
-					data
-				);
-				alert(sendAjax);
-			}
-
-		});
+		
 	});
 </script>

@@ -1,6 +1,17 @@
 <?php 
 include_once 'common.php';
-include_once 'include/header.php';
+$test = false;
+echo data_input(false);
+// $updateRateSQL = "UPDATE db_rate 
+// SET r_content = ?, r_star = ?
+// WHERE cus_id = ? AND pro_id = ?
+// ";
+// $rateContent = "ok"; 
+// $rateValue = "3"; 
+// $cusID = 20;
+// $proID = 6;
+
+// $runSQL = db_run($updateRateSQL, [$rateContent, $rateValue, $cusID, $proID], "siii");
 	// db_connect();
 	// $kq = get_list("select * from db_category");
 	// var_dump($kq);
@@ -181,16 +192,6 @@ $(function() {
 		});
 		
 	});
-</script> -->
-<?php if(isset($_POST['test'])) {
-	vd($_POST['test']);
-} ?>
-<form action="" method='post'>
-	<textarea name="test" id="" cols="30" rows="10">
-	</textarea>
-	<script>
-		CKEDITOR.replace('test');
-	</script>
-	<button type="submit">send</button>
-</form>
+*/
+
 

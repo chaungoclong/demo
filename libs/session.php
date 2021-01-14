@@ -76,7 +76,7 @@
 		}
 
 		$sql = "SELECT * FROM {$fromTable} WHERE $field = ?";
-		$data = s_row($sql, [$id]);
+		$data = s_row($sql, [$id], "i");
 		
 		return $data;
 	}

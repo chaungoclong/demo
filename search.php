@@ -11,7 +11,7 @@ $keyWord = "%" . $q . "%";
 $getResultSQL = "SELECT * FROM db_product WHERE pro_active = 1  AND pro_name LIKE(?)";
 
 //số lượng bản ghi
-$listRecord = db_get($getResultSQL, [$keyWord], 1);
+$listRecord = db_get($getResultSQL, 1, [$keyWord], "s");
 $numRecord = $listRecord->num_rows;
 
 //phân trang

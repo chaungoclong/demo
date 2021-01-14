@@ -19,7 +19,7 @@
 			VALUES(?, ?, ?, ?)
 			";
 
-			$runSQL = db_run($addRateSQL, $cusID, $proID, $rateContent, $rateValue);
+			$runSQL = db_run($addRateSQL, [$cusID, $proID, $rateContent, $rateValue], "iisi");
 			if($runSQL) {
 				$status = 1;
 				$msg    = "THÊM ĐÁNH GIÁ THÀNH CÔNG";
@@ -52,7 +52,7 @@
 			WHERE cus_id = ? AND pro_id = ?
 			";
 
-			$runSQL = db_run($updateRateSQL, $rateContent, $rateValue, $cusID, $proID);
+			$runSQL = db_run($updateRateSQL, [$rateContent, $rateValue, $cusID, $proID], "siii");
 			if($runSQL) {
 				$status = 1;
 				$msg    = "CẬP NHẬT SẢN PHẨM THÀNH CÔNG";
@@ -93,7 +93,7 @@
 		WHERE pro_id = ?
 		ORDER BY db_rate.r_update_at DESC";
 
-		$result = db_get($fetchRateSQL, [$proID]);
+		$result = db_get($fetchRateSQL, 0, [$proID], "i");
 
 		if (!empty($result)) {
 
@@ -130,7 +130,7 @@
 						</div>
 
 						<div class="col-11">
-							<h6 class="rate_name">chaungoclong</h6>
+							<h6 class="rate_name">' .$rate['cus_name']. '</h6>
 
 							<!-- số sao đánh giá + ngày đánh giá -->
 							<div class="star_rate_date d-flex mb-2">

@@ -453,3 +453,28 @@ select.quantity  {
     color:yellow !important;
     background: red !important;
 }
+
+/*checkout*/
+.pro_check_out {
+    font-size: 13px;
+}
+
+.pro_check_out tr {
+    padding-top: 1px;
+}
+
+.pro_check_name {
+    margin: 0;
+    font-size: 13px; 
+    max-width: 200px;
+    overflow: hidden !important;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.icon_cart_check span {
+    top: -10px;
+    right: -10px;
+    text-align: center;
+}
+                                            

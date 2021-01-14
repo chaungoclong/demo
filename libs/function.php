@@ -220,7 +220,7 @@ function read_date($time) {
 	function data_input($value){
 		db_connect();
 		global $connect;
-		$value = htmlspecialchars(stripcslashes(trim($value)));
+		$value = htmlspecialchars(stripslashes(trim($value)));
 		$value = $connect->real_escape_string($value);
 		return $value;
 	}
@@ -256,17 +256,17 @@ function read_date($time) {
 
 	function emailExist($table, $fieldName, $email) {
 		$sql = "select {$fieldName} from {$table} where {$fieldName} = ?";
-		return db_get($sql, [$email], 2);
+		return db_get($sql, 2, [$email], "s");
 	}
 
 	function phoneExist($table, $fieldName, $phone) {
 		$sql = "select {$fieldName} from {$table} where {$fieldName} = ?";
-		return db_get($sql, [$phone], 2);
+		return db_get($sql, 2, [$phone], "s");
 	}
 
 	function userExist($table, $fieldName, $user) {
 		$sql = "select {$fieldName} from {$table} where {$fieldName} = ?";
-		return db_get($sql, [$user], 2);
+		return db_get($sql, 2, [$user], "s");
 	}
 
 	function vd($value) {
@@ -279,7 +279,7 @@ function read_date($time) {
 		WHERE db_order.cus_id = ? AND db_order.or_status = 5 AND db_order_detail.pro_id = ?
 		";
 
-		$result = s_row($sql, [$cusID, $proID]);
+		$result = s_row($sql, [$cusID, $proID], "ii");
 
 		return $result;
 	}
@@ -289,7 +289,13 @@ function read_date($time) {
 		WHERE cus_id = ? AND pro_id = ?
 		";
 
-		$result = db_get($sql, [$cusID, $proID], 2);
+		$result = db_get($sql, 2, [$cusID, $proID], "ii");
 
+		return $result;
+	}
+
+	function getProductById($id) {
+		$getProSQL = "SELECT * FROM db_product WHERE pro_id = ?";
+		$result = s_row($getProSQL, [$id], "i");
 		return $result;
 	}

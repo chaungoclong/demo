@@ -94,7 +94,7 @@ if(isset($_POST)) {
 					";
 
 					//thông tín sản phẩm có id = $pro_id
-					$product = s_row($getOneProSQL, [$pro_id]);
+					$product = s_row($getOneProSQL, [$pro_id], "i");
 
 					//giới hạn số lượng sản phẩm được chọn
 					$limit = $proLimit > $product['pro_qty'] ? $product['pro_qty'] : $proLimit;

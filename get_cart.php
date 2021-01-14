@@ -20,7 +20,7 @@ if(!is_login()) {
 		$getOneProSQL = "SELECT pro_qty FROM db_product
 		WHERE pro_id  = ?
 		";
-		$product = s_cell($getOneProSQL, [$proID]);
+		$product = s_cell($getOneProSQL, [$proID], "i");
 		echo $product;
 	}
 }
