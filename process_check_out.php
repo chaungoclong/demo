@@ -47,18 +47,25 @@
 
 					$product = getProductById($pro_id);
 
+					// thêm sản phẩm vào hóa đơn chi tiết
 					$addOrderDetailSQL = "INSERT INTO db_order_detail(or_id, pro_id, amount, price) 
 					VALUES(?, ?, ?, ?) 
 					";
-
 					db_run($addOrderDetailSQL, [$orderID, $pro_id, $qty, $product['pro_price']], "iiii");
 
+					// cập nhật só lượng sản phẩm trong bảng sản phẩm
 					$updateProQtySQL = "UPDATE db_product SET pro_qty = pro_qty - ? WHERE pro_id = ?";
 					db_run($updateProQtySQL, [$qty, $pro_id], "ii");
 
 				}
+
+				// đặt hàng thành công
+				delete_session('cart');
+				echo 5;
 			} else {
-				echo 3;
+
+				// đặt hàng thất bại
+				echo 6;
 			}
 		}
 	}

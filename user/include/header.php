@@ -4,21 +4,21 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title></title>
-  <link rel="stylesheet" href="dist/bootstrap/css/bootstrap.css">
-  <link rel="stylesheet" href="assets/font/css/all.css">
-  <link rel="stylesheet" href="assets/css/home.css">
-  <link rel="stylesheet" href="assets/css/login_register.css">
-  <link rel="stylesheet" href="dist/jquery/jquery-ui.min.css">
-  <script src="dist/jquery/jquery-3.5.1.js"></script>
-  <script src="dist/jquery/jquery-ui.min.js"></script>
-  <script src="assets/js/common.js"></script>
-  <script src="assets/js/valid.js"></script>
-  <script src="assets/js/login_register.js"></script>
-  <script src="assets/js/cart.js"></script>
-  <script src="assets/js/rate.js"></script>
-  <script src="dist/popper/popper.min.js"></script>
-  <script src="dist/bootstrap/js/bootstrap.js"></script>
-  <script src="dist/ckeditor/ckeditor.js"></script>
+  <link rel="stylesheet" href="../dist/bootstrap/css/bootstrap.css">
+  <link rel="stylesheet" href="../assets/font/css/all.css">
+  <link rel="stylesheet" href="../assets/css/home.css">
+  <link rel="stylesheet" href="../assets/css/login_register.css">
+  <link rel="stylesheet" href="../dist/jquery/jquery-ui.min.css">
+  <script src="../dist/jquery/jquery-3.5.1.js"></script>
+  <script src="../dist/jquery/jquery-ui.min.js"></script>
+  <script src="../assets/js/common.js"></script>
+  <script src="../assets/js/valid.js"></script>
+  <script src="../assets/js/login_register.js"></script>
+  <script src="../assets/js/cart.js"></script>
+  <script src="../assets/js/rate.js"></script>
+  <script src="../dist/popper/popper.min.js"></script>
+  <script src="../dist/bootstrap/js/bootstrap.js"></script>
+  <script src="../dist/ckeditor/ckeditor.js"></script>
 </head>
 <body>
   <!-- header -->
@@ -44,7 +44,7 @@
           <!-- search box -->
           <div id="headerSearch" class="col-4 d-flex align-items-center p-0">
             <!-- form search -->
-            <form id="formSearch" action="search.php" method="GET" class="form-inline d-flex">
+            <form id="formSearch" action="<?= base_url('search.php'); ?>" method="GET" class="form-inline d-flex">
               <input id="boxSearch" type="search" name="q" placeholder="tìm kiếm..." class="form-control"
               value="<?= isset($_GET['q'] ) ? $_GET['q'] : ''; ?>" autocomplete = "off"
               >
@@ -78,7 +78,7 @@
                  ?>
 
                   <a href="<?= base_url('user/account.php'); ?>" class="nav-link dropdown-toggle">
-                    <span><img src="image/<?= $info['cus_avatar']; ?>" alt="" style="width: 30px;  height: 30px; border-radius: 50%;"></span>
+                    <span><img src="../image/<?= $info['cus_avatar']; ?>" alt="" style="width: 30px;  height: 30px; border-radius: 50%;"></span>
                     <span>
                       <?= $info['cus_name'];?>
                     </span>
@@ -154,8 +154,9 @@
      $(document).on("input", "#boxSearch", function() {
         let data = $(this).val();
         let keyWord = $(this).serialize();
+        let link = "<?php echo base_url("search_live.php"); ?>";
         if (data) {
-            let result = sendAJax("search_live.php", "get", "html", keyWord);
+            let result = sendAJax(link, "get", "html", keyWord);
             $("#ajaxSearch").html(result);
         } else {
             $("#ajaxSearch").html("");

@@ -1,7 +1,13 @@
 <?php 
 include_once 'common.php';
 $test = false;
-echo data_input(false);
+vd($_SESSION['cart']);
+if(checkOutOK()) {
+	echo 1;
+} else {
+	echo 0;
+}
+
 // $updateRateSQL = "UPDATE db_rate 
 // SET r_content = ?, r_star = ?
 // WHERE cus_id = ? AND pro_id = ?

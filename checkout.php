@@ -16,25 +16,28 @@ require_once 'include/navbar.php';
 						<h5>THÔNG TIN THANH TOÁN</h5>
 					</div>
 					<div class="card-body">
+						<?php 
+							$customer = getUserById($_SESSION['user_token']['id']);
+						 ?>
 						<form action="" id="form_check_out">
 							<div class="form-group">
 								<label for="name">
 									<span><i class="fas fa-user"></i></span>
 									 Tên người nhận
 								</label>
-								<input type="text" class="form-control" id="name" name="name">
+								<input type="text" class="form-control" id="name" name="name" value="<?= $customer['cus_name']; ?>">
 								<div class="alert-danger" id="rcvNameErr"></div>
 							</div>
 
 							<div class="form-group">
 								<label for="phone"><span><i class="fas fa-phone-alt"></i></span> Số điện thoại người nhận</label>
-								<input type="text" class="form-control" id="phone" name="phone">
+								<input type="text" class="form-control" id="phone" name="phone" value="<?= $customer['cus_phone']; ?>">
 								<div class="alert-danger" id="rcvPhoneErr"></div>
 							</div>
 
 							<div class="form-group">
 								<label for="address"><span><i class="fas fa-id-card"></i></span> Địa chỉ người nhận</label>
-								<input type="text" class="form-control" id="address" name="address">
+								<input type="text" class="form-control" id="address" name="address" value="<?= $customer['cus_address']; ?>">
 								<div class="alert-danger" id="rcvAddErr"></div>
 							</div>
 
@@ -74,10 +77,14 @@ require_once 'include/navbar.php';
 
 									<!-- lấy sản phẩm -->
 									<?php
-									$getOneProSQL = "SELECT * FROM db_product
-									WHERE pro_id  = ?
-									";
-									$product = s_row($getOneProSQL, [$pro_id], "i");
+										$product = getProductById($pro_id);
+
+										// nếu số lượng sản phẩm hiện tại = 0 || < só lượng sản phẩm trong giỏ
+										// xóa sản phẩm đó khỏi giỏ hàng -> lần lặp mới
+										if($product['pro_qty'] == 0 || $product['pro_qty'] < $qty) {
+											unset($_SESSION['cart'][$pro_id]);
+											continue;
+										}
 									?>
 
 									<!-- in sản phẩm -->
@@ -130,7 +137,10 @@ require_once 'include/navbar.php';
 					</table>
 				</div>
 				<div class="card-footer">
-					<button class="btn btn-block btn-success" id="btn_order">ĐẶT HÀNG</button>
+					<button class="btn btn-block btn-success" id="btn_order" 
+					<?= empty($_SESSION['cart']) ? "disabled" : ""; ?>>
+						ĐẶT HÀNG
+					</button>
 				</div>
 			</div>
 			<!-- /column -->
@@ -195,14 +205,51 @@ require_once 'include/navbar.php';
 			if(!test) {
 				$('.error_field').first().focus();
 			} else {
-				let data = $('#form_check_out').serialize();
-				let sendAjax = sendAJax(
-					'process_check_out.php',
+
+				// nếu thông tin không sai kiểm tra có được đặt hàng(số lượng sản phẩm có đủ)
+				let checkOutOK = sendAJax(
+					'get_cart.php',
 					'post',
 					'text',
-					data
+					{action:"check_out"}
 				);
-				alert(sendAjax);
+				console.log(checkOutOK);
+
+				// ok -> đặt hàng + bật nút đặt hàng
+				if(checkOutOK == '1') {
+					$('#btn_order').prop('disabled', false);
+
+					let data = $('#form_check_out').serialize();
+					let sendAjax = sendAJax(
+						'process_check_out.php',
+						'post',
+						'text',
+						data
+					);
+
+					switch(sendAjax) {
+						case '1':
+							alert("THIẾU THÔNG TIN");
+							break;
+						case '2':
+							alert("THÔNG TIN SAI");
+							break;
+						case '5':
+							alert("ĐẶT HÀNG THÀNH CÔNG");
+							window.location = "order_success.php";
+							break;
+						case '6':
+							alert("ĐẶT HÀNG THẤT BẠI. VUI LÒNG THỬ LẠI");
+							break;
+					}
+				} else {
+
+					// no -> hiển thị thông báo lỗi
+					alert("CÓ SẢN PHẨM TRONG GIỎ ĐÃ HẾT HÀNG HOẶC SỐ LƯỢNG TỒN KHO KHÔNG ĐỦ");
+					$('#btn_order').prop('disabled', true);
+					window.location = "view_cart.php";
+				}
+				
 			}
 
 		});

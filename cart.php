@@ -71,10 +71,10 @@ if(isset($_POST)) {
 		if(isset($action) && $action === "count_one" && !empty($proID)) {
 			echo $_SESSION['cart'][$proID];
 		}
-		//ĐẾM SỐ SẢN PHẨM
-		foreach ($_SESSION['cart'] as $pro_id => $qty) {
-			$totalItem += $qty;
-		}
+		// //ĐẾM SỐ SẢN PHẨM
+		// foreach ($_SESSION['cart'] as $pro_id => $qty) {
+		// 	$totalItem += $qty;
+		// }
 		// start table
 		$html .= "
 		<table class='cart_table table table-hover table-borderless'>
@@ -89,15 +89,26 @@ if(isset($_POST)) {
 			";
 			if(!empty($_SESSION['cart'])) {
 				foreach ($_SESSION['cart'] as $pro_id => $qty) {
-					$getOneProSQL = "SELECT * FROM db_product
-					WHERE pro_id = ?
-					";
-
-					//thông tín sản phẩm có id = $pro_id
-					$product = s_row($getOneProSQL, [$pro_id], "i");
+		
+					//thông tin sản phẩm có id = $pro_id
+					$product = getProductById($pro_id);
 
 					//giới hạn số lượng sản phẩm được chọn
 					$limit = $proLimit > $product['pro_qty'] ? $product['pro_qty'] : $proLimit;
+
+					//nếu giới hạn == 0(số lượng sản phẩm == 0): 
+					//xóa sản phẩm khỏi giỏ hàng -> tiếp tục lần lặp mới
+					if($limit == 0) {
+						unset($_SESSION['cart'][$pro_id]);
+						continue;
+					}
+
+					//nếu số lượng sản phẩm trong giỏ hàng > số lượng sản phẩm hiện tại:
+					//đặt số lượng sản phẩm trong giỏ hàng = số lượng sản phẩm hiện tại
+					if($limit < $qty) {
+						$qty = $limit;
+						$_SESSION['cart'][$pro_id] = $qty;
+					}
 
 					//danh sách lựa chọn 
 					$option = "";
@@ -167,25 +178,39 @@ if(isset($_POST)) {
 					</tr>
 					";
 					$totalMoney += $product['pro_price'] * $qty;
+					$totalItem += $qty;
 				}
-				$html .= "
-				<tr class='all_total'>
-					<td colspan='5' class='text-right'><strong>TỔNG SẢN PHẨM:</strong></td>
-					<td id='totalItem'>"
-						. $totalItem
-						. " sản phẩm
-					</td>
-					<td></td>
-				</tr>
-				<tr class='all_total'>
-					<td colspan='5' class='text-right'><strong>TỔNG TIỀN:</strong></td>
-					<td>"
-						. number_format($totalMoney, 0, ',', '.')
-						. " <span class='unit'>&#8363;</span>
-					</td>
-					<td></td>
-				</tr>
-				";
+
+				//số lượng sản phẩm trong giỏ hàng > 0 ?
+				//in thông tin : in giỏ hàng trống
+				if($totalItem > 0) {
+					$html .= "
+					<tr class='all_total'>
+						<td colspan='5' class='text-right'><strong>TỔNG SẢN PHẨM:</strong></td>
+						<td id='totalItem'>"
+							. $totalItem
+							. " sản phẩm
+						</td>
+						<td></td>
+					</tr>
+					<tr class='all_total'>
+						<td colspan='5' class='text-right'><strong>TỔNG TIỀN:</strong></td>
+						<td>"
+							. number_format($totalMoney, 0, ',', '.')
+							. " <span class='unit'>&#8363;</span>
+						</td>
+						<td></td>
+					</tr>
+					";
+				} else {
+					$html .= "
+					<tr>
+						<td class='text-center' colspan='7'>
+							<h5>GIỎ HÀNG TRỐNG</h5>
+						</td>
+					</tr>
+					";
+				}
 			} else {
 				$html .= "
 				<tr>

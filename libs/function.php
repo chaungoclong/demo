@@ -225,58 +225,69 @@ function read_date($time) {
 		return $value;
 	}
 
+	// hàm kiểm tra email
 	function check_email($string) {
 		$pattern = '/^[a-z][a-z0-9_\.]{5,32}@[a-z0-9]{2,}(\.[a-z0-9]{2,4}){1,2}$/';
 		return preg_match($pattern, $string);
 	}
 
+	// hàm kiểm tra ngày tháng
 	function check_date($string) {
 		$pattern = '/^[12]\d{3}-(0[1-9]|1[12])-(0[1-9]|[12]\d|3[01])$/';
 		return preg_match($pattern, $string);
 	}
 
+	// hàm định dạng ngày (d-m-y => y-m-d)
 	function formatDate($string) {
 		return implode('-', array_reverse(explode('-', $string)));
 	}
 
+	// hàm kiểm tra tên
 	function check_name($string) {
 		$pattern = '/^([a-zA-Z]{1,10}\s?)+$/';
 		return preg_match($pattern, $string);
 	}
 
+	// hàm kiểm tra mật khẩu
 	function check_password($string) {
 		$pattern = '/^[a-zA-Z0-9+-\@\*\#]{8,32}$/';
 		return preg_match($pattern, $string);
 	}
 
+	// hàm kiểm tra số điện thoại
 	function check_phone($string) {
 		$pattern = '/^(84|0[3|5|7|8|9])+([0-9]{8})$/';
 		return preg_match($pattern, $string);
 	}
 
+	// hàm kiểm tra email đã tồn tại
 	function emailExist($table, $fieldName, $email) {
 		$sql = "select {$fieldName} from {$table} where {$fieldName} = ?";
 		return db_get($sql, 2, [$email], "s");
 	}
 
+	// hàm kiểm tra số điện thoại đã tồn tại
 	function phoneExist($table, $fieldName, $phone) {
 		$sql = "select {$fieldName} from {$table} where {$fieldName} = ?";
 		return db_get($sql, 2, [$phone], "s");
 	}
 
+	// hàm kiểm tra người dùng đã tồn tại
 	function userExist($table, $fieldName, $user) {
 		$sql = "select {$fieldName} from {$table} where {$fieldName} = ?";
 		return db_get($sql, 2, [$user], "s");
 	}
 
+	// hàm in dữ liệu để debug dễ nhìn
 	function vd($value) {
 		echo "<pre>" . print_r($value, true) . "</pre>";
 	}
 
+	// hàm kiểm tra khách hàng đã mua một sản phẩm
 	function checkCustomerBought($cusID, $proID) {
 		$sql = "SELECT db_order.cus_id FROM db_order JOIN db_order_detail
 		ON db_order.or_id = db_order_detail.or_id
-		WHERE db_order.cus_id = ? AND db_order.or_status = 5 AND db_order_detail.pro_id = ?
+		WHERE db_order.cus_id = ? AND db_order.or_status = 4 AND db_order_detail.pro_id = ?
 		";
 
 		$result = s_row($sql, [$cusID, $proID], "ii");
@@ -284,6 +295,7 @@ function read_date($time) {
 		return $result;
 	}
 
+	// hàm kiểm tra đánh giá đã tồn tại
 	function checkRateExist($cusID, $proID) {
 		$sql = "SELECT cus_id, pro_id FROM db_rate
 		WHERE cus_id = ? AND pro_id = ?
@@ -294,8 +306,29 @@ function read_date($time) {
 		return $result;
 	}
 
+	// hàm lấy một sản phẩm theo id
 	function getProductById($id) {
 		$getProSQL = "SELECT * FROM db_product WHERE pro_id = ?";
 		$result = s_row($getProSQL, [$id], "i");
 		return $result;
+	}
+
+
+	// hàm kiểm tra được chuyển sang trang checkout hay không
+	// nếu số lượng hiện tại của sản phẩm = 0 || hoặc nhỏ hơn số lượng của sản phẩm
+	// trong giỏ hàng => không được chuyển và ngược lại
+	function checkOutOK() {
+		if(!empty($_SESSION['cart'])) {
+			foreach ($_SESSION['cart'] as $pro_id => $qty) {
+				$product = getProductById($pro_id);
+
+				$proQty = $product['pro_qty'];
+
+				if($proQty == 0 || $proQty < $qty) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
 	}

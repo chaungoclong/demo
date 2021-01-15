@@ -23,5 +23,14 @@ if(!is_login()) {
 		$product = s_cell($getOneProSQL, [$proID], "i");
 		echo $product;
 	}
+
+	if(isset($action) && $action === "check_out") {
+		$result = checkOutOK();
+		if($result) {
+			echo 1;
+		} else {
+			echo 0;
+		}
+	}
 }
 ?>

@@ -1,11 +1,11 @@
 $(function() {
     //thay đổi ảnh
-    $('.small_img').on('click', function() {
+    $(document).on('click', '.small_img', function() {
         $('.big_img').attr("src", $(this).attr("src"));
     });
 
     //giảm số lượng
-    $('.minus').on('click', function() {
+    $(document).on('click', '.minus', function() {
         let input = $(this).parent().find('input');
 
         let value = parseInt(input.val());
@@ -17,7 +17,7 @@ $(function() {
     });
 
     //tăng số lượng
-    $('.plus').on('click', function() {
+    $(document).on('click', '.plus', function() {
         let input = $(this).parent().find('input');
         let value = parseInt(input.val());
         if (isNaN(value)) {
@@ -46,7 +46,7 @@ $(function() {
     });
 
     //thêm sản phẩm ở các trang khác trang chi tiết sản phẩm
-    $('.btn_add_cart_out').on('click', function() {
+    $(document).on('click', '.btn_add_cart_out', function() {
         let proID = $(this).data('pro-id');
         let quantity = 1;
         let action = "add";
@@ -57,8 +57,7 @@ $(function() {
             sendAJax(
                 'get_cart.php',
                 'post',
-                'text',
-                { proid: proID, action: "pro_qty" }
+                'text', { proid: proID, action: "pro_qty" }
             )
         );
 
@@ -67,8 +66,7 @@ $(function() {
             sendAJax(
                 'get_cart.php',
                 'post',
-                'text',
-                { proid: proID, action: "pro_cart_qty" }
+                'text', { proid: proID, action: "pro_cart_qty" }
             )
         );
 
@@ -102,7 +100,30 @@ $(function() {
             });
         }
 
-
     });
 
 });
+
+function fetch_cart() {
+    let content = sendAJax(
+        'cart.php',
+        'post',
+        'json'
+    );
+
+    if (content.notice != "") {
+        alert(content.notice);
+    }
+    console.log('ok:');
+    console.log(content.totalItem);
+    $('#shopping-cart .card-body').html(content.html);
+    if (content.totalItem > 0) {
+        $('#shoppingCartIndex').text(content.totalItem);
+        $('#modal_cart').show().find('.badge').text(content.totalItem);
+        $('.btn_check_out').show();
+    } else {
+        $('#shoppingCartIndex').text(0);
+        $('#modal_cart').hide();
+        $('.btn_check_out').hide();
+    }
+}

@@ -29,13 +29,29 @@ require_once 'include/navbar.php';
 						 */
 					 -->
 					<?php if (!empty($_SESSION['cart'])): ?>
-						<?php $total = 0; ?>
+						<?php 
+							$total = 0; 
+							$totalItem = 0;
+						?>
 						<?php foreach ($_SESSION['cart'] as $pro_id => $qty): ?>
 							<?php
-							$getOneProSQL = "SELECT * FROM db_product
-							WHERE pro_id  = ?
-							";
-							$product = s_row($getOneProSQL, [$pro_id]);
+								$getOneProSQL = "SELECT * FROM db_product
+								WHERE pro_id  = ?
+								";
+								$product = s_row($getOneProSQL, [$pro_id]);
+
+								$limit = 10;
+								$limit = ($limit > $product['pro_qty']) ? $product['pro_qty'] : $limit;
+
+								if($limit == 0) {
+									unset($_SESSION['cart'][$pro_id]);
+									continue;
+								}
+
+								if($limit < $qty) {
+									$qty = $limit;
+									$_SESSION['cart'][$pro_id] = $qty;
+								}
 							?>
 							<tr class="cart_table_body">
 								<td><?= $product['pro_id']; ?></td>
@@ -84,8 +100,6 @@ require_once 'include/navbar.php';
 									 * =>selected option đó
 									 * 
 									 */
-									$limit = 10;
-									$limit = ($limit > $product['pro_qty']) ? $product['pro_qty'] : $limit;
 									for ($i = 1; $i <= $limit ; $i++) { 
 										if($i == $qty) {
 											echo "	 
@@ -111,12 +125,17 @@ require_once 'include/navbar.php';
 							</button>
 						</td>
 					</tr>
-					<?php $total += $product['pro_price'] * $qty; ?>
+					<?php 
+						$total     += $product['pro_price'] * $qty;
+						$totalItem += $qty;
+					?>
 				<?php endforeach ?>
 
 				<tr class="all_total">
 					<td colspan="5" class="text-right"><strong>TỔNG SỐ LƯỢNG:</strong></td>
-					<td id="totalItem"></td>
+					<td id="totalItem">
+						
+					</td>
 					<td></td>
 				</tr>
 				<tr class="all_total">
@@ -142,7 +161,7 @@ require_once 'include/navbar.php';
 				<strong>MUA THÊM</strong>
 			</a>
 			<?php if (!empty($_SESSION['cart'])): ?>
-				<a class="btn_check_out btn btn-warning" href="<?= base_url('checkout.php') ?>">
+				<a class="btn_check_out btn btn-warning">
 					<strong>CHECK OUT</strong>
 				</a>
 			<?php endif ?>
@@ -155,13 +174,31 @@ require_once 'include/navbar.php';
 		 * -> cập nhật giá trị hiển thị trên icon giỏ hàng
 		 */
 		$(function() {
+			 fetch_cart();
+
 			/**
 			 * giá trị hàng tổng số lượng  trong bảng giỏ hàng lấy từ chỉ số của
 			 * giỏ hàng trên thanh menu:
 			 * vì chỉ số của giỏ hàng trên thanh menu thay đổi ngay lập tức khi giỏ hàng
 			 * có sự thay đổi
 			 */
-			$('#totalItem').text($('#shoppingCartIndex').text() + "sản phẩm");
+			$('#totalItem').text($('#shoppingCartIndex').text() + " sản phẩm");
+
+			$(document).on('click', '.btn_check_out', function() {
+				let checkOutOK = sendAJax(
+					'get_cart.php',
+					'post',
+					'text',
+					{action:"check_out"}
+				);
+				if(checkOutOK == '1') {
+					window.location = "checkout.php";
+				} else {
+					alert("CÓ SẢN PHẨM TRONG GIỎ ĐÃ HẾT HÀNG HOẶC SỐ LƯỢNG TỒN KHO KHÔNG ĐỦ");
+					fetch_cart();
+				}
+			});
+
 			//thay đổi số lượng sản phẩm
 			$(document).on('change', '.quantity', function(e) {
 				let proID = $(this).data('pro-id');
@@ -177,6 +214,9 @@ require_once 'include/navbar.php';
 					});
 						//thành công
 						change_qty.done(function(res) {
+							if(res.notice != "") {
+								alert(res.notice);
+							}
 							$('#shopping-cart .card-body').html(res.html);
 							if(res.totalItem > 0) {
 								$('#shoppingCartIndex').text(res.totalItem);

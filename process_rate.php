@@ -13,7 +13,7 @@
 		$checkBought = checkCustomerBought($cusID, $proID);
 		if(!$checkBought) {
 			$status = 0;
-			$msg = "BẠN CHƯA MUA SẢN PHẨM NÀY";
+			$msg    = "BẠN CHƯA MUA SẢN PHẨM NÀY";
 		} else {
 			$addRateSQL = "INSERT INTO db_rate(cus_id, pro_id, r_content, r_star)
 			VALUES(?, ?, ?, ?)
@@ -34,8 +34,8 @@
 
 	//CẬP NHẬT ĐÁNH GIÁ
 	if(isset($_POST) && $_POST['action'] == "update_rate") {
-		$status = 1;
-		$msg = "";
+		$status      = 1;
+		$msg         = "";
 		$cusID       = data_input(input_post('cusID'));
 		$proID       = data_input(input_post('proID'));
 		$rateContent = data_input(input_post('rateContent'));
@@ -45,7 +45,7 @@
 		$checkBought = checkCustomerBought($cusID, $proID);
 		if(!$checkBought) {
 			$status = 0;
-			$msg = "BẠN CHƯA MUA SẢN PHẨM NÀY";
+			$msg    = "BẠN CHƯA MUA SẢN PHẨM NÀY";
 		} else {
 			$updateRateSQL = "UPDATE db_rate 
 			SET r_content = ?, r_star = ?
@@ -55,10 +55,10 @@
 			$runSQL = db_run($updateRateSQL, [$rateContent, $rateValue, $cusID, $proID], "siii");
 			if($runSQL) {
 				$status = 1;
-				$msg    = "CẬP NHẬT SẢN PHẨM THÀNH CÔNG";
+				$msg    = "CẬP NHẬT ĐÁNH GIÁ THÀNH CÔNG";
 			} else {
 				$status = 0;
-				$msg    = "CẬP NHẬT SẢN PHẨM KHÔNG THÀNH CÔNG";
+				$msg    = "CẬP NHẬT ĐÁNH GIÁ KHÔNG THÀNH CÔNG";
 			}
 		}
 		echo json_encode(['status'=>$status, 'msg'=>$msg ]);
@@ -67,9 +67,9 @@
 
 	// KIỂM TRA ĐÁNH GIÁ CỦA NGƯỜI DÙNG CUSID VỀ SẢN PHẨM PROID ĐÃ TỒN TẠI HAY CHƯA
 	if(isset($_POST) && $_POST['action'] == "rate_exist") {
-		$cusID       = data_input(input_post('cusID'));
-		$proID       = data_input(input_post('proID'));
-
+		$cusID          = data_input(input_post('cusID'));
+		$proID          = data_input(input_post('proID'));
+		
 		$checkRateExist = checkRateExist($cusID, $proID);
 		if($checkRateExist) {
 			echo 1;
