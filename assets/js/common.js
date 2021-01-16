@@ -56,7 +56,7 @@ function showImg(input, storeImg, mode = 0, storeNameImg = "") {
             var name = input.files[i].name;
             var img = $('<img >');
             if (mode) {
-                img.attr('src', url).css("border-radius", "5px").addClass("w-25");
+                img.attr('src', url).css("border-radius", "5px").addClass("w-25 img-thumbnail");
             } else {
                 img.attr('src', url).addClass("w-100 h-100");
             }
@@ -64,7 +64,7 @@ function showImg(input, storeImg, mode = 0, storeNameImg = "") {
                 $(storeNameImg).text(name);
             }
 
-            $(storeImg).append(img);
+            $(storeImg).empty().append(img);
         }
 
         //trả kết quả của từng phần tử file dưới dạng url

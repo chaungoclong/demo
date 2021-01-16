@@ -77,14 +77,14 @@
                   $info = getUserById($id);
                  ?>
 
-                  <a href="<?= base_url('user/account.php'); ?>" class="nav-link dropdown-toggle">
+                  <a href="<?= base_url('user/profile.php'); ?>" class="nav-link dropdown-toggle">
                     <span><img src="image/<?= $info['cus_avatar']; ?>" alt="" style="width: 30px;  height: 30px; border-radius: 50%;"></span>
                     <span>
                       <?= $info['cus_name'];?>
                     </span>
                   </a>
                   <div class="dropdown-menu">
-                    <a href="<?= base_url('user/account.php'); ?>" class="dropdown-item">Tài khoản của tôi</a>
+                    <a href="<?= base_url('user/profile.php'); ?>" class="dropdown-item">Tài khoản của tôi</a>
                     <a href="<?= base_url('user/purchase.php'); ?>" class="dropdown-item">Quản lý đon hàng</a>
                     <a href="<?= base_url('logout.php'); ?>" class="dropdown-item">Đăng xuất</a>
                   </div>

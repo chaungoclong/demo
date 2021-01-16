@@ -235,7 +235,7 @@ require_once 'include/navbar.php';
 							alert("THÔNG TIN SAI");
 							break;
 						case '5':
-							alert("ĐẶT HÀNG THÀNH CÔNG");
+							// alert("ĐẶT HÀNG THÀNH CÔNG");
 							window.location = "order_success.php";
 							break;
 						case '6':

@@ -1,12 +1,8 @@
 <?php 
 include_once 'common.php';
-$test = false;
-vd($_SESSION['cart']);
-if(checkOutOK()) {
-	echo 1;
-} else {
-	echo 0;
-}
+$test = getOrderDetailByID(29);
+vd($test);
+
 
 // $updateRateSQL = "UPDATE db_rate 
 // SET r_content = ?, r_star = ?

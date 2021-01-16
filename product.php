@@ -53,23 +53,31 @@ if($cat) {
 		<!-- /list brand -->
 		<?php
 		$getProSQL = "SELECT * FROM db_product WHERE pro_active = 1";
+
 		//tạo câu sql lấy sản phẩm
 		$getProSQL = $cat ? $getProSQL .= " AND cat_id = '{$cat}'" : $getProSQL;
 		$getProSQL = $bra ? $getProSQL .= " AND bra_id = '{$bra}'" : $getProSQL;
+
 		//lấy số lượng sản phẩm
 		$listRecord = get_list($getProSQL, 2);
 		$numRecord  = $listRecord->num_rows;
+
 		//phân trang
 		//tạo link trang hiện tại
 		$currentLink = create_link(base_url("product.php"), ["cat"=>$cat, "bra"=>$bra, "page"=>"{page}"]);
+
 		//số sản phẩm trên trang
 		$proPerPage  = 8;
+
 		//trang hiện tại
 		$currentPage = input_get("page") ? input_get("page") : 1;
+
 		//biến chứa thông trả về từ hàm phân trang (offset, limit, html)
 		$page = paginate($currentLink, $numRecord, $currentPage, $proPerPage);
+
 		//câu SQL sau khi phân trang
 		$getProSQL   .= " LIMIT {$page['limit']} OFFSET {$page['offset']}";
+
 		//hiển thị sản phẩm sau khi phân trang
 		$listPro = get_list($getProSQL, 2);
 		$numPro  = $listPro->num_rows;
@@ -77,6 +85,7 @@ if($cat) {
 		$numRow  = row_qty($numPro, $numCol);
 		$catName = fetch_rows("db_category", "cat_id = '{$cat}'", ["*"]);
 		?>
+
 		<section class="product my-5 shadow">
 			<h2 class="text-center mb-3"><?= isset($catName["cat_name"]) ? $catName["cat_name"] : ""; ?></h2>
 			<div class="list_product_body">
@@ -92,7 +101,7 @@ if($cat) {
 								$end   = $end <= $numRecord ? $end : $numRecord;
 								echo $start . " - " . $end;
 								?>
-								)
+							)
 							</span>
 						</span>
 					</div>
@@ -101,6 +110,7 @@ if($cat) {
 						<?php $countCol = 0; ?>
 						<div class="card-group">
 							<?php while ($pro = $listPro->fetch_assoc()): ?>
+
 								<!-- ------------------------------------product ----------------------------------- -->
 								<div class="card text-center" style="max-width: 25%;">
 									<?php if ($pro['pro_qty'] == 0): ?>
@@ -133,6 +143,7 @@ if($cat) {
 									<strong><?= number_format($pro['pro_price'], 0, ',', '.'); ?> &#8363;</strong>
 								</h6>
 								<hr>
+
 								<!-- thêm vào giỏ hàng -->
 								<?php if ($pro['pro_qty']): ?>
 									<a class="btn_add_cart_out btn btn-success text-light" data-pro-id="<?= $pro['pro_id']; ?>"
@@ -141,10 +152,12 @@ if($cat) {
 										<i class="fas fa-cart-plus fa-lg"></i>
 									</a>
 								<?php endif ?>
+
 								<!-- xem chi tiết sản phẩm -->
 								<a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-primary" data-toggle="tooltip" data-placement="top" title="chi tiết sản phẩm">
 									<i class="far fa-eye fa-lg"></i>
 								</a>
+
 								<!-- danh sách yêu thích -->
 								<a href='<?= create_link(base_url("wishlist.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-danger"
 									data-toggle="tooltip" data-placement="top" title="Thêm vào danh sách yêu thích">
@@ -152,6 +165,7 @@ if($cat) {
 								</a>
 							</div>
 						</div>
+
 						<!-- ------------------------------------/product ----------------------------------- -->
 						<?php
 						$countCol++ ;
@@ -170,7 +184,7 @@ if($cat) {
 <script>
 	$(function() {
 		
-	})
+	});
 </script>
 <!-- phân trang -->
 <?php

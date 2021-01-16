@@ -332,3 +332,42 @@ function read_date($time) {
 		}
 		return false;
 	}
+
+	// hàm chuyển chuỗi về thời gian theo định dạng
+	function strToTimeFormat($string, $format) {
+		$time = strtotime($string);
+		return date($format, $time);
+	}
+
+	// hàm lấy đơn hàng theo mã người dùng
+	function getOrderByUser($userID) {
+		$getOrderSQL = "SELECT * FROM db_order JOIN db_customer
+		ON db_order.cus_id = db_customer.cus_id
+		WHERE db_order.cus_id = ?
+		ORDER BY db_order.or_create_at DESC
+		";
+		$result = db_get($getOrderSQL, 1, [$userID], "i");
+		return $result;
+	}
+
+	function getOrderByID($orderID) {
+		$getOrderSQL = "SELECT db_order.*, db_customer.cus_name FROM db_order JOIN db_customer
+		ON db_order.cus_id = db_customer.cus_id
+		WHERE db_order.or_id = ?
+		";
+		$result = s_row($getOrderSQL, [$orderID], "i");
+		return $result;
+	}
+
+	// hàm lấy đơn hàng chi tiết theo mã người dùng
+	function getOrderDetailByID($orderID) {
+		$getOrderSQL = "SELECT * FROM db_order JOIN db_order_detail
+		ON db_order.or_id = db_order_detail.or_id
+		JOIN db_product
+		ON db_order_detail.pro_id = db_product.pro_id
+		WHERE db_order.or_id = ?
+		";
+
+		$result = db_get($getOrderSQL, 1, [$orderID], "i");
+		return $result;
+	}
