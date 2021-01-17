@@ -26,7 +26,7 @@ if(isset($_POST)) {
 	//số sản phẩm tối đa được mua
 	$proLimit = 10;
 	//kiểm tra đăng nhập
-	if(!is_login()) {
+	if(!is_login() || is_admin()) {
 		$notice = "Bạn chưa đăng nhập";
 		echo json_encode([
 			'notice' => $notice

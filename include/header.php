@@ -72,7 +72,7 @@
                 </a>
               </li>
               <li id="account" class="nav-item dropdown">
-                <?php if (is_login()) {
+                <?php if (is_login() && !is_admin()) {
                   $id = $_SESSION['user_token']['id'];
                   $info = getUserById($id);
                  ?>
@@ -91,7 +91,7 @@
 
                 <?php } else { ?>
 
-                  <a href="<?= base_url('login.php'); ?>" class="nav-link dropdown-toggle">
+                  <a href="<?= base_url('login_form.php'); ?>" class="nav-link dropdown-toggle">
                     <span><i class="fas fa-user fa-lg"></i></span>
                     <span>
                       <?= "Tài khoản"; ?>

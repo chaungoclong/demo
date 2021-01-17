@@ -1,0 +1,114 @@
+:root {
+    --titleColor : #0975f5;
+}
+
+body {  
+	background: #fff;
+    font-family: Verdana,Geneva,sans-serif; 
+    font-size: 15px;
+}
+
+/*search*/
+#search_bar {
+	width: 300px;
+}
+/*notice*/
+
+.dropdown-toggle {
+	position: relative !important;
+}
+
+.dropdown-toggle .notice_index {
+	position: absolute !important;
+	top: 2px !important;
+	left: 30px;
+	padding: 2px;
+}
+.notice_box .dropdown-menu {
+	font-size: 15px;
+	left: -100% !important;
+	width: 350px !important;
+}
+
+.notice_box>a {
+	color:#fff;
+}
+
+.notice_title, .notice_item {
+	padding: 10px;
+	border-bottom: 1px solid #f2f2f2;
+}
+
+.notice_icon {
+	display: flex;
+	align-items: center;
+	width: 40px;
+	height: 40px;
+	padding-right: 10px !important;
+}
+
+.notice_content {
+	flex: 1;
+}
+
+.notice_content span {
+	font-size: 13px;
+}
+
+/*account*/
+
+.account_box .dropdown-menu {
+	font-size: 15px;
+	left: 0 !important;
+}
+
+.account_box>a {
+	color: #fff;
+}
+/*main*/
+
+.left_col {
+	width: 250px !important	;
+	top: 0;	
+	bottom: 0;
+}
+
+.sidebar {
+	padding: 0px 15px;
+}
+
+.sidebar a{
+	font-size: 14px;
+	color:#000;
+	text-decoration: none;
+}
+.logo_sidebar {
+	display: flex;
+	align-items: center;
+	height: 46px;
+	margin: 0;	
+	padding: 0px 15px;	
+}
+
+.logo_sidebar .navbar-brand {
+	font-size: 26px;
+	color: #fff;
+}
+
+.sidebar .dropdown_menu{
+	position: relative;
+	display: none;
+}
+
+.sidebar .dropdown-toggle{
+	position: relative;
+	cursor: pointer;
+}
+
+.right_col {
+	margin-left: 250px;	
+}
+
+.navtop {
+	color:#fff;
+}

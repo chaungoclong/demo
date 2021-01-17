@@ -108,9 +108,9 @@ require_once RF . '/user/include/navbar.php';
 							<th>STT</th>
 							<th>Mã sản phẩm</th>
 							<th colspan="2">Tên sản phẩm</th>
-							<th>Đơn giá</th>
-							<th>Số lượng</th>
-							<th>Thành tiền</th>
+							<th width="15%">Đơn giá</th>
+							<th width="10%">Số lượng</th>
+							<th width="15%">Thành tiền</th>
 						</tr>
 
 						<?php foreach ($orderDetail as $key => $product): ?>
@@ -156,3 +156,4 @@ require_once RF . '/user/include/navbar.php';
 <?php
 require_once RF . '/user/include/footer.php';
 ?>
+

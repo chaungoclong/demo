@@ -27,7 +27,7 @@
 	}
 
 	//hàm đăng nhập
-	function set_login($id, $email, $role = 3) {
+	function set_login($id, $email, $role = 0) {
 		start_session();
 		set_session("user_token", [
 			"id"    => $id,

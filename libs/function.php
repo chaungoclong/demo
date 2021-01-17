@@ -180,7 +180,7 @@ function read_date($time) {
 				//thêm nút trang tiếp theo
 		if($currentPage < $totalPage &&  $totalPage > 1) {
 					//thay thế {page} bằng só thứ tự trang
-			$link = str_replace("{page}", $currentPage + 1, $currentLink);
+			$link = str_replace("{page}", (int)$currentPage + 1, $currentLink);
 			$html .= '
 			<li class="page-item">
 			<a class="page-link h-100" href="' . $link . '">' 
@@ -340,13 +340,20 @@ function read_date($time) {
 	}
 
 	// hàm lấy đơn hàng theo mã người dùng
-	function getOrderByUser($userID) {
+	function getOrderByUser($userID, $limit = 0, $offset = 0) {
 		$getOrderSQL = "SELECT * FROM db_order JOIN db_customer
 		ON db_order.cus_id = db_customer.cus_id
 		WHERE db_order.cus_id = ?
 		ORDER BY db_order.or_create_at DESC
 		";
-		$result = db_get($getOrderSQL, 1, [$userID], "i");
+
+		if($limit) {
+			$getOrderSQL .= " LIMIT ? OFFSET ?";
+			$result = db_get($getOrderSQL, 1, [$userID, $limit, $offset], "iii");
+		} else {
+			$result = db_get($getOrderSQL, 1, [$userID], "i");
+		}
+
 		return $result;
 	}
 

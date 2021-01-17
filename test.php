@@ -1,8 +1,16 @@
 <?php 
 include_once 'common.php';
-$test = getOrderDetailByID(29);
-vd($test);
-
+// $test = getOrderDetailByID(29);
+// vd($test);
+//set_login(1, "abc@123.com");
+vd(get_session("user_token"));
+if(is_admin()) {
+	echo 1;
+} else {
+	echo 0;
+}
+set_logout();
+?>
 
 // $updateRateSQL = "UPDATE db_rate 
 // SET r_content = ?, r_star = ?

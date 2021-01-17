@@ -2,7 +2,7 @@
 require_once 'common.php';
 
 //nếu đã đăng nhập thì về index.php
-if(is_login()) {
+if(is_login() && !is_admin()) {
 	redirect('index.php');
 }
 require_once RF . "/include/header.php";

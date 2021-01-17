@@ -92,7 +92,7 @@
 
                 <?php } else { ?>
 
-                  <a href="<?= base_url('login.php'); ?>" class="nav-link dropdown-toggle">
+                  <a href="<?= base_url('login_form.php'); ?>" class="nav-link dropdown-toggle">
                     <span><i class="fas fa-user fa-lg"></i></span>
                     <span>
                       <?= "Tài khoản"; ?>

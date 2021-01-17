@@ -209,8 +209,7 @@ function userInfoUpdate() {
 				case 5:
 					// $('#backErr').text('Cập nhật thành công');
 					// $('#name').text(data.name);
-					//alert('CẬP NHẬT THÀNH CÔNG');
-					//location.reload();
+					alert('CẬP NHẬT THÀNH CÔNG');
 					$('[class*="acc_img"]').prop('src', "../image/" + data.avatar);
 					$('[class*="acc_name"]').text(data.name);
 
