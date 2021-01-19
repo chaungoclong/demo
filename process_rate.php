@@ -2,7 +2,7 @@
 	require_once 'common.php';
 
 	//THÊM ĐÁNH GIÁ
-	if(isset($_POST) && $_POST['action'] == "add_rate") {
+	if(isset($_POST['action']) && $_POST['action'] == "add_rate") {
 		$status = 1;
 		$msg = "";
 		$cusID       = data_input(input_post('cusID'));
@@ -33,7 +33,7 @@
 
 
 	//CẬP NHẬT ĐÁNH GIÁ
-	if(isset($_POST) && $_POST['action'] == "update_rate") {
+	if(isset($_POST['action']) && $_POST['action'] == "update_rate") {
 		$status      = 1;
 		$msg         = "";
 		$cusID       = data_input(input_post('cusID'));
@@ -66,7 +66,7 @@
 	}
 
 	// KIỂM TRA ĐÁNH GIÁ CỦA NGƯỜI DÙNG CUSID VỀ SẢN PHẨM PROID ĐÃ TỒN TẠI HAY CHƯA
-	if(isset($_POST) && $_POST['action'] == "rate_exist") {
+	if(isset($_POST['action']) && $_POST['action'] == "rate_exist") {
 		$cusID          = data_input(input_post('cusID'));
 		$proID          = data_input(input_post('proID'));
 		
@@ -79,7 +79,7 @@
 	}
 
 	// LẤY ĐÁNH GIÁ
-	if(isset($_POST) && $_POST['action'] == "fetch_rate") {
+	if(isset($_POST['action']) && $_POST['action'] == "fetch_rate") {
 		$html      = "";
 		$numRate   = 0;
 		$totalStar = 0;

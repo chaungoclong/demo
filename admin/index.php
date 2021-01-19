@@ -1,4 +1,5 @@
 <?php 
+	require_once '../common.php';
 	require_once 'include/header.php';
 
 	if(!is_login() || !is_admin()) {

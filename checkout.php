@@ -223,22 +223,23 @@ require_once 'include/navbar.php';
 					let sendAjax = sendAJax(
 						'process_check_out.php',
 						'post',
-						'text',
+						'json',
 						data
 					);
 
-					switch(sendAjax) {
-						case '1':
+					switch(sendAjax.status) {
+						case 1:
 							alert("THIẾU THÔNG TIN");
 							break;
-						case '2':
+						case 2:
 							alert("THÔNG TIN SAI");
 							break;
-						case '5':
+						case 5:
 							// alert("ĐẶT HÀNG THÀNH CÔNG");
-							window.location = "order_success.php";
+							let link = "order_success.php?orid=" + sendAjax.orID;
+							window.location = link;
 							break;
-						case '6':
+						case 6:
 							alert("ĐẶT HÀNG THẤT BẠI. VUI LÒNG THỬ LẠI");
 							break;
 					}

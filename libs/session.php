@@ -81,6 +81,28 @@
 		return $data;
 	}
 
+	// hàm lấy người dùng theo ID 2
+	function get_user_by_id($id, $type = 0) {
+		start_session();
+		db_connect();
+
+		global $connect;
+		$data = [];
+
+		if($type) {
+			$fromTable = "db_admin";
+			$field = "ad_id";
+		} else {
+			$fromTable = "db_customer";
+			$field = "cus_id";
+		}
+
+		$sql = "SELECT * FROM {$fromTable} WHERE $field = ?";
+		$data = s_row($sql, [$id], "i");
+		
+		return $data;
+	}
+
 	
 	function deleteCookie($key) {
 		if(isset($_COOKIE[$key])) {

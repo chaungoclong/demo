@@ -14,8 +14,11 @@ require_once RF . '/include/navbar.php';
 					</div>
                     	<img src="https://www.freeiconspng.com/thumbs/success-icon/success-icon-10.png" width="100px" class="mb-5">
 					<div class="btn-group w-75">
+						<?php 
+							$orID = isset($_GET['orid']) ? $_GET['orid'] : 1;
+						 ?>
 						<a class="btn btn-success w-50" href="<?= base_url('product.php'); ?>">xem thêm</a>
-						<a class="btn btn-primary w-50" href="<?= base_url('user/purchase.php'); ?>">xem đơn hàng của bạn</a>
+						<a class="btn btn-primary w-50" href="<?= create_link(base_url('user/order_detail.php'), ["orid"=>$orID]); ?>">xem đơn hàng của bạn</a>
 					</div>
 				</div>
 			</div>

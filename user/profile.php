@@ -1,7 +1,7 @@
 <?php
 require_once '../common.php';
 //check is login
-if(!is_login()) {
+if(!is_login() || is_admin()) {
 	redirect("login_form.php");
 } else {
 	$user = getUserById($_SESSION['user_token']['id']);

@@ -109,11 +109,11 @@
             <strong>Nhân viên</strong>
           </a>
           <div class="dropdown_menu border-0">
-            <a href="" class="dropdown-item">
+            <a href="<?= base_url('admin/user/'); ?>" class="dropdown-item">
               <i class="fas fa-list-ul mr-1"></i>
               Danh sách nhân viên
             </a>
-            <a href="" class="dropdown-item">
+            <a href="<?= create_link( base_url('admin/user/add.php'), ['from'=>getCurrentURL()]); ?>" class="dropdown-item">
               <i class="fas fa-user-plus mr-1"></i>
               Thêm nhân viên
             </a>
@@ -121,7 +121,7 @@
         </li>
         <!-- người dùng -->
         <li class="nav-item mb-4 dropdown">
-          <a href="">
+          <a href="<?= base_url('admin/customer/'); ?>">
             <i class="fas fa-users mr-1"></i>
             <strong>người dùng</strong>
           </a>

@@ -1,6 +1,3 @@
-<?php
-require_once '../common.php';
-?>
 <!DOCTYPE html>
 <html>
   <head>

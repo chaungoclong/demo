@@ -17,6 +17,12 @@ function isName(string) {
 	return pattern.test(string);
 }
 
+
+function isUname(string) {
+	var pattern = /^[\w\d]{3,}$/;
+	return pattern.test(string);
+}
+
 function isPassword(string) {
 	var pattern = /^([\w\d]{8,32})$/;
 	return pattern.test(string);

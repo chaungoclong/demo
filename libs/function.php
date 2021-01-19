@@ -121,6 +121,8 @@ function read_date($time) {
 		$html = '';
 		//tổng số trang
 		$totalPage = ceil($totalItem / $itemPerPage);
+
+		$currentPage = ($currentPage > $totalPage) ? $totalPage : $currentPage;
 		//số item bỏ qua
 		$offsetItem = ((int)$currentPage - 1) * (int)$itemPerPage;
 		//số trang > 0 hiện nút phân trang
@@ -378,3 +380,30 @@ function read_date($time) {
 		$result = db_get($getOrderSQL, 1, [$orderID], "i");
 		return $result;
 	}
+
+	// hàm lấy danh sách người dùng
+	function getListUser($typeUser, $limit = 0, $offset = 0) {
+		if($typeUser == 1) {
+			$getListUserSQL = "SELECT * FROM db_admin WHERE ad_role > 1";
+		} else {
+			$getListUserSQL = "SELECT * FROM db_customer";
+		}
+
+		if($limit) {
+			$getListUserSQL .= " LIMIT ? OFFSET ?";
+			$result = db_get($getListUserSQL, 1, [$limit, $offset], "ii");
+		} else {
+			$result = db_get($getListUserSQL, 1);
+		}
+
+		return $result;
+	}
+
+	//hàm lấy đường dẫn hiện tại của trang
+	function getCurrentURL() {
+		$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off" 
+		|| $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+
+		return $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+	}
+	

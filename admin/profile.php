@@ -1,4 +1,5 @@
 <?php
+require_once '../common.php';
 require_once 'include/header.php';
 
 if(!is_login() || !is_admin()) {
@@ -83,8 +84,8 @@ require_once 'include/navbar.php';
 									console.log(input, inst);
 									setTimeout(function () {
 										inst.dpDiv.css({
-											top: 371,
-											left: 410
+											top: 310,
+											left: 280
 										});
 									},0);
 								}

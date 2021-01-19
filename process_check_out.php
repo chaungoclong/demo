@@ -2,6 +2,7 @@
 	require_once 'common.php';
 	if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
+		$status = 5;
 		//lấy thông tin
 		$cus_id  = $_SESSION['user_token']['id'];
 		$name    = data_input(input_post('name'));
@@ -14,11 +15,11 @@
 		if($name === false || $phone === false || $address === false) {
 
 			// thiếu thông tin
-			echo 1;
+			$status = 1;
 		} else if(!check_name($name) || !check_phone($phone)) {
 
 			// thông tin sai
-			echo 2;
+			$status = 2;
 		} else {
 			/**
 			 * nếu input đúng
@@ -61,12 +62,14 @@
 
 				// đặt hàng thành công
 				delete_session('cart');
-				echo 5;
+				$status = 5;
 			} else {
 
 				// đặt hàng thất bại
-				echo 6;
+				$status = 6;
 			}
 		}
+		$res = ["status"=>$status, "orID"=>$orderID];
+		echo json_encode($res);
 	}
  ?>

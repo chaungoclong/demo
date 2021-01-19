@@ -62,7 +62,7 @@
          ?>
         <li class="account_box nav-item dropdown">
           <a href="" class="nav-link dropdown-toggle" data-toggle="dropdown">
-            <img src="../image/<?= $user['ad_avatar']; ?>" alt="" width="30px" height="30px" class="acc_img_sidebar">
+            <img src="<?= base_url('image/' . $user['ad_avatar']); ?>" alt="" width="30px" height="30px" class="acc_img_sidebar">
             <span class="acc_name_sidebar"><?= $user['ad_name']; ?></span>
           </a>
           <!-- account dropdown -->
