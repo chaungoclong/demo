@@ -1,32 +1,17 @@
 
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title></title>
-	<link rel="stylesheet" href="">
-</head>
-<body>
-	<select name="" id="kk">
-		<option disabled="" selected value="1">--xin chào---</option>
-		<option value="1">hello</option>
-	</select>
-	<script>
-		let kk = document.querySelector('#kk').value;
-		console.log(kk);
-	</script>
-</body>
-</html>
-
 <?php 
 include_once 'common.php';
 // $test = getOrderDetailByID(29);
 // vd($test);
 //set_login(1, "abc@123.com");
-$test = false;
-$t = $test ?? 0;
-var_dump($t);
+$test = getImageProduct(58);
+if($test) {
+	echo 1;
+} else {
+	echo 0;
+}
+vd($test);
+
 ?>
 
 // $updateRateSQL = "UPDATE db_rate 

@@ -119,7 +119,7 @@ require_once RF . '/user/include/navbar.php';
 								<td><?= $product['pro_id']; ?></td>
 								<td width="10%">
 									<a href="<?= create_link(base_url('product_detail.php'), ["proid"=>$product['pro_id']]); ?>">
-										<img src="<?= $product['pro_img']; ?>" alt="" class="img-thumbnail">
+										<img src="../image/<?= $product['pro_img']; ?>" alt="" class="img-thumbnail">
 									</a>
 								</td>
 								<td>

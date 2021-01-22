@@ -36,14 +36,14 @@ require_once 'include/navbar.php';
 					<div class="card text-center py-3 h-100">
 						<div class="row p-0 m-0">
 							<div class="col-12 mb-3">
-								<img src="<?= $product['pro_img']; ?>" alt="" class="big_img card-img-top w-75" style="border-radius: 5px;">
+								<img src="image/<?= $product['pro_img']; ?>" alt="" class="big_img card-img-top w-75" style="border-radius: 5px;">
 							</div>
 							<div class="col-12">
 								<div class="row">
 									<?php if (!empty($listImg)): ?>
 										<?php foreach ($listImg as $key => $img): ?>
 											<div class="col-3">
-												<img src="<?= $img['img_url']; ?>" class="small_img img-fluid" alt="" style="border-radius: 5px;">
+												<img src="image/<?= $img['img_url']; ?>" class="small_img img-thumbnail" alt="" style="width: 80px; height: 80px;">
 											</div>
 										<?php endforeach ?>
 									<?php endif ?>
@@ -76,15 +76,15 @@ require_once 'include/navbar.php';
 							<div class="table-responsive mb-3">
 								<table class="table table-sm table-borderless mb-0">
 									<tr>
-										<th class="pl-0 w-25" scope="row"><strong>Loại sản phẩm:</strong></th>
+										<th class="pl-0 w-50" scope="row"><strong>Loại sản phẩm:</strong></th>
 										<td><?= !empty($category) ? $category : ""; ?></td>
 									</tr>
 									<tr>
-										<th class="pl-0 w-25" scope="row"><strong>Hãng sản xuất:</strong></th>
+										<th class="pl-0 w-50" scope="row"><strong>Hãng sản xuất:</strong></th>
 										<td><?= !empty($brand) ? $brand : ""; ?></td>
 									</tr>
 									<tr>
-										<th class="pl-0 w-25" scope="row"><strong>Màu:</strong></th>
+										<th class="pl-0 w-50" scope="row"><strong>Màu:</strong></th>
 										<td>
 											<?= !empty($product['pro_color']) ?
 											$product['pro_color'] : ""; ?>
@@ -142,6 +142,7 @@ require_once 'include/navbar.php';
 				</div>
 				<div id="info" class="tab-pane fadt p-3">
 					<h6><strong>THÔNG SỐ KĨ THUẬT</strong></h6>
+					<?= !empty($product['pro_detail']) ? $product['pro_detail'] : "";  ?>
 				</div>
 				<div id="rate" class="tab-pane fade py-3">
 					<!-- đánh giá trung bình-->

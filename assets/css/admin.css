@@ -8,6 +8,9 @@ body {
     font-size: 15px;
 }
 
+.error_field {
+	border-color: red;
+}
 /*search*/
 #search_bar {
 	width: 300px;
@@ -111,4 +114,15 @@ body {
 
 .navtop {
 	color:#fff;
+}
+
+.img_lib_box {
+	position: relative;
+}
+
+.btn_remove_img_lib {
+	position: absolute;
+	top: 0;
+	right: 0;
+	padding: 0;
 }

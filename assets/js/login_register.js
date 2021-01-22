@@ -305,7 +305,8 @@ function login() {
 					$('#backErr').text("Dữ liệu sai");
 					break;
 				case "5":
-					window.location = "index.php";
+					let prevPage = $('#loginForm #from').val();
+					window.location = prevPage;
 					break;
 				case "6":
 					$('#backErr').text("Đăng nhập thất bại. Hãy thử lại");

@@ -406,4 +406,117 @@ function read_date($time) {
 
 		return $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 	}
+
+	// hàm lấy tất cả bản ghi của 1 bảng
+	function db_fetch_table($table, $mode = 0, $limit = 0, $offset = 0) {
+		$fetchSQL = "SELECT * FROM {$table}";
+		
+		if($limit) {
+			$fetchSQL .= " LIMIT ? OFFSET ?";
+			return db_get($fetchSQL, $mode, [$limit, $offset], "ii");
+		}
+
+		return db_get($fetchSQL, $mode);
+	}
+
+	// hàm lấy danh sách sản phẩm
+	function getListProduct($limit = 0, $offset = 0) {
+		$getSQL = "
+		SELECT db_product.*, db_brand.bra_name, db_category.cat_name FROM db_product 
+		JOIN db_category ON db_product.cat_id = db_category.cat_id
+		JOIN db_brand 	 ON db_product.bra_id = db_brand.bra_id";
+
+		if($limit) {
+			$getSQL .= " LIMIT ? OFFSET ?";
+			return db_get($getSQL, 1, [$limit, $offset], "ii");
+		}
+
+		return db_get($getSQL, 1);
+	}
+
+	// hàm kiểm tra sản phẩm có hóa đơn không
+	function hasOrder($proID) {
+		$checkSQL = "SELECT pro_id FROM db_order_detail WHERE pro_id = ? LIMIT 1";
+		return s_cell($checkSQL, [$proID], "i");
+	}
+
+	// hàm upload nhiều file
+	function multiUploadFile($file, $folder, $extension) {
+
+		// biến lưu kết quả
+		$result = [];
+
+		// biến lưu lỗi
+		$error = [];
+
+		// biến lưu output
+		$output = [];
+
+		// tổng số file
+		$totalFile = count($file['name']);
+
+		//kiểm tra file rỗng
+		if($totalFile == 0) {
+			$error[] = "file rỗng";	
+		} else {
+			for ($i = 0; $i < $totalFile ; $i++) { 
+
+				// tên file
+				$fileName = $file['name'][$i];
+
+				// tên file lưu trữ tạm thời
+				$fileTmp = $file['tmp_name'][$i];
+
+				// loại file
+				$fileType = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+				// kiểm tra có đúng loại file 
+				if(!in_array($fileType, $extension)) {
+					$error[] = $fileName . " :đuôi file không hợp lệ";
+				} else {
+
+					// tên mới
+					$newFileName = time() . rand() . $i . "." . $fileType;
+
+					// đường dẫn di chuyển ảnh vào
+					$filePath = $folder . $newFileName;
+
+					if(move_uploaded_file($fileTmp, $filePath)) {
+						$result[] = $newFileName;
+					} else {
+						$error[] = $fileName . " :tải lên không thành công";
+					}
+				}
+
+			}
+		}
+
+		$output = [
+			"result" => $result,
+			"error" => $error
+		];
+
+		return $output;
+		
+	}
 	
+
+	// hàm kiểm tra số 
+	function check_number($string) {
+		if(is_numeric($string) && (int)$string > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	// hàm kiểm tra sản phẩm đã tồn tại 
+	function productExist($productName) {
+		$checkSQL = "SELECT pro_name FROM db_product WHERE pro_name = ? LIMIT 1";
+		return s_cell($checkSQL, [$productName], "s");
+	}
+
+	// hàm lấy tất cả ảnh của một sản phẩm
+	function getImageProduct($proID) {
+		$getSQL = "SELECT * FROM db_image WHERE pro_id = ?";
+		return db_get($getSQL, 0, [$proID], "i");
+	}

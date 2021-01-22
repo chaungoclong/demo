@@ -12,7 +12,7 @@ require_once '../include/navbar.php';
 ?>
 <!-- main content -row -->
 <div class="main_content bg-white row m-0 pt-4">
-	<div class="col-12 content_table">
+	<div class="col-12">
 		<div>
 			<h5>NHÂN VIÊN</h5>
 			<p class="mb-4">Nhân viên là nơi bạn kiểm tra và chỉnh sửa thông tin nhân viên</p>
@@ -20,7 +20,7 @@ require_once '../include/navbar.php';
 		</div>
 
 		<div class="row m-0 mb-3">
-			<div class="col-12 p-0 d-flex justify-content-between">
+			<div class="col-12 p-0 d-flex justify-content-between align-items-center">
 				<a href="
 					<?= create_link( base_url('admin/user/add.php'), ['from'=>getCurrentURL()]); ?>
 					" 
@@ -31,27 +31,79 @@ require_once '../include/navbar.php';
 				>
 					<i class="fas fa-user-plus"></i>
 				</a>
+
+				<div class="form-group m-0 p-0 d-flex align-items-center">
+					<form action="" class="form-inline" id="search_box">
+						<input 
+							type        ="text" 
+							name        ="q" 
+							id          ="search" 
+							class       ="form-control"
+							placeholder ="Search..." 
+							value       ="<?= $_GET['q'] ?? ""; ?>"
+							>
+						<button class="btn btn-outline-success">
+							<i class="fas fa-search"></i>
+						</button>
+					</form>
+				</div>
 			</div>
 		</div>
 		<!-- lấy danh sách nhân viên-->
 		<?php
-			$listUser = getListUser(1);
+
+			$q = data_input(input_get('q'));
+			$key = "%" . $q . "%";
+
+			if($q != "") {
+				$searchSQL = "
+				SELECT * FROM db_admin WHERE 
+				(
+					ad_id LIKE(?) OR
+					ad_name LIKE(?) OR 
+					ad_uname LIKE(?) OR
+					ad_phone LIKE(?) OR
+					ad_email LIKE(?) OR
+					ad_dob LIKE(?) OR
+					ad_phone LIKE(?)
+				)
+				AND ad_role > 1
+				";
+
+				$param = [$key, $key, $key, $key, $key, $key, $key];
+				$listUser = db_get($searchSQL, 1, $param, "sssssss");
+			} else {
+
+				$listUser = getListUser(1);
+			}
+			
 
 			// chia trang
 			$totalUser = $listUser->num_rows;
 			$userPerPage = 5;
 			$currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
-			$currentLink = create_link(base_url("admin/user/index.php"), ["page"=>'{page}']);
+			$currentLink = create_link(base_url("admin/user/index.php"), ["page"=>'{page}', 'q'=>$q]);
 			$page = paginate($currentLink, $totalUser, $currentPage, $userPerPage);
 
 			// danh sách nhân viên sau khi chia trang
-			$listUserPaginate = getListUser(1, $page['limit'], $page['offset']);
+			if($q != "") {
+				$searchResultSQL = $searchSQL . " LIMIT ? OFFSET ?";
+				$param = [$key, $key, $key, $key, $key, $key, $key, $page['limit'], $page['offset']];
+
+				// danh sách người dùng sau khi tìm kiếm và chia trang chia trang
+				$listUserPaginate = db_get($searchResultSQL, 1, $param, "sssssssii");
+			} else {
+
+				$listUserPaginate = getListUser(1, $page['limit'], $page['offset']);
+			}
+
+			
 			$totalUserPaginate = $listUserPaginate->num_rows;
 
 			// số thứ tự
 			$stt = 1 + (int)$page['offset'];
 		?>
-		<div>
+		<div class="content_table">
 			<table class="table table-hover table-bordered" style="font-size: 13px;">
 				<tr>
 					<th>STT</th>
@@ -162,6 +214,10 @@ require_once '../include/navbar.php';
 <script>
 	$(function() {
 
+		// cập nhật nội dung thẻ search
+		let q = "<?= $_GET['q'] ?? ""; ?>";
+		$('#search').val(q);
+	
 		// Thay đổi trạng thái của khách hàng
 		$(document).on('change', '.btn_switch_active', function() {
 
@@ -216,13 +272,15 @@ require_once '../include/navbar.php';
 			
 
 			// làm mới trang
-			let prevPage = "<?= getCurrentURL(); ?>";
+			let q           = "<?= $_GET['q'] ?? ""; ?>";
+
+			let prevPage    = "<?= getCurrentURL(); ?>";
 			let currentPage = <?= $currentPage ?>;
 			let fetchPage = sendAJax(
 				"fetch_page.php",
 				"post",
 				"html",
-				{action: "fetch", prevPage: prevPage, currentPage: currentPage }
+				{action: "fetch", prevPage: prevPage, q: q, currentPage: currentPage }
 			);
 
 			$('.content_table').html(fetchPage);
@@ -250,15 +308,17 @@ require_once '../include/navbar.php';
 				// trang trước(chuyển hướng đến sau khi cập nhật -dùng cho update)
 				let prevPage = "<?= getCurrentURL(); ?>";
 
-				// trang hieenh tại(phân trang)
+				// trang hiện tại(phân trang)
 				let currentPage = <?= $currentPage ?>;
+
+				let q           = "<?= $_GET['q'] ?? ""; ?>";
 
 				// làm mới trang
 				let fetchPage = sendAJax(
 					"fetch_page.php",
 					"post",
 					"html",
-					{action: "fetch", prevPage: prevPage, currentPage: currentPage }
+					{action: "fetch", prevPage: prevPage, q: q, currentPage: currentPage }
 				);
 
 				$('.content_table').html(fetchPage);

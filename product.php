@@ -117,7 +117,7 @@ if($cat) {
 										<span class="product_status badge badge-pill badge-warning">Bán hết</span>
 									<?php endif ?>
 									<a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $pro["pro_id"]]); ?>'>
-										<img src="<?= $pro['pro_img']; ?>" alt="" class="card-img-top">
+										<img src="image/<?= $pro['pro_img']; ?>" alt="" class="card-img-top">
 									</a>
 									<div class="card-body">
 										<!-- thông tin sản phẩm -->

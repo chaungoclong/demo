@@ -45,7 +45,8 @@ $listCategory = db_fetch_table("db_category", 0);
                <!-- tên sản phẩm -->
                <div class="form-group">
                   <label for="name"><strong>Tên sản phẩm:</strong></label>
-                  <input type="text" class="form-control" name="name" id="name">
+                  <input type="text" class="form-control" name="name" id="name" required>
+                  <div class="alert-danger" id="nameErr"></div>
                </div>
 
                <div class="form-row">
@@ -53,25 +54,29 @@ $listCategory = db_fetch_table("db_category", 0);
                   <!-- thể loại -->
                   <div class="form-group col-6">
                     <label for="category"><strong>Thể loại:</strong></label>
-                    <select name="categoty" id="category" class="custom-select">
+                    <select name="category" id="category" class="custom-select">
+                        <option value="0" disabled hidden selected="">Chọn thể loại</option>
                        <?php foreach ($listCategory as $key => $category): ?>
                           <option value="<?= $category['cat_id']; ?>">
                              <?= $category['cat_name']; ?>
                           </option>
                        <?php endforeach ?>
                     </select>
+                    <div class="alert-danger" id="categoryErr"></div>
                  </div>
 
                  <!-- hãng -->
                  <div class="form-group col-6">
                     <label for="brand"><strong>Hãng:</strong></label>
                     <select name="brand" id="brand" class="custom-select">
+                        <option value="0" disabled hidden selected="">Chọn hãng</option>
                        <?php foreach ($listBrand as $key => $brand): ?>
-                          <option value="<?= $brand['cat_id']; ?>">
+                          <option value="<?= $brand['bra_id']; ?>">
                              <?= $brand['bra_name']; ?>
                           </option>
                        <?php endforeach ?>
                     </select>
+                    <div class="alert-danger" id="brandErr"></div>
                  </div>
              </div>
 
@@ -87,6 +92,7 @@ $listCategory = db_fetch_table("db_category", 0);
                         showImg(this, ".previewImage", 0);
                       });
                    </script>
+                   <div class="alert-danger" id="imageErr"></div>
                 </div>
              </div>
 
@@ -101,6 +107,7 @@ $listCategory = db_fetch_table("db_category", 0);
                      showImg(this, ".previewLibrary", 1);
                    });
                 </script>
+                 <div class="alert-danger" id="libraryErr"></div>
              </div>
 
              <!--  -->
@@ -108,26 +115,30 @@ $listCategory = db_fetch_table("db_category", 0);
                 <div class="form-group col-4">
                    <label for="price"><strong>Giá:</strong></label>
                    <input type="number" class="form-control" name="price" id="price">
+                   <div class="alert-danger" id="priceErr"></div>
                </div>
                <div class="form-group col-4">
                    <label for="quantity"><strong>Số lượng:</strong></label>
                    <input type="number" class="form-control" name="quantity" id="quantity">
+                   <div class="alert-danger" id="quantityErr"></div>
                </div>
                <div class="form-group col-4">
                    <label for="color"><strong>Màu sắc:</strong></label>
-                   <input type="number" class="form-control" name="color" id="color">
+                   <input type="text" class="form-control" name="color" id="color">
+                   <div class="alert-danger" id="colorErr"></div> 
                </div>
             </div>
 
             <!-- mô tả ngắn -->
             <div class="form-group">
                <label for="short_desc"><strong>Mô tả ngắn:</strong></label>
-               <textarea name="short_desc" id="short_desc"></textarea>
+               <textarea name="shortDesc" id="short_desc"></textarea>
                <script>
                   CKEDITOR.replace( 'short_desc', {
                      height: 100
                   });
                </script>
+               <div class="alert-danger" id="shortDescErr"></div>
             </div>
 
             <!-- mô tả chi tiết -->
@@ -144,6 +155,7 @@ $listCategory = db_fetch_table("db_category", 0);
                       filebrowserWindowHeight : '700'
                   });
                </script>
+               <div class="alert-danger" id="descErr"></div>
             </div>
 
             <!-- Thông số sản phẩm -->
@@ -160,20 +172,21 @@ $listCategory = db_fetch_table("db_category", 0);
                       filebrowserWindowHeight : '700'
                   });
                </script>
+               <div class="alert-danger" id="detailErr"></div> 
             </div>
 
             <div class="custom-control custom-switch mb-3">
                <input
-               type="checkbox"
-               id="active"
-               name="active"
-               class="custom-control-input"
+               type  ="checkbox"
+               id    ="active"
+               name  ="active"
+               class ="custom-control-input"
                checked
                >
                <label for="active" class="custom-control-label">Trạng thái</label>
             </div>
 
-            <button class="btn btn-block btn-success"><strong>THÊM</strong></button>
+            <button class="btn_add_pro btn btn-block btn-success"><strong>THÊM</strong></button>
               
          </div>
       </div>
@@ -190,10 +203,9 @@ $listCategory = db_fetch_table("db_category", 0);
 </html>
 <script>
    $(function() {
-   	$(document).on('submit', "#user_add_form", function(e) {
+   	$(document).on('submit', "#product_add_form", function(e) {
    		e.preventDefault();
-
-         addUser();
+         addProduct();
 
       });
    });

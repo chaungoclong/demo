@@ -22,12 +22,12 @@ require_once '../include/navbar.php';
 		<div class="row m-0 mb-3">
 			<div class="col-12 p-0 d-flex justify-content-between align-items-center">
 				<a href="
-					<?= create_link( base_url('admin/user/add.php'), ['from'=>getCurrentURL()]); ?>
+					<?= create_link( base_url('admin/product/add.php'), ['from'=>getCurrentURL()]); ?>
 					" 
 					class="btn btn-success" 
 					data-toggle="tooltip" 
 					data-placement="top" 
-					title="Thêm nhân viên"
+					title="Thêm sản phẩm mới"
 				>
 					<i class="fas fa-user-plus"></i>
 				</a>
@@ -127,7 +127,7 @@ require_once '../include/navbar.php';
 
 					<!-- ảnh  -->
 					<td>
-						<img src="<?= $product['pro_img']; ?>" width="30px" height="30px">
+						<img src="../../image/<?= $product['pro_img']; ?>" width="30px" height="30px">
 					</td>
 
 					<!-- hãng -->

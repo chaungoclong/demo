@@ -1,44 +1,97 @@
 <?php 
+
+	/**
+	 * 	==============================TRANG LÀM MỚI====================================
+	 * 	Mô tả: làm mới nội dung bảng ở trang index sau khi có 1 hàng thay đổi(cập nhật, xóa)
+	 * 	Hoạt động:
+	 * 	 - nhận dữ liệu gửi sang từ ajax -> kiểm tra có action = "fetch"
+	 * 	 - kiểm tra có biến yêu cầu tìm kiếm:
+	 * 	 	+ rỗng => lấy hết danh sách kết quả có thể lấy
+	 * 	 	+ không rỗng => lấy hết danh sách kết quả theo yêu cầu
+	 * 	 - chia trang
+	 * 	 	+ xác định trang hiện tại thông qua biến $_POST['currentPage'](để khi làm mới vẫn giữ được đúng trang 	ban đầu)
+	 * 	 	+ tạo đường link của trang yêu cầu
+	 * 	 	+ phân trang bằng hàm 
+	 *   - lấy danh sách kết quả sau khi chia trang
+	 *   	+ có tìm kiếm : lấy danh sách kết quả thỏa mãn yêu cầu tìm kiếm sau khi phân trang
+	 *   	+ không có tìm kiếm: lấy danh sách kết quả sau khi phân trang
+	 * 
+	 */
+	
+
+
+
 	require_once '../../common.php';
 	if(isset($_POST['action']) && $_POST['action'] == "fetch") {
 		$html = '';
-		$html .= '    
-		<div>
-			<h5>NHÂN VIÊN</h5>
-			<p class="mb-4">Nhân viên là nơi bạn kiểm tra và chỉnh sửa thông tin nhân viên</p>
-			<hr>
-		</div>
-		<div class="row m-0 mb-3">
-			<div class="col-12 p-0 d-flex justify-content-between">
-				<a href="' . base_url("admin/user/add.php") . '" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Thêm nhân viên">
-					<i class="fas fa-user-plus"></i>
-				</a>
-			</div>
-		</div>
-		';
 
-		$listUser = getListUser(1);
-		// vd($listUser->fetch_all(MYSQLI_ASSOC));
+		//============================ LẤY DANH SÁCH NGƯỜI DÙNG =========================
+		$q = data_input(input_post('q'));
+		$key = "%" . $q . "%";
 
-		//  exit;
+		// nếu từ khóa tìm kiếm không rỗng -> lấy danh sách người dùng theo tìm kiếm
+		if($q != "") {
+			$searchSQL = "
+			SELECT * FROM db_admin WHERE 
+			(
+				ad_id LIKE(?) OR
+				ad_name LIKE(?) OR 
+				ad_uname LIKE(?) OR
+				ad_phone LIKE(?) OR
+				ad_email LIKE(?) OR
+				ad_dob LIKE(?) OR
+				ad_phone LIKE(?)
+			)
+			AND ad_role > 1
+			";
 
-		// chia trang
+			$param = [$key, $key, $key, $key, $key, $key, $key];
+			$listUser = db_get($searchSQL, 1, $param, "sssssss");
+		} else {
+
+			// từ khóa tìm kiếm rỗng -> lấy hết danh sách người dùng
+			$listUser = getListUser(1);
+		}
+		
+
+		// ============= CHIA TRANG ===================================================
+		
+		// tổng số người dùng
 		$totalUser = $listUser->num_rows;
+
+		// số người trên một trang
 		$userPerPage = 5;
+
+		// trang hiện tại
 		$currentPage = isset($_POST['currentPage']) ? $_POST['currentPage'] : 1;
-		$currentLink = create_link(base_url("admin/user/index.php"), ["page"=>'{page}']);
+
+		// link trang hiện tại(URI)
+		$currentLink = create_link(base_url("admin/user/index.php"), ["page"=>'{page}', 'q'=>$q]);
+
+		// kết quả phân trang
 		$page = paginate($currentLink, $totalUser, $currentPage, $userPerPage);
 
-		//đơn hàng sau khi chia trang
-		$listUserPaginate = getListUser(1, $page['limit'], $page['offset']);
+		//===================== DANH SÁCH NGƯỜI DÙNG SAU KHI CHIA TRANG ============================
+		
+		if($q != "") {
+			$searchResultSQL = $searchSQL . " LIMIT ? OFFSET ?";
+			$param = [$key, $key, $key, $key, $key, $key, $key, $page['limit'], $page['offset']];
+
+			// danh sách người dùng sau khi tìm kiếm và chia trang chia trang
+			$listUserPaginate = db_get($searchResultSQL, 1, $param, "sssssssii");
+		} else {
+
+			// danh sách người dùng sau khi chia trang
+			$listUserPaginate = getListUser(1, $page['limit'], $page['offset']);
+		}
+
+		// tổng số bản ghi sau khi phân trang
 		$totalUserPaginate = $listUserPaginate->num_rows;
 
 		// số thứ tự
 		$stt = 1 + (int)$page['offset'];
 
-
 		$html .= ' 
-		<div>
 			<table class="table table-hover table-bordered" style="font-size: 13px;">
 				<tr>
 					<th>STT</th>

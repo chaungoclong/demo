@@ -37,7 +37,7 @@ function showImg(input, storeImg, mode = 0, storeNameImg = "") {
     //lấy số lượng file trong thẻ input
     var numberFile = input.files.length;
     // console.log(numberFile);
-
+    $(storeImg).empty();
     //đọc từng file
     for (let i = 0; i < numberFile; ++i) {
         //tạo đối tượng đọc file
@@ -64,7 +64,7 @@ function showImg(input, storeImg, mode = 0, storeNameImg = "") {
                 $(storeNameImg).text(name);
             }
 
-            $(storeImg).empty().append(img);
+            $(storeImg).append(img);
         }
 
         //trả kết quả của từng phần tử file dưới dạng url
@@ -73,15 +73,31 @@ function showImg(input, storeImg, mode = 0, storeNameImg = "") {
 }
 
 //get ajax
-function sendAJax(url, method, type = 'text', data = {}) {
+function sendAJax(url, method, type = 'text', data = {}, mode = 0) {
     var result = false;
-    $.ajax({
-        url: url,
-        data: data,
-        method: method,
-        dataType: type,
-        async: false
-    }).done(function(res) {
+    var ajaxData = {};
+    if(!mode) {
+        ajaxData = {
+            url: url,
+            data: data,
+            method: method,
+            dataType: type,
+            async: false
+        }
+    } else {
+         ajaxData = {
+            url: url,
+            data: data,
+            method: method,
+            dataType: type,
+            cache: false,
+            contentType: false,
+            processData: false,
+            async: false
+        }
+    }
+
+    $.ajax(ajaxData).done(function(res) {
         result = res;
     }).fail(function(a, b, c) {
         result = false;

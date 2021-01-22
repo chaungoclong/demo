@@ -12,31 +12,102 @@ require_once '../include/navbar.php';
 ?>
 <!-- main content -row -->
 <div class="main_content bg-white row m-0 pt-4">
-	<div class="col-12 content_table">
+	<div class="col-12">
 		<div>
 			<h5>KHÁCH HÀNG</h5>
 			<p class="mb-4">Khách hàng là nơi bạn kiểm tra và chỉnh sửa thông tin khách hàng</p>
 			<hr>
 		</div>
+		<div class="row m-0 mb-3">
+			<div class="col-12 p-0 d-flex justify-content-end align-items-center">
+
+				<!-- ===================== search  ====================== -->
+				<div class="form-group m-0 p-0 d-flex align-items-center">
+					<form action="" class="form-inline" id="search_box">
+						<input 
+							type        ="text" 
+							name        ="q" 
+							id          ="search" 
+							class       ="form-control"
+							placeholder ="Search..." 
+							value       ="<?= $_GET['q'] ?? ""; ?>"
+							>
+						<button class="btn btn-outline-success">
+							<i class="fas fa-search"></i>
+						</button>
+					</form>
+				</div>
+
+			</div>
+		</div>
 		<!-- lấy khách hàng -->
 		<?php
-			$listCustomer = getListUser(0);
+			$q = data_input(input_get('q'));
+			$key = "%" . $q . "%";
+
+			if($q != "") {
+				$searchSQL = "
+				SELECT * FROM db_customer WHERE 
+					cus_id LIKE(?) OR
+					cus_name LIKE(?) OR 
+					cus_address LIKE(?) OR
+					cus_phone LIKE(?) OR
+					cus_email LIKE(?) OR
+					cus_dob LIKE(?) OR
+					cus_phone LIKE(?)
+				";
+
+				$param = [$key, $key, $key, $key, $key, $key, $key];
+				$listCustomer = db_get($searchSQL, 1, $param, "sssssss");
+			} else {
+
+				$listCustomer = getListUser(0);
+			}
+			
 
 			// chia trang
 			$totalCustomer = $listCustomer->num_rows;
 			$customerPerPage = 5;
 			$currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
-			$currentLink = create_link(base_url("admin/customer/index.php"), ["page"=>'{page}']);
+			$currentLink = create_link(base_url("admin/customer/index.php"), ["page"=>'{page}', 'q'=>$q]);
 			$page = paginate($currentLink, $totalCustomer, $currentPage, $customerPerPage);
 
-			//khách hàng sau khi chia trang
-			$listCustomerPaginate = getListUser(0, $page['limit'], $page['offset']);
+			// danh sách nhân viên sau khi chia trang
+			if($q != "") {
+				$searchResultSQL = $searchSQL . " LIMIT ? OFFSET ?";
+				$param = [$key, $key, $key, $key, $key, $key, $key, $page['limit'], $page['offset']];
+
+				// danh sách người dùng sau khi tìm kiếm và chia trang chia trang
+				$listCustomerPaginate = db_get($searchResultSQL, 1, $param, "sssssssii");
+			} else {
+
+				$listCustomerPaginate = getListUser(0, $page['limit'], $page['offset']);
+			}
+
+			
 			$totalCustomerPaginate = $listCustomerPaginate->num_rows;
 
 			// số thứ tự
 			$stt = 1 + (int)$page['offset'];
+
+			// //
+			// $listCustomer = getListUser(0);
+
+			// // chia trang
+			// $totalCustomer = $listCustomer->num_rows;
+			// $customerPerPage = 5;
+			// $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
+			// $currentLink = create_link(base_url("admin/customer/index.php"), ["page"=>'{page}']);
+			// $page = paginate($currentLink, $totalCustomer, $currentPage, $customerPerPage);
+
+			// //khách hàng sau khi chia trang
+			// $listCustomerPaginate = getListUser(0, $page['limit'], $page['offset']);
+			// $totalCustomerPaginate = $listCustomerPaginate->num_rows;
+
+			// // số thứ tự
+			// $stt = 1 + (int)$page['offset'];
 		?>
-		<div>
+		<div class="content_table">
 			<table class="table table-hover table-bordered" style="font-size: 13px;">
 				<tr>
 					<th>STT</th>
@@ -124,6 +195,10 @@ require_once '../include/navbar.php';
 <script>
 	$(function() {
 
+		// cập nhật nội dung thẻ search
+		let q = "<?= $_GET['q'] ?? ""; ?>";
+		$('#search').val(q);
+
 		// Thay đổi trạng thái của khách hàng
 		$(document).on('change', '.btn_switch_active', function() {
 
@@ -178,13 +253,14 @@ require_once '../include/navbar.php';
 			
 
 			// làm mới trang
-			let prevPage = "<?= getCurrentURL(); ?>";
+			let q           = "<?= $_GET['q'] ?? ""; ?>";
+			let prevPage    = "<?= getCurrentURL(); ?>";
 			let currentPage = <?= $currentPage ?>;
 			let fetchPage = sendAJax(
 				"fetch_page.php",
 				"post",
 				"html",
-				{action: "fetch", prevPage: prevPage, currentPage: currentPage }
+				{action: "fetch", prevPage: prevPage, q: q, currentPage: currentPage }
 			);
 
 			$('.content_table').html(fetchPage);
@@ -210,17 +286,19 @@ require_once '../include/navbar.php';
 
 				// LÀM MỚI TRANG
 				// trang trước(chuyển hướng đến sau khi cập nhật -dùng cho update)
-				let prevPage = "<?= getCurrentURL(); ?>";
-
+				let prevPage    = "<?= getCurrentURL(); ?>";
+				
 				// trang hieenh tại(phân trang)
 				let currentPage = <?= $currentPage ?>;
+				
+				let q           = "<?= $_GET['q'] ?? ""; ?>";
 
 				// làm mới trang
 				let fetchPage = sendAJax(
 					"fetch_page.php",
 					"post",
 					"html",
-					{action: "fetch", prevPage: prevPage, currentPage: currentPage }
+					{action: "fetch", prevPage: prevPage, q: q, currentPage: currentPage }
 				);
 
 				$('.content_table').html(fetchPage);

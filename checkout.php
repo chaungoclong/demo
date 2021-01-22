@@ -93,7 +93,7 @@ require_once 'include/navbar.php';
 											<a href="
 												<?= create_link(base_url('product_detail.php'), ['proid'=>$pro_id]); ?>
 											">
-												<img src="<?= $product['pro_img']; ?>" alt="" class="img-thumbnail" width="100%">
+												<img src="image/<?= $product['pro_img']; ?>" alt="" class="img-thumbnail" width="100%">
 											</a>
 										</td>
 

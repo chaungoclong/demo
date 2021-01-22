@@ -56,11 +56,11 @@
             <strong>Sản phẩm</strong>
           </a>
           <div class="dropdown_menu border-0">
-            <a href="" class="dropdown-item">
+            <a href="<?= base_url('admin/product/'); ?>" class="dropdown-item">
               <i class="fas fa-list-ul mr-1"></i>
               Danh sách sản phẩm
             </a>
-            <a href="" class="dropdown-item">
+            <a href="<?= create_link( base_url('admin/product/add.php'), ['from'=>getCurrentURL()]); ?>" class="dropdown-item">
               <i class="fas fa-plus-circle mr-1"></i>
               Thêm sản phẩm
             </a>
@@ -99,6 +99,13 @@
               Thêm slide
             </a>
           </div>
+        </li>
+        <!-- hóa đơn -->
+        <li class="nav-item mb-4 dropdown">
+          <a href="<?= base_url('admin/order/'); ?>">
+            <i class="fas fa-book mr-1"></i>
+            <strong>Hóa đơn</strong>
+          </a>
         </li>
         
         <?php if ($_SESSION['user_token']['role'] == 1): ?>

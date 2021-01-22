@@ -98,7 +98,7 @@
                     </span>
                   </a>
                   <div class="dropdown-menu">
-                    <a href="<?= base_url('login_form.php'); ?>" class="dropdown-item">Đăng nhập</a>
+                    <a href="<?= create_link(base_url('login_form.php'), ["from"=>getCurrentURL()]); ?>" class="dropdown-item">Đăng nhập</a>
                     <a href="<?= base_url('register_form.php'); ?>" class="dropdown-item">Đăng kí</a>
                   </div>
 

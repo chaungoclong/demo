@@ -784,8 +784,8 @@ function validateUserAdd() {
     let email = $('#email').val().trim();
     let phone = $('#phone').val().trim();
     let avatar = $('#avatar')[0].files[0];
-    let pwd     =  $('#pwdRegister').val().trim();
-    let rePwd   =  $('#rePwdRegister').val().trim();
+    let pwd = $('#pwdRegister').val().trim();
+    let rePwd = $('#rePwdRegister').val().trim();
 
     //VALIDATE
 
@@ -853,18 +853,18 @@ function validateUserAdd() {
     }
 
     //password
-    if(pwd == "") {
+    if (pwd == "") {
         $('#pwdRegister').addClass("error_field");
         $('#pwdRegisterErr').text("password is required");
         test = false;
-    } else if(!isPassword(pwd)) {
+    } else if (!isPassword(pwd)) {
         $('#pwdRegister').addClass("error_field");
         $('#pwdRegisterErr').text("password is wrong");
         test = false;
     }
 
     //repassword
-    if(rePwd != pwd) {
+    if (rePwd != pwd) {
         $('#rePwdRegister').addClass("error_field");
         $('#rePwdRegisterErr').text("password not match");
         test = false;
@@ -964,3 +964,475 @@ function addUser() {
     }
 }
 
+// PRODUCT MODULE
+
+function validateProductAdd() {
+
+    let test = true;
+    let limitImg = 4;
+
+    // xóa class lỗi
+    $('#name').removeClass("error_field");
+    $('#category').removeClass("error_field");
+    $('#brand').removeClass("error_field");
+    $('#price').removeClass("error_field");
+    $('#quantity').removeClass("error_field");
+    $('#color').removeClass("error_field");
+    $('#short_desc').removeClass("error_field");
+    $('#desc').removeClass("error_field");
+    $('#detail').removeClass("error_field");
+
+    // xóa thông báo lỗi
+    $('#nameErr').text("");
+    $('#categoryErr').text("");
+    $('#brandErr').text("");
+    $('#priceErr').text("");
+    $('#quantityErr').text("");
+    $('#colorErr').text("");
+    $('#shortDescErr').text("");
+    $('#descErr').text("");
+    $('#detailErr').text("");
+    $('#imageErr').text("");
+    $('#libraryErr').text("");
+
+    // lấy giá trị
+    let name = $('#name').val().trim();
+    let category = $('#category').val();
+    let brand = $('#brand').val();
+    let price = $('#price').val().trim();
+    let quantity = $('#quantity').val().trim();
+    let color = $('#color').val().trim();
+    let shortDesc = $('#short_desc').val().trim();
+    let desc = $('#desc').val().trim();
+    let detail = $('#detail').val().trim();
+    let image = $('#image')[0].files[0];
+    let library = $('#library')[0].files;
+
+    // validate
+    // name
+    if (name == "") {
+        $('#name').addClass("error_field");
+        $('#nameErr').text('không được để trống');
+        test = false;
+    }
+
+    // category
+    if (!category) {
+        $('#category').addClass("error_field");
+        $('#categoryErr').text('không được để trống');
+        test = false;
+    }
+
+    // brand
+    if (!brand) {
+        $('#brand').addClass("error_field");
+        $('#brandErr').text('không được để trống');
+        test = false;
+    }
+
+    // price
+    if (!price) {
+        $('#price').addClass("error_field");
+        $('#priceErr').text('không được để trống');
+        test = false;
+    } else if (parseInt(price) < 0 || isNaN(parseInt(price))) {
+        $('#price').addClass("error_field");
+        $('#priceErr').text('giá không hợp lệ');
+        test = false;
+    }
+
+    // quantity
+    if (!quantity) {
+        $('#quantity').addClass("error_field");
+        $('#quantityErr').text('không được để trống');
+        test = false;
+    } else if (parseInt(quantity) < 0 || isNaN(parseInt(quantity))) {
+        $('#quantity').addClass("error_field");
+        $('#quantityErr').text('số lượng không hợp lệ');
+        test = false;
+    }
+
+    // color
+    if (color == "") {
+        $('#color').addClass("error_field");
+        $('#colorErr').text('không được để trống');
+        test = false;
+    }
+
+    // short desc
+    if (shortDesc == "") {
+        $('#shortDesc').addClass("error_field");
+        $('#shortDescErr').text('không được để trống');
+        test = false;
+    }
+
+    // desc
+    if (desc == "") {
+        $('#desc').addClass("error_field");
+        $('#descErr').text('không được để trống');
+        test = false;
+    }
+
+    // detail
+    if (detail == "") {
+        $('#detail').addClass("error_field");
+        $('#detailErr').text('không được để trống');
+        test = false;
+    }
+
+    // image
+    if (image == undefined) {
+        $('#imageErr').text('không được để trống');
+        test = false;
+    } else {
+        let imgName = image.name;
+        let listExt = ["jpg", 'jpeg', 'png'];
+        let ext = imgName.split('.').pop().toLowerCase();
+        let size = imgName.size;
+
+        if (!listExt.some(val => val == ext)) {
+            $('#imageErr').text("file không hợp lệ");
+            test = false;
+        } else if (size > 500000) {
+            $('#imageErr').text("kích cỡ file quá lớn");
+            test = false;
+        }
+    }
+
+    if (library != undefined) {
+        let errorLibrary = "";
+        let qtyFile = library.length;
+
+        if (qtyFile > limitImg) {
+            errorLibrary += "số lượng file nhiều hơn giới hạn cho phép";
+        } else {
+            $.each(library, function(k, v) {
+                let imgName = v.name;
+                let listExt = ["jpg", 'jpeg', 'png'];
+                let ext = imgName.split('.').pop().toLowerCase();
+                let size = v.size;
+
+                if (!listExt.some(val => val == ext)) {
+                    errorLibrary += imgName + ": file không hợp lệ| ";
+                } else if (size > 500000) {
+                    errorLibrary += imgName + ": file quá lớn| ";
+                }
+            });
+        }
+
+        if (errorLibrary.length > 0) {
+            test = false;
+            $('#libraryErr').html(errorLibrary);
+        }
+    }
+
+    if (!test) {
+        $('.error_field').first().focus();
+    }
+
+    return test;
+}
+
+
+function addProduct() {
+    if (validateProductAdd()) {
+        // biến chứa dữ liệu gửi lên server
+        let form_data = new FormData();
+
+        // thông tin lấy từ form 
+        let infoByForm = $('#product_add_form').serializeArray();
+        $.each(infoByForm, function(k, obj) {
+            form_data.append(obj.name, obj.value);
+        });
+
+        // biến chứa ảnh đại diện
+        let image = $('#image')[0].files[0];
+        if (image != undefined) {
+            form_data.append("image", image);
+        }
+
+        // biến chứa các ảnh chi tiết
+        let library = $('#library')[0].files;
+        if (library != undefined) {
+            $.each(library, function(k, v) {
+                form_data.append("library[]", v);
+            });
+        }
+
+        form_data.append("action", "add");
+
+        let sendAddProduct = sendAJax(
+            "process_product.php",
+            "post",
+            "json",
+            form_data,
+            1
+        );
+
+        // lấy kết quả trả về
+        let imageErr = sendAddProduct.imageErr;
+        let libraryErr = sendAddProduct.libraryErr;
+        let status = sendAddProduct.status;
+        let prevLink = sendAddProduct.prevLink;
+
+        // lỗi tải ảnh đại diện
+        if (imageErr != "") {
+            alert(imageErr);
+        }
+
+        // lỗi tải ảnh chi tiết
+        if (libraryErr != "") {
+            alert(libraryErr);
+        }
+
+        // hiển thị trạng thái
+        switch (status) {
+            case 1:
+                alert("Thiếu dữ liệu");
+                break;
+            case 3:
+                alert("Sản phẩm đã tồn tại");
+                break;
+            case 5:
+                alert("Thêm sản phẩm thành công");
+                window.location = prevLink;
+                break;
+            case 6:
+                alert("Thêm sản phẩm thất bại , sản phẩm có thể đã tồn tại");
+                break;
+        }
+    }
+}
+
+
+function validateProductEdit() {
+
+    let test = true;
+    let limitImg = 10;
+
+    // xóa class lỗi
+    $('#name').removeClass("error_field");
+    $('#category').removeClass("error_field");
+    $('#brand').removeClass("error_field");
+    $('#price').removeClass("error_field");
+    $('#quantity').removeClass("error_field");
+    $('#color').removeClass("error_field");
+    $('#short_desc').removeClass("error_field");
+    $('#desc').removeClass("error_field");
+    $('#detail').removeClass("error_field");
+
+    // xóa thông báo lỗi
+    $('#nameErr').text("");
+    $('#categoryErr').text("");
+    $('#brandErr').text("");
+    $('#priceErr').text("");
+    $('#quantityErr').text("");
+    $('#colorErr').text("");
+    $('#shortDescErr').text("");
+    $('#descErr').text("");
+    $('#detailErr').text("");
+    $('#imageErr').text("");
+    $('#libraryErr').text("");
+
+    // lấy giá trị
+    let name = $('#name').val().trim();
+    let category = $('#category').val();
+    let brand = $('#brand').val();
+    let price = $('#price').val().trim();
+    let quantity = $('#quantity').val().trim();
+    let color = $('#color').val().trim();
+    let shortDesc = $('#short_desc').val().trim();
+    let desc = $('#desc').val().trim();
+    let detail = $('#detail').val().trim();
+    let image = $('#image')[0].files[0];
+    let library = $('#library')[0].files;
+
+    // validate
+    // name
+    if (name == "") {
+        $('#name').addClass("error_field");
+        $('#nameErr').text('không được để trống');
+        test = false;
+    }
+
+    // category
+    if (!category) {
+        $('#category').addClass("error_field");
+        $('#categoryErr').text('không được để trống');
+        test = false;
+    }
+
+    // brand
+    if (!brand) {
+        $('#brand').addClass("error_field");
+        $('#brandErr').text('không được để trống');
+        test = false;
+    }
+
+    // price
+    if (!price) {
+        $('#price').addClass("error_field");
+        $('#priceErr').text('không được để trống');
+        test = false;
+    } else if (parseInt(price) < 0 || isNaN(parseInt(price))) {
+        $('#price').addClass("error_field");
+        $('#priceErr').text('giá không hợp lệ');
+        test = false;
+    }
+
+    // quantity
+    if (!quantity) {
+        $('#quantity').addClass("error_field");
+        $('#quantityErr').text('không được để trống');
+        test = false;
+    } else if (parseInt(quantity) < 0 || isNaN(parseInt(quantity))) {
+        $('#quantity').addClass("error_field");
+        $('#quantityErr').text('số lượng không hợp lệ');
+        test = false;
+    }
+
+    // color
+    if (color == "") {
+        $('#color').addClass("error_field");
+        $('#colorErr').text('không được để trống');
+        test = false;
+    }
+
+    // short desc
+    if (shortDesc == "") {
+        $('#shortDesc').addClass("error_field");
+        $('#shortDescErr').text('không được để trống');
+        test = false;
+    }
+
+    // desc
+    if (desc == "") {
+        $('#desc').addClass("error_field");
+        $('#descErr').text('không được để trống');
+        test = false;
+    }
+
+    // detail
+    if (detail == "") {
+        $('#detail').addClass("error_field");
+        $('#detailErr').text('không được để trống');
+        test = false;
+    }
+
+    // image
+    if (image != undefined) {
+        let imgName = image.name;
+        let listExt = ["jpg", 'jpeg', 'png'];
+        let ext = imgName.split('.').pop().toLowerCase();
+        let size = imgName.size;
+
+        if (!listExt.some(val => val == ext)) {
+            $('#imageErr').text("file không hợp lệ");
+            test = false;
+        } else if (size > 500000) {
+            $('#imageErr').text("kích cỡ file quá lớn");
+            test = false;
+        }
+    }
+
+    if (library != undefined) {
+        let errorLibrary = "";
+        let qtyFile = library.length;
+
+        if (qtyFile > limitImg) {
+            errorLibrary += "số lượng file nhiều hơn giới hạn cho phép";
+        } else {
+            $.each(library, function(k, v) {
+                let imgName = v.name;
+                let listExt = ["jpg", 'jpeg', 'png'];
+                let ext = imgName.split('.').pop().toLowerCase();
+                let size = v.size;
+
+                if (!listExt.some(val => val == ext)) {
+                    errorLibrary += imgName + ": file không hợp lệ| ";
+                } else if (size > 500000) {
+                    errorLibrary += imgName + ": file quá lớn| ";
+                }
+            });
+        }
+
+        if (errorLibrary.length > 0) {
+            test = false;
+            $('#libraryErr').html(errorLibrary);
+        }
+    }
+
+    if (!test) {
+        $('.error_field').first().focus();
+    }
+
+    return test;
+}
+
+
+function editProduct() {
+    console.log("ok");
+    if (validateProductEdit()) {
+        // biến chứa dữ liệu gửi lên server
+        let form_data = new FormData();
+
+        // thông tin lấy từ form 
+        let infoByForm = $('#product_edit_form').serializeArray();
+        $.each(infoByForm, function(k, obj) {
+            form_data.append(obj.name, obj.value);
+        });
+
+        // biến chứa ảnh đại diện
+        let image = $('#image')[0].files[0];
+        if (image != undefined) {
+            form_data.append("image", image);
+        }
+
+        // biến chứa các ảnh chi tiết
+        let library = $('#library')[0].files;
+        if (library != undefined) {
+            $.each(library, function(k, v) {
+                form_data.append("library[]", v);
+            });
+        }
+
+        form_data.append("action", "edit");
+
+        let sendAddProduct = sendAJax(
+            "process_product.php",
+            "post",
+            "json",
+            form_data,
+            1
+        );
+
+        // lấy kết quả trả về
+        let libraryErr = sendAddProduct.libraryErr;
+        let status     = sendAddProduct.status;
+        let prevLink   = sendAddProduct.prevLink;
+
+        // hiển thị trạng thái
+        switch (status) {
+            case 1:
+                alert("Thiếu dữ liệu");
+                break;
+            case 3:
+                alert("Sản phẩm đã tồn tại");
+                break;
+            case 5:
+                let notice = "Cập nhật sản phẩm thành công";
+
+                if(libraryErr != "") {
+                    notice += "\nNOTICE:" + libraryErr;
+                }
+
+                alert(notice);
+
+                window.location = prevLink;
+                break;
+            case 6:
+                alert("cập nhật sản phẩm thất bại , tên sản phẩm có thể đã tồn tại");
+                break;
+        }
+    }
+}

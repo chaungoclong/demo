@@ -1,9 +1,11 @@
 <?php
 require_once 'common.php';
 
+$from = input_get("from") ?? "index.php";
+
 //nếu đã đăng nhập thì về index.php
 if(is_login() && !is_admin()) {
-	redirect('index.php');
+	header("Location:" . $from);
 }
 require_once RF . "/include/header.php";
 require_once RF . "/include/navbar.php";
@@ -15,6 +17,7 @@ require_once RF . "/include/navbar.php";
 		<div class="card-body">
 			<form action="	" method="POST" id="loginForm" style="width: 400px;">
 				<div id="backErr" class="alert-danger"></div>
+				<input type="hidden" name="from" id="from" value="<?= $from; ?>">
 				<!-- email/phone number -->
 				<div class="form-group mb-3">
 					<div class="input-group">

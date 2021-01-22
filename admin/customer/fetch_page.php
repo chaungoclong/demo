@@ -1,34 +1,73 @@
 <?php 
 	require_once '../../common.php';
 	if(isset($_POST['action']) && $_POST['action'] == "fetch") {
+
 		$html = '';
-		$html .= '    
-		<div>
-			<h5>KHÁCH HÀNG</h5>
-			<p class="mb-4">Khách hàng là nơi bạn kiểm tra và chỉnh sửa thông tin khách hàng</p>
-			<hr>
-		</div>
-		';
 
-		$listCustomer = getListUser(0);
+		//============================ LẤY DANH SÁCH KHÁCH HÀNG =========================
+		$q = data_input(input_post('q'));
+		$key = "%" . $q . "%";
 
-		// chia trang
+		// nếu từ khóa tìm kiếm không rỗng -> lấy danh sách khách hàng theo tìm kiếm
+		if($q != "") {
+			$searchSQL = "
+			SELECT * FROM db_customer WHERE 
+				cus_id LIKE(?) OR
+				cus_name LIKE(?) OR 
+				cus_address LIKE(?) OR
+				cus_phone LIKE(?) OR
+				cus_email LIKE(?) OR
+				cus_dob LIKE(?) OR
+				cus_phone LIKE(?)
+			";
+
+			$param = [$key, $key, $key, $key, $key, $key, $key];
+			$listCustomer = db_get($searchSQL, 1, $param, "sssssss");
+		} else {
+
+			// từ khóa tìm kiếm rỗng -> lấy hết danh sách khách hàng
+			$listCustomer = getListUser(0);
+		}
+		
+
+		// ============= CHIA TRANG ===================================================
+		
+		// tổng số khách hàng
 		$totalCustomer = $listCustomer->num_rows;
+
+		// số khách hàng trên một trang
 		$customerPerPage = 5;
+
+		// trang hiện tại
 		$currentPage = isset($_POST['currentPage']) ? $_POST['currentPage'] : 1;
-		$currentLink = create_link(base_url("admin/customer/index.php"), ["page"=>'{page}']);
+
+		// link trang hiện tại(URI)
+		$currentLink = create_link(base_url("admin/customer/index.php"), ["page"=>'{page}', 'q'=>$q]);
+
+		// kết quả phân trang
 		$page = paginate($currentLink, $totalCustomer, $currentPage, $customerPerPage);
 
-		//đơn hàng sau khi chia trang
-		$listCustomerPaginate = getListUser(0, $page['limit'], $page['offset']);
+		//===================== DANH SÁCH KHÁCH HÀNG SAU KHI CHIA TRANG ============================
+		
+		if($q != "") {
+			$searchResultSQL = $searchSQL . " LIMIT ? OFFSET ?";
+			$param = [$key, $key, $key, $key, $key, $key, $key, $page['limit'], $page['offset']];
+
+			// danh sách khách hàng sau khi tìm kiếm và chia trang chia trang
+			$listCustomerPaginate = db_get($searchResultSQL, 1, $param, "sssssssii");
+		} else {
+
+			// danh sách khách hàng sau khi chia trang
+			$listCustomerPaginate = getListUser(0, $page['limit'], $page['offset']);
+		}
+
+		// tổng số bản ghi sau khi phân trang
 		$totalCustomerPaginate = $listCustomerPaginate->num_rows;
 
 		// số thứ tự
 		$stt = 1 + (int)$page['offset'];
 
-
 		$html .= ' 
-		<div>
 			<table class="table table-hover table-bordered" style="font-size: 13px;">
 				<tr>
 					<th>STT</th>
