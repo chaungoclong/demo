@@ -273,7 +273,5 @@ require_once '../include/navbar.php';
 
 			$('.content_table').html(fetchPage);
 		});
-
-
 	});
 </script>	
