@@ -1,5 +1,22 @@
 <?php
 require_once 'common.php';
+
+//ID nhận được
+$proID = data_input(input_get("proid"));
+
+//lấy sản phẩm có ID nhận được
+$product   = getProductById($proID);
+
+$catID     = $product['cat_id'];
+$catStatus = getCategoryByID($catID);
+
+$braID     = $product['bra_id'];
+$braStatus = getBrandByID($braID);
+
+if(!$catStatus['cat_active'] || !$braStatus['bra_active']) {
+	redirect('product.php');
+}
+
 require_once 'include/header.php';
 require_once 'include/navbar.php';
 ?>
@@ -7,11 +24,7 @@ require_once 'include/navbar.php';
 <main>
 	<!-- In thông tin sản phẩm có id = id nhận được -->
 	<?php
-		//ID nhận được
-	$proID = data_input(input_get("proid"));
 
-		//lấy sản phẩm có ID nhận được
-	$product = getProductById($proID);
 	
 	//lấy các ảnh của sản phẩm, thể loại, hãng
 	if(!empty($product)) {
@@ -50,6 +63,13 @@ require_once 'include/navbar.php';
 								</div>
 							</div>
 						</div>
+						<script>
+							
+							//thay đổi ảnh
+							$(document).on('click', '.small_img', function() {
+								$('.big_img').attr("src", $(this).attr("src"));
+							});
+						</script>
 					</div>
 					<!-- /product image content -->
 				</div>
@@ -100,11 +120,6 @@ require_once 'include/navbar.php';
 								</table>
 							</div>
 							<hr>
-							<p>
-								<?= !empty($product['pro_short_desc']) ?
-								$product['pro_short_desc'] : ""; ?>
-							</p>
-							<hr>
 							<div class="action border-1">
 								<div class="get_quantity d-flex mb-3">
 									<button class="minus btn"><i class="fas fa-minus"></i></button>
@@ -138,7 +153,34 @@ require_once 'include/navbar.php';
 			<div class="tab-content">
 				<div id="desc" class="active tab-pane p-3">
 					<h6><strong>MÔ TẢ</strong></h6>
-					<?= !empty($product['pro_desc']) ? $product['pro_desc'] : "";  ?>
+
+					<p class="lessText">
+						<?= !empty($product['pro_short_desc']) ? $product['pro_short_desc'] : "";  ?>
+					</p>
+
+					<div id="moreText" style="display: none;">
+						<?= !empty($product['pro_desc']) ? $product['pro_desc'] : "";  ?>
+					</div>
+
+					<div class="d-flex justify-content-center">
+						<button class="btn btn-primary dropdown-toggle" id="toggleShow">Xem thêm</button>
+					</div>
+
+					<script>
+						$(function() {
+							$(document).on('click', '#toggleShow', function() {
+								let textValue = $(this).text();
+								if(textValue == "Xem thêm") {
+									$(this).text("Ẩn bớt");
+									$('#moreText').slideDown(600);
+								} else {
+									$(this).text("Xem thêm");
+									$('#moreText').slideUp(600);
+
+								}
+							});
+						});
+					</script>
 				</div>
 				<div id="info" class="tab-pane fadt p-3">
 					<h6><strong>THÔNG SỐ KĨ THUẬT</strong></h6>
@@ -339,7 +381,7 @@ require_once 'include/navbar.php';
 			//số lượng sản phẩm này trong giỏ hàng
 			let qtyProInCart;
 
-				qtyProInCart = parseInt(
+			qtyProInCart = parseInt(
 				sendAJax(
 					'get_cart.php',
 					'post',
@@ -430,8 +472,8 @@ require_once 'include/navbar.php';
 				let rateContent = $('#rateContent').val();
 				let rateValue = $('#rateValue').val();
 				let cusID = <?= 
-					isset($_SESSION['user_token']['id']) ?
-					$_SESSION['user_token']['id'] : 0; 
+				isset($_SESSION['user_token']['id']) ?
+				$_SESSION['user_token']['id'] : 0; 
 				?>;
 				let proID = <?= $product['pro_id']; ?>;
 
@@ -448,7 +490,7 @@ require_once 'include/navbar.php';
 						if(confirm("BẠN CÓ MUỐN CẬP NHẬT LẠI BÌNH LUẬN CỦA BẠN VỀ SẢN PHẨM NÀY")) {
 							let resultUpdate = setRate(
 								cusID, proID, rateValue, rateContent, "update_rate"
-							);
+								);
 							alert(resultUpdate.msg);
 							fetchRate(proID);
 						}

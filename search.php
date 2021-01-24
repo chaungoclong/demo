@@ -51,7 +51,7 @@ $numRow = row_qty($numResult, $numCol);
                                 $end   = $end <= $numRecord ? $end : $numRecord;
                                 echo $start . " - " . $end;
                                 ?>
-                                )
+                            )
                             </span>
                         </span>
                     </div>
@@ -62,18 +62,21 @@ $numRow = row_qty($numResult, $numCol);
                             <?php while ($result = $listResult->fetch_assoc()): ?>
                                 <!-- ------------------------------------product ----------------------------------- -->
                                 <div class="card text-center" style="max-width: 25%;">
+
                                     <?php if ($result['pro_qty'] == 0): ?>
                                         <span class="product_status badge badge-pill badge-warning">Sale out</span>
                                     <?php endif ?>
+
                                     <a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $result["pro_id"]]); ?>'>
-                                        <img src="<?= $result['pro_img']; ?>" alt="" class="card-img-top">
+                                        <img src="image/<?= $result['pro_img']; ?>" alt="" class="card-img-top">
                                     </a>
+
                                     <div class="card-body">
 
                                         <!-- thông tin sản phẩm -->
                                         <h5 class="card-title"><a href=""><?= $result['pro_name']; ?></a></h5>
                                         <?php
-                                            $cat = fetch_rows("db_category", "cat_id = '{$result["cat_id"]}'", ["cat_name"]);
+                                        $cat = fetch_rows("db_category", "cat_id = '{$result["cat_id"]}'", ["cat_name"]);
                                         ?>
 
                                         <p class="text-uppercase card-subtitle"><?= $cat['cat_name']; ?></p>
@@ -82,30 +85,31 @@ $numRow = row_qty($numResult, $numCol);
                                             <strong><?= number_format($result['pro_price'], 0, ',', '.'); ?> &#8363;</strong>
                                         </h6>
                                         <hr>
+
                                         <!-- thêm vào giỏ hàng -->
                                         <?php if ($result['pro_qty']): ?>
 
                                             <a class="btn_add_cart_out btn btn-success text-light" data-pro-id="<?= $result['pro_id']; ?>"
-                                            data-toggle="tooltip" data-placement="top" title="Thêm vào giỏ hàng"
-                                            >
-                                            <i class="fas fa-cart-plus fa-lg"></i>
-                                        </a>
+                                                data-toggle="tooltip" data-placement="top" title="Thêm vào giỏ hàng"
+                                                >
+                                                <i class="fas fa-cart-plus fa-lg"></i>
+                                            </a>
 
-                                    <?php endif ?>
+                                        <?php endif ?>
 
-                                    <!-- xem chi tiết sản phẩm -->
-                                    <a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $result["pro_id"]]); ?>' class="btn btn-default btn-primary" data-toggle="tooltip" data-placement="top" title="chi tiết sản phẩm">
-                                      <i class="far fa-eye fa-lg"></i>
-                                  </a>
+                                        <!-- xem chi tiết sản phẩm -->
+                                        <a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $result["pro_id"]]); ?>' class="btn btn-default btn-primary" data-toggle="tooltip" data-placement="top" title="chi tiết sản phẩm">
+                                          <i class="far fa-eye fa-lg"></i>
+                                      </a>
 
-                                  <!-- danh sách yêu thích -->
-                                  <a href='<?= create_link(base_url("wishlist.php"), ["proid"=> $result["pro_id"]]); ?>' class="btn btn-default btn-danger"
-                                      data-toggle="tooltip" data-placement="top" title="Thêm vào danh sách yêu thích">
-                                      <i class="far fa-heart fa-lg"></i>
-                                  </a>
-                              </div>
-                          </div>
-                          <!-- ------------------------------------/product ----------------------------------- -->
+                                      <!-- danh sách yêu thích -->
+                                      <a href='<?= create_link(base_url("wishlist.php"), ["proid"=> $result["pro_id"]]); ?>' class="btn btn-default btn-danger"
+                                          data-toggle="tooltip" data-placement="top" title="Thêm vào danh sách yêu thích">
+                                          <i class="far fa-heart fa-lg"></i>
+                                      </a>
+                                  </div>
+                                </div>
+                                <!-- ------------------------------------/product ----------------------------------- -->
                           <?php
                           $countCol++ ;
                           if($countCol == $numCol) {

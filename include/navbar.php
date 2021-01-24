@@ -15,8 +15,14 @@
     <?php  $listCategory = fetch_list("db_category", "1"); ?>
     <?php foreach ($listCategory as $key => $category): ?>
 
-      <li class="<?= $currentPage == 'product' && input_get('cat') == $category["cat_id"] ? 'nav-item dropdown active' : 'nav-item dropdown'; ?>">
-        <a href="<?= create_link(base_url('product.php'), ['cat'=>$category['cat_id']]); ?>" class="nav-link dropdown-toggle"><?php echo $category["cat_name"]; ?></a>
+      <?php if ($category['cat_active']): ?>
+
+        <li class="<?= $currentPage == 'product' && input_get('cat') == $category["cat_id"] ? 'nav-item dropdown active' : 'nav-item dropdown'; ?>">
+
+        <a href="<?= create_link(base_url('product.php'), ['cat'=>$category['cat_id']]); ?>" class="nav-link dropdown-toggle">
+          <?php echo $category["cat_name"]; ?>
+        </a>
+        
         <div class="dropdown-menu">
           <!-- in danh sách các hãng -->
 
@@ -26,12 +32,18 @@
           ?>
           
           <?php foreach ($listBrand as $key => $brand): ?>
-            <a href="<?= create_link(base_url('product.php'), ['cat'=>$category['cat_id'], 'bra'=>$brand['bra_id']]); ?>" class="dropdown-item"><?= $brand["bra_name"]; ?></a>
+            <?php if ($brand['bra_active']): ?>
+              <a href="<?= create_link(base_url('product.php'), ['cat'=>$category['cat_id'], 'bra'=>$brand['bra_id']]); ?>" class="dropdown-item">
+              <?= $brand["bra_name"]; ?>
+              </a>
+            <?php endif ?>
           <?php endforeach ?>
 
           <!-- /in danh sách các hãng -->
         </div>
       </li>
+      
+      <?php endif ?>
 
     <?php endforeach; ?>
     <!-- /in danh sách danh mục -->

@@ -122,7 +122,7 @@ function read_date($time) {
 		//tổng số trang
 		$totalPage = ceil($totalItem / $itemPerPage);
 
-		$currentPage = ($currentPage > $totalPage) ? $totalPage : $currentPage;
+		$currentPage = ($currentPage > $totalPage && $totalPage != 0) ? $totalPage : $currentPage;
 		//số item bỏ qua
 		$offsetItem = ((int)$currentPage - 1) * (int)$itemPerPage;
 		//số trang > 0 hiện nút phân trang
@@ -289,7 +289,7 @@ function read_date($time) {
 	function checkCustomerBought($cusID, $proID) {
 		$sql = "SELECT db_order.cus_id FROM db_order JOIN db_order_detail
 		ON db_order.or_id = db_order_detail.or_id
-		WHERE db_order.cus_id = ? AND db_order.or_status = 4 AND db_order_detail.pro_id = ?
+		WHERE db_order.cus_id = ? AND db_order.or_status = 1 AND db_order_detail.pro_id = ?
 		";
 
 		$result = s_row($sql, [$cusID, $proID], "ii");
@@ -370,7 +370,15 @@ function read_date($time) {
 
 	// hàm lấy đơn hàng chi tiết theo mã người dùng
 	function getOrderDetailByID($orderID) {
-		$getOrderSQL = "SELECT * FROM db_order JOIN db_order_detail
+		$getOrderSQL = "
+		SELECT 
+			db_product.pro_id, 
+			db_product.pro_name, 
+			db_product.pro_img, 
+			db_order_detail.price, 
+			db_order_detail.amount
+		FROM db_order 
+		JOIN db_order_detail
 		ON db_order.or_id = db_order_detail.or_id
 		JOIN db_product
 		ON db_order_detail.pro_id = db_product.pro_id
@@ -438,6 +446,11 @@ function read_date($time) {
 	function hasOrder($proID) {
 		$checkSQL = "SELECT pro_id FROM db_order_detail WHERE pro_id = ? LIMIT 1";
 		return s_cell($checkSQL, [$proID], "i");
+	}
+
+	function hasProduct($field, $value) {
+		$checkSQL = "SELECT {$field} FROM db_product WHERE {$field} = ? LIMIT 1";
+		return s_cell($checkSQL, [$value], "i");
 	}
 
 	// hàm upload nhiều file
@@ -515,8 +528,47 @@ function read_date($time) {
 		return s_cell($checkSQL, [$productName], "s");
 	}
 
+	// hàm kiểm tra danh mục đã tồn tại 
+	function categoryExist($categoryName) {
+		$checkSQL = "SELECT cat_name FROM db_category WHERE cat_name = ? LIMIT 1";
+		return s_cell($checkSQL, [$categoryName], "s");
+	}
+
+	// hàm kiểm tra hãng đã tồn tại 
+	function brandExist($brandName) {
+		$checkSQL = "SELECT bra_name FROM db_brand WHERE bra_name = ? LIMIT 1";
+		return s_cell($checkSQL, [$brandName], "s");
+	}
+
 	// hàm lấy tất cả ảnh của một sản phẩm
 	function getImageProduct($proID) {
 		$getSQL = "SELECT * FROM db_image WHERE pro_id = ?";
 		return db_get($getSQL, 0, [$proID], "i");
+	}
+
+	// hàm lấy về danh mục theo id
+	function getCategoryByID($categoryID) {
+		$getCatSQL  = "SELECT * FROM db_category WHERE cat_id = ?";
+		return s_row($getCatSQL, [$categoryID], "i");
+	}
+
+	// hàm lấy về hãng theo id
+	function getBrandByID($brandID) {
+		$getBraSQL  = "SELECT * FROM db_brand WHERE bra_id = ?";
+		return s_row($getBraSQL, [$brandID], "i");
+	}
+
+	function getListOrder($limit = 0, $offset = 0) {
+			$getSQL = "
+			SELECT db_order.*, db_customer.cus_name FROM db_order
+			JOIN db_customer
+			ON db_order.cus_id = db_customer.cus_id
+			";
+
+			if($limit) {
+				$getSQL .= " LIMIT ? OFFSET ?";
+				return db_get($getSQL, 1, [$limit, $offset], "ii");
+			}
+
+			return db_get($getSQL, 1);
 	}

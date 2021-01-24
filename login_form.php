@@ -5,7 +5,7 @@ $from = input_get("from") ?? "index.php";
 
 //nếu đã đăng nhập thì về index.php
 if(is_login() && !is_admin()) {
-	header("Location:" . $from);
+	header("Location:index.php");
 }
 require_once RF . "/include/header.php";
 require_once RF . "/include/navbar.php";

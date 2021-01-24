@@ -31,22 +31,24 @@ if($cat) {
 		<div id="listBrand" class="py-3" style="">
 			<div class="d-flex justify-content-start flex-wrap">
 				<?php foreach ($listBrands as $key => $brand): ?>
-					<a class="card" href='
-					<?php
-					/**
-					* Nếu có danh mục sản phẩm: in các sản phẩm có danh mục = danh mục && hãng = hãng
-					* Nếu chỉ có hãng: in các sản phẩm có hãng bằng hãng
-					*/
-					$cat = input_get("cat");
-					if($cat) {
-						echo create_link(base_url("product.php"), ["cat"=>$cat, "bra"=>$brand["bra_id"]]);
+					<?php if ($brand['bra_active']): ?>
+						<a class="card" href='
+						<?php
+						/**
+						* Nếu có danh mục sản phẩm: in các sản phẩm có danh mục = danh mục && hãng = hãng
+						* Nếu chỉ có hãng: in các sản phẩm có hãng bằng hãng
+						*/
+						$cat = input_get("cat");
+						if($cat) {
+							echo create_link(base_url("product.php"), ["cat"=>$cat, "bra"=>$brand["bra_id"]]);
 						} else {
 							echo create_link(base_url("product.php"), ["bra"=>$brand["bra_id"]]);
 						}
 						?>
-						'>
-						<img src="<?= $brand['bra_logo']; ?>" alt="">
-					</a>
+							'>
+							<img src="<?= $brand['bra_logo']; ?>" alt="">
+						</a>
+					<?php endif ?>
 				<?php endforeach ?>
 			</div>
 		</div>
@@ -96,12 +98,12 @@ if($cat) {
 						<span>
 							(
 								<?php
-								$start = (int)$page["offset"] + 1;
+								$start = $numRecord > 0 ? (int)$page["offset"] + 1 : 0;
 								$end   = (int)$page["offset"] + (int)$page["limit"];
 								$end   = $end <= $numRecord ? $end : $numRecord;
 								echo $start . " - " . $end;
 								?>
-							)
+								)
 							</span>
 						</span>
 					</div>
@@ -130,56 +132,56 @@ if($cat) {
 											);
 											?>
 											">
-												<?= $pro['pro_name']; ?>
-											</a>
-										</h5>
+											<?= $pro['pro_name']; ?>
+										</a>
+									</h5>
 									<?php
 									$catName = fetch_rows("db_category", "cat_id = '{$pro["cat_id"]}'", ["cat_name"]);
 									?>
 									<p class="text-uppercase card-subtitle">
 										<?= $catName['cat_name']; ?>
 									</p>
-								<h6 class="text-danger">
-									<strong><?= number_format($pro['pro_price'], 0, ',', '.'); ?> &#8363;</strong>
-								</h6>
-								<hr>
+									<h6 class="text-danger">
+										<strong><?= number_format($pro['pro_price'], 0, ',', '.'); ?> &#8363;</strong>
+									</h6>
+									<hr>
 
-								<!-- thêm vào giỏ hàng -->
-								<?php if ($pro['pro_qty']): ?>
-									<a class="btn_add_cart_out btn btn-success text-light" data-pro-id="<?= $pro['pro_id']; ?>"
-										data-toggle="tooltip" data-placement="top" title="Thêm vào giỏ hàng"
-										>
-										<i class="fas fa-cart-plus fa-lg"></i>
+									<!-- thêm vào giỏ hàng -->
+									<?php if ($pro['pro_qty']): ?>
+										<a class="btn_add_cart_out btn btn-success text-light" data-pro-id="<?= $pro['pro_id']; ?>"
+											data-toggle="tooltip" data-placement="top" title="Thêm vào giỏ hàng"
+											>
+											<i class="fas fa-cart-plus fa-lg"></i>
+										</a>
+									<?php endif ?>
+
+									<!-- xem chi tiết sản phẩm -->
+									<a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-primary" data-toggle="tooltip" data-placement="top" title="chi tiết sản phẩm">
+										<i class="far fa-eye fa-lg"></i>
 									</a>
-								<?php endif ?>
 
-								<!-- xem chi tiết sản phẩm -->
-								<a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-primary" data-toggle="tooltip" data-placement="top" title="chi tiết sản phẩm">
-									<i class="far fa-eye fa-lg"></i>
-								</a>
-
-								<!-- danh sách yêu thích -->
-								<a href='<?= create_link(base_url("wishlist.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-danger"
-									data-toggle="tooltip" data-placement="top" title="Thêm vào danh sách yêu thích">
-									<i class="far fa-heart fa-lg"></i>
-								</a>
+									<!-- danh sách yêu thích -->
+									<a href='<?= create_link(base_url("wishlist.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-danger"
+										data-toggle="tooltip" data-placement="top" title="Thêm vào danh sách yêu thích">
+										<i class="far fa-heart fa-lg"></i>
+									</a>
+								</div>
 							</div>
-						</div>
 
-						<!-- ------------------------------------/product ----------------------------------- -->
-						<?php
-						$countCol++ ;
-						if($countCol == $numCol) {
-							break;
-						}
-						?>
-					<?php endwhile ?>
-				</div>
-			<?php endfor ?>
-		</div>
-	</section>
-	<!-- /product -->
-</div>
+							<!-- ------------------------------------/product ----------------------------------- -->
+							<?php
+							$countCol++ ;
+							if($countCol == $numCol) {
+								break;
+							}
+							?>
+						<?php endwhile ?>
+					</div>
+				<?php endfor ?>
+			</div>
+		</section>
+		<!-- /product -->
+	</div>
 </main>
 <script>
 	$(function() {

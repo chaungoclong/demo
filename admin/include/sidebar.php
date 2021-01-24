@@ -39,11 +39,11 @@
             <strong>Danh mục sản phẩm</strong>
           </a>
           <div class="dropdown_menu border-0">
-            <a href="" class="dropdown-item">
+            <a href="<?= base_url('admin/category/'); ?>" class="dropdown-item">
               <i class="fas fa-list-ul mr-1"></i>
               Danh sách danh mục
             </a>
-            <a href="" class="dropdown-item">
+            <a href="<?= create_link( base_url('admin/category/add.php'), ['from'=>getCurrentURL()]); ?>" class="dropdown-item">
               <i class="fas fa-plus-circle mr-1"></i>
               Thêm danh mục
             </a>
@@ -69,17 +69,17 @@
         <!-- ảnh sản phẩm -->
         <li class="nav-item mb-4 dropdown">
           <a class="dropdown-toggle">
-            <i class="far fa-image mr-1"></i>
-            <strong>Ảnh sản phẩm</strong>
+           <i class="fab fa-android"></i>
+            <strong>Hãng</strong>
           </a>
           <div class="dropdown_menu border-0">
-            <a href="" class="dropdown-item">
+            <a href="<?= base_url('admin/brand/'); ?>" class="dropdown-item">
               <i class="far fa-images mr-1"></i>
-              Danh sách ảnh
+              Danh sách hãng
             </a>
-            <a href="" class="dropdown-item">
+            <a href="<?= create_link( base_url('admin/brand/add.php'), ['from'=>getCurrentURL()]); ?>" class="dropdown-item">
               <i class="fas fa-plus-circle mr-1"></i>
-              Thêm ảnh
+              Thêm hãng
             </a>
           </div>
         </li>

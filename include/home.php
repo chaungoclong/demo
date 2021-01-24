@@ -12,13 +12,13 @@
       <!-- ?in số hàng? -->
       <?php for ($i = 0; $i < $numRow; $i++): ?>
         <?php $countCol = 0; ?>
-        <div class="card-deck">
+        <div class="card-group">
           <?php while ($cat = $listCat->fetch_assoc()): ?>
             <?php if ($cat['cat_active']): ?>
               <!-- ?in cột? -->
               <div class="category_item card" style="max-width: 25%;">
                 <a href="<?= create_link(base_url('product.php'), ['cat'=> $cat["cat_id"]]); ?>" class="card-body">
-                  <img src="<?= $cat['cat_logo']; ?>" alt="" class="card-img-top">
+                  <img src="image/<?= $cat['cat_logo']; ?>" alt="" class="card-img-top">
                   <div class="category_info bg-light">
                     <h5><?= $cat['cat_name']; ?></h5>
                     <!-- ?lấy số lượng sản phẩm? -->

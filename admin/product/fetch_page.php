@@ -106,7 +106,7 @@
 
 					<!-- ảnh  -->
 					<td>
-						<img src="' . $product['pro_img'] . '" width="30px" height="30px">
+						<img src="../../image/' . $product['pro_img'] . '" width="30px" height="30px">
 					</td>
 
 					<!-- hãng -->

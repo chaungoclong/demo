@@ -1,8 +1,4 @@
 $(function() {
-    //thay đổi ảnh
-    $(document).on('click', '.small_img', function() {
-        $('.big_img').attr("src", $(this).attr("src"));
-    });
 
     //giảm số lượng
     $(document).on('click', '.minus', function() {

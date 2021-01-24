@@ -228,7 +228,7 @@ $listCategory = db_fetch_table("db_category", 0);
                id    ="active"
                name  ="active"
                class ="custom-control-input"
-               checked
+               <?= $product['pro_active'] ? "checked" : ""; ?>
                >
                <label for="active" class="custom-control-label">Trạng thái</label>
             </div>

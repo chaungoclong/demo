@@ -50,8 +50,9 @@ require_once RF . '/user/include/navbar.php';
 						<tr>
 							<th>STT</th>
 							<th>Mã đơn hàng</th>
-							<th>Tên khách hàng</th>
-							<th>Địa chỉ</th>
+							<th>Người đặt</th>
+							<th>Người nhận</th>
+							<th>Địa chỉ giao hàng</th>
 							<th>Ngày đặt</th>
 							<th>Trạng thái</th>
 							<th>Chi tiết</th>
@@ -65,28 +66,23 @@ require_once RF . '/user/include/navbar.php';
 									<td><?= $stt++; ?></td>
 									<td><?= $order['or_id']; ?></td>
 									<td><?= $order['cus_name']; ?></td>
-									<td><?= $order['cus_address']; ?></td>
+									<td><?= $order['receiver_name']; ?></td>
+									<td><?= $order['receiver_add']; ?></td>
 									<td><?= strToTimeFormat($order['or_create_at'], "H:i:s d-m-Y"); ?></td>
 									<td id="status_order_<?= $order['or_id']; ?>">	
 										<?php
 											$status = $order['or_status'];
 											switch ($status) {
 												case '0':
-													echo "đang chờ hủy";
-													break;
-												case '1':
 													echo "đang chờ xác nhận";
 													break;
-												case '2':
+												case '1':
 													echo "đã xác nhận";
 													break;
+												case '2':
+													echo "đang chờ hủy";
+													break;
 												case '3':
-													echo "đang giao hàng";
-													break;
-												case '4':
-													echo "đã giao hàng";
-													break;
-												case '5':
 													echo "đã hủy";
 													break;
 												
@@ -103,7 +99,7 @@ require_once RF . '/user/include/navbar.php';
 										</a>
 									</td>
 									<td>
-										<?php if ($order['or_status'] == 0 || $order['or_status'] == 4 || $order['or_status'] == 5): ?>
+										<?php if ($order['or_status'] == 1 || $order['or_status'] == 3): ?>
 											<button class="btn btn-danger" disabled="">HỦY</button>
 										<?php else: ?>
 											<button class="btn_cancel btn btn-danger" data-order-id="<?= $order['or_id']; ?>" 

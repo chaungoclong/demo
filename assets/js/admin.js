@@ -1436,3 +1436,378 @@ function editProduct() {
         }
     }
 }
+
+function validateCategoryAdd() {
+
+    let test = true;
+
+    // xóa class lỗi
+    $('#name').removeClass("error_field");
+
+    // xóa thông báo lỗi
+    $('#nameErr').text("");
+
+    // lấy giá trị
+    let name = $('#name').val().trim();
+    let image = $('#image')[0].files[0];
+
+    // validate
+    // name
+    if (name == "") {
+        $('#name').addClass("error_field");
+        $('#nameErr').text('không được để trống');
+        test = false;
+    }
+
+    // image
+    if (image == undefined) {
+        $('#imageErr').text('không được để trống');
+        test = false;
+    } else {
+        let imgName = image.name;
+        let listExt = ["jpg", 'jpeg', 'png'];
+        let ext = imgName.split('.').pop().toLowerCase();
+        let size = image.size;
+
+        if (!listExt.some(val => val == ext)) {
+            $('#imageErr').text("file không hợp lệ");
+            test = false;
+        } else if (size > 500000) {
+            $('#imageErr').text("kích cỡ file quá lớn");
+            test = false;
+        }
+    }
+
+    if (!test) {
+        $('.error_field').first().focus();
+    }
+
+    return test;
+}
+
+function addCategory() {
+   if(validateCategoryAdd()) {
+
+    let form_data = new FormData();
+
+    let infoByForm = $("#category_add_form").serializeArray();
+    $.each(infoByForm, function(k, obj) {
+        form_data.append(obj.name, obj.value);
+    });
+
+    let image = $('#image')[0].files[0];
+    if(image != undefined) {
+        form_data.append("image", image);
+    }
+
+    form_data.append("action", "add");
+
+    let sendAddCategory = sendAJax(
+        "process_category.php",
+        "post",
+        "json",
+        form_data,
+        1
+    );
+
+    let status = sendAddCategory.status;
+    let prevLink = sendAddCategory.prevLink;
+
+    switch(status) {
+        case 1:
+            alert("THIẾU DỮ LIỆU");
+            break;
+        case 3:
+            alert("DANH MỤC ĐÃ TỒN TẠI");
+            break;
+        case 5:
+            alert("THÊM DANH MỤC THÀNH CÔNG");
+            window.location = prevLink;
+            break;
+        case 6:
+            alert("THÊM DANH MỤC THẤT BẠI, TÊN DANH MỤC CÓ THỂ ĐÃ TỒN TẠI");
+            break;
+    }
+
+   }
+}
+
+function validateCategoryEdit() {
+
+    let test = true;
+
+    // xóa class lỗi
+    $('#name').removeClass("error_field");
+
+    // xóa thông báo lỗi
+    $('#nameErr').text("");
+
+    // lấy giá trị
+    let name = $('#name').val().trim();
+    let image = $('#image')[0].files[0];
+
+    // validate
+    // name
+    if (name == "") {
+        $('#name').addClass("error_field");
+        $('#nameErr').text('không được để trống');
+        test = false;
+    }
+
+    // image
+    if (image != undefined) {
+        let imgName = image.name;
+        let listExt = ["jpg", 'jpeg', 'png'];
+        let ext = imgName.split('.').pop().toLowerCase();
+        let size = image.size;
+
+        if (!listExt.some(val => val == ext)) {
+            $('#imageErr').text("file không hợp lệ");
+            test = false;
+        } else if (size > 500000) {
+            $('#imageErr').text("kích cỡ file quá lớn");
+            test = false;
+        }
+    }
+
+    if (!test) {
+        $('.error_field').first().focus();
+    }
+
+    return test;
+}
+
+function editCategory() {
+   if(validateCategoryEdit()) {
+
+    let form_data = new FormData();
+
+    let infoByForm = $("#category_edit_form").serializeArray();
+    $.each(infoByForm, function(k, obj) {
+        form_data.append(obj.name, obj.value);
+    });
+
+    let image = $('#image')[0].files[0];
+    if(image != undefined) {
+        form_data.append("image", image);
+    }
+
+    form_data.append("action", "edit");
+
+    let sendEditCategory = sendAJax(
+        "process_category.php",
+        "post",
+        "json",
+        form_data,
+        1
+    );
+
+    let status = sendEditCategory.status;
+    let prevLink = sendEditCategory.prevLink;
+
+    switch(status) {
+        case 1:
+            alert("THIẾU DỮ LIỆU");
+            break;
+        case 3:
+            alert("DANH MỤC ĐÃ TỒN TẠI");
+            break;
+        case 5:
+            alert("CẬP NHẬT DANH MỤC THÀNH CÔNG");
+            window.location = prevLink;
+            break;
+        case 6:
+            alert("CẬP NHẬT DANH MỤC THẤT BẠI, TÊN DANH MỤC CÓ THỂ ĐÃ TỒN TẠI");
+            break;
+    }
+
+   }
+}
+
+// ======== BRAND MODULE ========================================
+function validateBrandAdd() {
+
+    let test = true;
+
+    // xóa class lỗi
+    $('#name').removeClass("error_field");
+
+    // xóa thông báo lỗi
+    $('#nameErr').text("");
+
+    // lấy giá trị
+    let name = $('#name').val().trim();
+    let image = $('#image')[0].files[0];
+
+    // validate
+    // name
+    if (name == "") {
+        $('#name').addClass("error_field");
+        $('#nameErr').text('không được để trống');
+        test = false;
+    }
+
+    // image
+    if (image == undefined) {
+        $('#imageErr').text('không được để trống');
+        test = false;
+    } else {
+        let imgName = image.name;
+        let listExt = ["jpg", 'jpeg', 'png'];
+        let ext = imgName.split('.').pop().toLowerCase();
+        let size = image.size;
+
+        if (!listExt.some(val => val == ext)) {
+            $('#imageErr').text("file không hợp lệ");
+            test = false;
+        } else if (size > 500000) {
+            $('#imageErr').text("kích cỡ file quá lớn");
+            test = false;
+        }
+    }
+
+    if (!test) {
+        $('.error_field').first().focus();
+    }
+
+    return test;
+}
+
+function addBrand() {
+   if(validateBrandAdd()) {
+
+    let form_data = new FormData();
+
+    let infoByForm = $("#brand_add_form").serializeArray();
+    $.each(infoByForm, function(k, obj) {
+        form_data.append(obj.name, obj.value);
+    });
+
+    let image = $('#image')[0].files[0];
+    if(image != undefined) {
+        form_data.append("image", image);
+    }
+
+    form_data.append("action", "add");
+
+    let sendAddBrand = sendAJax(
+        "process_brand.php",
+        "post",
+        "json",
+        form_data,
+        1
+    );
+
+    let status = sendAddBrand.status;
+    let prevLink = sendAddBrand.prevLink;
+
+    switch(status) {
+        case 1:
+            alert("THIẾU DỮ LIỆU");
+            break;
+        case 3:
+            alert("HÃNG ĐÃ TỒN TẠI");
+            break;
+        case 5:
+            alert("THÊM HÃNG THÀNH CÔNG");
+            window.location = prevLink;
+            break;
+        case 6:
+            alert("THÊM HÃNG THẤT BẠI, TÊN HÃNG CÓ THỂ ĐÃ TỒN TẠI");
+            break;
+    }
+
+   }
+}
+
+function validateBrandEdit() {
+
+    let test = true;
+
+    // xóa class lỗi
+    $('#name').removeClass("error_field");
+
+    // xóa thông báo lỗi
+    $('#nameErr').text("");
+
+    // lấy giá trị
+    let name = $('#name').val().trim();
+    let image = $('#image')[0].files[0];
+
+    // validate
+    // name
+    if (name == "") {
+        $('#name').addClass("error_field");
+        $('#nameErr').text('không được để trống');
+        test = false;
+    }
+
+    // image
+    if (image != undefined) {
+        let imgName = image.name;
+        let listExt = ["jpg", 'jpeg', 'png'];
+        let ext = imgName.split('.').pop().toLowerCase();
+        let size = image.size;
+
+        if (!listExt.some(val => val == ext)) {
+            $('#imageErr').text("file không hợp lệ");
+            test = false;
+        } else if (size > 500000) {
+            $('#imageErr').text("kích cỡ file quá lớn");
+            test = false;
+        }
+    }
+
+    if (!test) {
+        $('.error_field').first().focus();
+    }
+
+    return test;
+}
+
+function editBrand() {
+   if(validateBrandEdit()) {
+
+    let form_data = new FormData();
+
+    let infoByForm = $("#brand_edit_form").serializeArray();
+    $.each(infoByForm, function(k, obj) {
+        form_data.append(obj.name, obj.value);
+    });
+
+    let image = $('#image')[0].files[0];
+    if(image != undefined) {
+        form_data.append("image", image);
+    }
+
+    form_data.append("action", "edit");
+
+    let sendEditBrand = sendAJax(
+        "process_brand.php",
+        "post",
+        "json",
+        form_data,
+        1
+    );
+
+    let status = sendEditBrand.status;
+    let prevLink = sendEditBrand.prevLink;
+
+    switch(status) {
+        case 1:
+            alert("THIẾU DỮ LIỆU");
+            break;
+        case 3:
+            alert("HÃNG ĐÃ TỒN TẠI");
+            break;
+        case 5:
+            alert("CẬP NHẬT HÃNG THÀNH CÔNG");
+            window.location = prevLink;
+            break;
+        case 6:
+            alert("CẬP NHẬT HÃNG THẤT BẠI, TÊN HÃNG CÓ THỂ ĐÃ TỒN TẠI");
+            break;
+    }
+
+   }
+}

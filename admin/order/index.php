@@ -22,6 +22,8 @@ require_once '../include/navbar.php';
 		<div class="row m-0 mb-3">
 			<div class="col-12 p-0 d-flex justify-content-between align-items-center">
 
+				<button class="btn btn-warning" onclick="javascript:history.go(-1)">QUAY LẠI</button>
+
 				<div class="form-group m-0 p-0 d-flex align-items-center">
 					<form action="" class="form-inline" id="search_box">
 						<input 

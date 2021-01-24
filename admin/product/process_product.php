@@ -190,17 +190,23 @@ if (!empty($_POST['action']) && $_POST['action'] == "edit") {
 	} else {
 
 		// thêm sản phẩm vào bảng sản phẩm
+		$nameIsExistSQL = "SELECT pro_id FROM db_product WHERE pro_name = ? AND pro_id != ? LIMIT 1";
+		$runCheckName = s_cell($nameIsExistSQL, [$name, $productID], "si");
 
-		$imageName = "";
-		if($imageFile != null) {
-			$imageName = up_file($imageFile, $folder, $extension);
+		if($runCheckName) {
+			$status = 3;
 		} else {
-			$imageName = $oldImage;
-		}
 
-		$updateProductSQL = "  
-		UPDATE db_product
-		SET 
+			$imageName = "";
+			if($imageFile != null) {
+				$imageName = up_file($imageFile, $folder, $extension);
+			} else {
+				$imageName = $oldImage;
+			}
+
+			$updateProductSQL = "  
+			UPDATE db_product
+			SET 
 			cat_id         = ?,
 			bra_id         = ?,
 			pro_name       = ?,
@@ -212,50 +218,51 @@ if (!empty($_POST['action']) && $_POST['action'] == "edit") {
 			pro_desc       = ?,
 			pro_detail     = ?,
 			pro_active     = ?
-		WHERE
+			WHERE
 			pro_id = ?
-		";
+			";
 
-		$param = [
-			$category, $brand, $name, $imageName, $color, $price, $quantity, $shortDesc, $desc, $detail, $active, $productID
-		];
+			$param = [
+				$category, $brand, $name, $imageName, $color, $price, $quantity, $shortDesc, $desc, $detail, $active, $productID
+			];
 
-		$runUpdateProduct = db_run($updateProductSQL, $param, "iisssiisssii");
+			$runUpdateProduct = db_run($updateProductSQL, $param, "iisssiisssii");
 
-		// tải sản phẩm thành công -> tải ảnh của sản phẩm
-		if($runUpdateProduct) {
+			// tải sản phẩm thành công -> tải ảnh của sản phẩm
+			if($runUpdateProduct) {
 
-			// nếu tồn tại file ảnh -> tải lên
-			if($libraryFile != null) {
+				// nếu tồn tại file ảnh -> tải lên
+				if($libraryFile != null) {
 
-				// kiểm tra số lượng
-				$imgQtyCurrent = count(getImageProduct($productID));
-				$imgQtyNew = count($libraryFile['name']);
+					// kiểm tra số lượng
+					$imgQtyCurrent = count(getImageProduct($productID));
+					$imgQtyNew = count($libraryFile['name']);
 
-				if($imgQtyCurrent + $imgQtyNew > $limitImgLib) {
-					$upLibraryError = "số lượng ảnh vượt quá giới hạn cho phép($limitImgLib ảnh)";
-				} else {
-					$upLibrary = multiUploadFile($libraryFile, $folder, $extension);
-					$listFileName = $upLibrary['result'];
-					
-					foreach ($listFileName as $key => $fileName) {
-						$addLibrarySQL = "INSERT INTO db_image(pro_id, img_url) VALUES(?, ?)";
-						$runAddLibrary = db_run($addLibrarySQL, [$productID, $fileName], "is");
+					if($imgQtyCurrent + $imgQtyNew > $limitImgLib) {
+						$upLibraryError = "số lượng ảnh vượt quá giới hạn cho phép($limitImgLib ảnh)";
+					} else {
+
+						$upLibrary = multiUploadFile($libraryFile, $folder, $extension);
+						$listFileName = $upLibrary['result'];
+
+						foreach ($listFileName as $key => $fileName) {
+							$addLibrarySQL = "INSERT INTO db_image(pro_id, img_url) VALUES(?, ?)";
+							$runAddLibrary = db_run($addLibrarySQL, [$productID, $fileName], "is");
+						}
+
+						// danh sách lỗi upfile
+						$upLibraryError = implode("<br>", $upLibrary['error']);
 					}
-
-					// danh sách lỗi upfile
-					$upLibraryError = implode("<br>", $upLibrary['error']);
 				}
 
-				
+				$status = 5;
+
+			} else {
+				// tải sản phẩm thất bại
+				$status = 6; 
 			}
-
-			$status = 5;
-
-		} else {
-			// tải sản phẩm thất bại
-			$status = 6; 
 		}
+		
 	}
 	
 	// biến lưu kết quả trả về
@@ -351,22 +358,22 @@ if (!empty($_POST['action']) && $_POST['action'] == "remove_img_lib") {
 	$html = '<div class="oldLibrary d-flex">';
 	foreach ($listLibrary as $key => $img) {
 		$html .= ' 
-		 <div class="img_lib_box text-center mr-2 bg-info" style="width: 150px !important;">
+		<div class="img_lib_box text-center mr-2 bg-info" style="width: 150px !important;">
 
-            <!-- ảnh -->
-            <img src="../../image/' . $img['img_url'] . '" alt="" width="100%">
+		<!-- ảnh -->
+		<img src="../../image/' . $img['img_url'] . '" alt="" width="100%">
 
-            <!-- nút xóa -->
-            <button 
-            type="button"
-            class="btn_remove_img_lib btn btn-danger" 
-            id="btn_remove_img_lib_' . $img['img_id'] . '" 
-            data-img-id="' . $img['img_id'] . '"
-            title="xóa ảnh"
-            >
-              <i class="fas fa-backspace"></i>
-            </button>
-         </div>
+		<!-- nút xóa -->
+		<button 
+		type="button"
+		class="btn_remove_img_lib btn btn-danger" 
+		id="btn_remove_img_lib_' . $img['img_id'] . '" 
+		data-img-id="' . $img['img_id'] . '"
+		title="xóa ảnh"
+		>
+		<i class="fas fa-backspace"></i>
+		</button>
+		</div>
 		';
 	}
 	$html .= "</div>";

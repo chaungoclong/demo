@@ -30,38 +30,32 @@ require_once RF . '/user/include/navbar.php';
 				<!-- lấy đơn hàng -->
 				<?php 
 					$orderID = data_input(input_get('orid'));
-					$order = getOrderByID($orderID);
+					$order   = getOrderByID($orderID);
 				 ?>
 
 				<div>
 					<!-- THÔNG TIN CHUNG -->
 					<table class="table table-hover table-sm table-borderless" style="font-size: 13px;">
 						<tr>
-							<td width="200px">MÃ ĐƠN HÀNG:</td>
+							<td width="200px"><strong>MÃ ĐƠN HÀNG:</strong></td>
 							<td><?= $orderID; ?></td>
 						</tr>
 						<tr>
-							<td>TÌNH TRẠNG ĐƠN HÀNG:</td>
+							<td><strong>TÌNH TRẠNG ĐƠN HÀNG:</strong></td>
 							<td>	
 								<?php
 									$status = $order['or_status'];
 									switch ($status) {
 										case '0':
-											echo "đang chờ hủy";
-											break;
-										case '1':
 											echo "đang chờ xác nhận";
 											break;
-										case '2':
+										case '1':
 											echo "đã xác nhận";
 											break;
+										case '2':
+											echo "đang chờ hủy";
+											break;
 										case '3':
-											echo "đang giao hàng";
-											break;
-										case '4':
-											echo "đã giao hàng";
-											break;
-										case '5':
 											echo "đã hủy";
 											break;
 										
@@ -73,23 +67,27 @@ require_once RF . '/user/include/navbar.php';
 							</td>
 						</tr>
 						<tr>
-							<td>NGƯỜI ĐẶT:</td>
+							<td><strong>NGƯỜI ĐẶT:</strong></td>
 							<td><?= $order['cus_name']; ?></td>
 						</tr>
 						<tr>
-							<td>NGƯỜI NHẬN:</td>
+							<td><strong>NGƯỜI NHẬN:</strong></td>
 							<td><?= $order['receiver_name']; ?></td>
 						</tr>
 						<tr>
-							<td>ĐỊA CHỈ NHẬN HÀNG:</td>
+							<td><strong>ĐỊA CHỈ NHẬN HÀNG:</strong></td>
 							<td><?= $order['receiver_add']; ?></td>
 						</tr>
 						<tr>
-							<td>NGÀY ĐẶT:</td>
+							<td><strong>SĐT NGƯỜI NHẬN:</strong></td>
+							<td><?= $order['receiver_phone']; ?></td>
+						</tr>
+						<tr>
+							<td><strong>NGÀY ĐẶT:</strong></td>
 							<td><?= strToTimeFormat($order['or_create_at'], "H:i:s d-m-Y"); ?></td>
 						</tr>
 						<tr>
-							<td>GHI CHÚ:</td>
+							<td><strong>GHI CHÚ:</strong></td>
 							<td><?= $order['or_notice']; ?></td>
 						</tr>
 					</table>

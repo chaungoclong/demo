@@ -105,5 +105,27 @@ function sendAJax(url, method, type = 'text', data = {}, mode = 0) {
     return result;
 }
 
+// hàm in một phần tử
+
+function printElement(element) {
+
+    // nội dung khôi phục
+    let restoreContent = $('body').html();
+
+    // nội dung in
+    let printContent = $(element).html();
+
+    // xóa nội dung trong trang thay thế bằng nội dung in
+    $('body').empty().html(printContent);
+
+    // // in
+    window.print();
+
+    // khôi phục
+    $('body').html(restoreContent);
+    window.reload();
+
+}
+
 
 

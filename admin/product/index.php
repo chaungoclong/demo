@@ -29,7 +29,7 @@ require_once '../include/navbar.php';
 					data-placement="top" 
 					title="Thêm sản phẩm mới"
 				>
-					<i class="fas fa-user-plus"></i>
+					<i class="fas fa-plus"></i>
 				</a>
 
 				<div class="form-group m-0 p-0 d-flex align-items-center">

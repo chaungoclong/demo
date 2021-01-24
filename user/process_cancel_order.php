@@ -9,7 +9,7 @@
 		if($orderID === false) {
 			$status =  1;
 		} else {
-			$cancelOrderSQL = "UPDATE db_order SET or_status = 0 WHERE or_id = ?";
+			$cancelOrderSQL = "UPDATE db_order SET or_status = 2 WHERE or_id = ?";
 			$runCancelOrder = db_run($cancelOrderSQL, [$orderID], "i");
 			$status = 5;
 		}
