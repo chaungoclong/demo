@@ -1815,7 +1815,9 @@ function editBrand() {
 // =========================SLIDER MODULE===========================
 function validateSlideAdd() {
 
-    let test = true;
+    let test       = true;
+    
+    let limitSlide = 20;
 
     // xóa class lỗi
     $('#cat').removeClass('error_field');
@@ -1846,18 +1848,23 @@ function validateSlideAdd() {
         $('#slideErr').text('Không được để trống');
         test = false;
     } else {
-        $.each(slide, function(k, v) {
-            let fileName = v.name;
-            let listExt = ['jpg', 'jpeg', 'png'];
-            let ext = fileName.split('.').pop().toLowerCase();
-            let size = v.size;
+        let qtySlide = slide.length;
+        if (qtySlide > limitSlide) {
+            errorSlide += "SỐ LƯỢNG FILE VƯỢT QUÁ GIỚI HẠN";  
+        } else {
+            $.each(slide, function(k, v) {
+                let fileName = v.name;
+                let listExt = ['jpg', 'jpeg', 'png'];
+                let ext = fileName.split('.').pop().toLowerCase();
+                let size = v.size;
 
-            if (!listExt.some(val => val == ext)) {
-                errorSlide += fileName + ":File không hợp lệ|";
-            } else if (size > 500000) {
-                errorSlide += fileName + ":File quá lớn|";
-            }
-        });
+                if (!listExt.some(val => val == ext)) {
+                    errorSlide += fileName + ":File không hợp lệ|";
+                } else if (size > 500000) {
+                    errorSlide += fileName + ":File quá lớn|";
+                }
+            });
+        }
 
         if (errorSlide.length > 0) {
             test = false;
@@ -1904,6 +1911,7 @@ function addSlide() {
         let status = sendAddSlide.status;
         let prevLink = sendAddSlide.prevLink;
         let upFileError = sendAddSlide.error;
+        var notice = "";
 
         switch (status) {
             case 1:
@@ -1912,7 +1920,7 @@ function addSlide() {
 
             case 5:
 
-                let notice = "THÊM SLIDE THÀNH CÔNG";
+                notice = "THÊM SLIDE THÀNH CÔNG";
 
                 if (upFileError != "") {
                     notice += "\nNOTICE:" + upFileError;
@@ -1921,6 +1929,18 @@ function addSlide() {
                 alert(notice);
                 window.location = prevLink;
                 break;
+
+            case 6:
+
+                notice = "THÊM SLIDE THẤT BẠI";
+
+                if (upFileError != "") {
+                    notice += "\nNOTICE:" + upFileError;
+                }
+
+                alert(notice);
+                break;
+
         }
     }
 }
