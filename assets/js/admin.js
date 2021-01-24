@@ -969,7 +969,7 @@ function addUser() {
 function validateProductAdd() {
 
     let test = true;
-    let limitImg = 4;
+    let limitImg = 10;
 
     // xóa class lỗi
     $('#name').removeClass("error_field");
@@ -1408,8 +1408,8 @@ function editProduct() {
 
         // lấy kết quả trả về
         let libraryErr = sendAddProduct.libraryErr;
-        let status     = sendAddProduct.status;
-        let prevLink   = sendAddProduct.prevLink;
+        let status = sendAddProduct.status;
+        let prevLink = sendAddProduct.prevLink;
 
         // hiển thị trạng thái
         switch (status) {
@@ -1422,7 +1422,7 @@ function editProduct() {
             case 5:
                 let notice = "Cập nhật sản phẩm thành công";
 
-                if(libraryErr != "") {
+                if (libraryErr != "") {
                     notice += "\nNOTICE:" + libraryErr;
                 }
 
@@ -1486,50 +1486,50 @@ function validateCategoryAdd() {
 }
 
 function addCategory() {
-   if(validateCategoryAdd()) {
+    if (validateCategoryAdd()) {
 
-    let form_data = new FormData();
+        let form_data = new FormData();
 
-    let infoByForm = $("#category_add_form").serializeArray();
-    $.each(infoByForm, function(k, obj) {
-        form_data.append(obj.name, obj.value);
-    });
+        let infoByForm = $("#category_add_form").serializeArray();
+        $.each(infoByForm, function(k, obj) {
+            form_data.append(obj.name, obj.value);
+        });
 
-    let image = $('#image')[0].files[0];
-    if(image != undefined) {
-        form_data.append("image", image);
+        let image = $('#image')[0].files[0];
+        if (image != undefined) {
+            form_data.append("image", image);
+        }
+
+        form_data.append("action", "add");
+
+        let sendAddCategory = sendAJax(
+            "process_category.php",
+            "post",
+            "json",
+            form_data,
+            1
+        );
+
+        let status = sendAddCategory.status;
+        let prevLink = sendAddCategory.prevLink;
+
+        switch (status) {
+            case 1:
+                alert("THIẾU DỮ LIỆU");
+                break;
+            case 3:
+                alert("DANH MỤC ĐÃ TỒN TẠI");
+                break;
+            case 5:
+                alert("THÊM DANH MỤC THÀNH CÔNG");
+                window.location = prevLink;
+                break;
+            case 6:
+                alert("THÊM DANH MỤC THẤT BẠI, TÊN DANH MỤC CÓ THỂ ĐÃ TỒN TẠI");
+                break;
+        }
+
     }
-
-    form_data.append("action", "add");
-
-    let sendAddCategory = sendAJax(
-        "process_category.php",
-        "post",
-        "json",
-        form_data,
-        1
-    );
-
-    let status = sendAddCategory.status;
-    let prevLink = sendAddCategory.prevLink;
-
-    switch(status) {
-        case 1:
-            alert("THIẾU DỮ LIỆU");
-            break;
-        case 3:
-            alert("DANH MỤC ĐÃ TỒN TẠI");
-            break;
-        case 5:
-            alert("THÊM DANH MỤC THÀNH CÔNG");
-            window.location = prevLink;
-            break;
-        case 6:
-            alert("THÊM DANH MỤC THẤT BẠI, TÊN DANH MỤC CÓ THỂ ĐÃ TỒN TẠI");
-            break;
-    }
-
-   }
 }
 
 function validateCategoryEdit() {
@@ -1578,50 +1578,50 @@ function validateCategoryEdit() {
 }
 
 function editCategory() {
-   if(validateCategoryEdit()) {
+    if (validateCategoryEdit()) {
 
-    let form_data = new FormData();
+        let form_data = new FormData();
 
-    let infoByForm = $("#category_edit_form").serializeArray();
-    $.each(infoByForm, function(k, obj) {
-        form_data.append(obj.name, obj.value);
-    });
+        let infoByForm = $("#category_edit_form").serializeArray();
+        $.each(infoByForm, function(k, obj) {
+            form_data.append(obj.name, obj.value);
+        });
 
-    let image = $('#image')[0].files[0];
-    if(image != undefined) {
-        form_data.append("image", image);
+        let image = $('#image')[0].files[0];
+        if (image != undefined) {
+            form_data.append("image", image);
+        }
+
+        form_data.append("action", "edit");
+
+        let sendEditCategory = sendAJax(
+            "process_category.php",
+            "post",
+            "json",
+            form_data,
+            1
+        );
+
+        let status = sendEditCategory.status;
+        let prevLink = sendEditCategory.prevLink;
+
+        switch (status) {
+            case 1:
+                alert("THIẾU DỮ LIỆU");
+                break;
+            case 3:
+                alert("DANH MỤC ĐÃ TỒN TẠI");
+                break;
+            case 5:
+                alert("CẬP NHẬT DANH MỤC THÀNH CÔNG");
+                window.location = prevLink;
+                break;
+            case 6:
+                alert("CẬP NHẬT DANH MỤC THẤT BẠI, TÊN DANH MỤC CÓ THỂ ĐÃ TỒN TẠI");
+                break;
+        }
+
     }
-
-    form_data.append("action", "edit");
-
-    let sendEditCategory = sendAJax(
-        "process_category.php",
-        "post",
-        "json",
-        form_data,
-        1
-    );
-
-    let status = sendEditCategory.status;
-    let prevLink = sendEditCategory.prevLink;
-
-    switch(status) {
-        case 1:
-            alert("THIẾU DỮ LIỆU");
-            break;
-        case 3:
-            alert("DANH MỤC ĐÃ TỒN TẠI");
-            break;
-        case 5:
-            alert("CẬP NHẬT DANH MỤC THÀNH CÔNG");
-            window.location = prevLink;
-            break;
-        case 6:
-            alert("CẬP NHẬT DANH MỤC THẤT BẠI, TÊN DANH MỤC CÓ THỂ ĐÃ TỒN TẠI");
-            break;
-    }
-
-   }
 }
 
 // ======== BRAND MODULE ========================================
@@ -1674,50 +1674,50 @@ function validateBrandAdd() {
 }
 
 function addBrand() {
-   if(validateBrandAdd()) {
+    if (validateBrandAdd()) {
 
-    let form_data = new FormData();
+        let form_data = new FormData();
 
-    let infoByForm = $("#brand_add_form").serializeArray();
-    $.each(infoByForm, function(k, obj) {
-        form_data.append(obj.name, obj.value);
-    });
+        let infoByForm = $("#brand_add_form").serializeArray();
+        $.each(infoByForm, function(k, obj) {
+            form_data.append(obj.name, obj.value);
+        });
 
-    let image = $('#image')[0].files[0];
-    if(image != undefined) {
-        form_data.append("image", image);
+        let image = $('#image')[0].files[0];
+        if (image != undefined) {
+            form_data.append("image", image);
+        }
+
+        form_data.append("action", "add");
+
+        let sendAddBrand = sendAJax(
+            "process_brand.php",
+            "post",
+            "json",
+            form_data,
+            1
+        );
+
+        let status = sendAddBrand.status;
+        let prevLink = sendAddBrand.prevLink;
+
+        switch (status) {
+            case 1:
+                alert("THIẾU DỮ LIỆU");
+                break;
+            case 3:
+                alert("HÃNG ĐÃ TỒN TẠI");
+                break;
+            case 5:
+                alert("THÊM HÃNG THÀNH CÔNG");
+                window.location = prevLink;
+                break;
+            case 6:
+                alert("THÊM HÃNG THẤT BẠI, TÊN HÃNG CÓ THỂ ĐÃ TỒN TẠI");
+                break;
+        }
+
     }
-
-    form_data.append("action", "add");
-
-    let sendAddBrand = sendAJax(
-        "process_brand.php",
-        "post",
-        "json",
-        form_data,
-        1
-    );
-
-    let status = sendAddBrand.status;
-    let prevLink = sendAddBrand.prevLink;
-
-    switch(status) {
-        case 1:
-            alert("THIẾU DỮ LIỆU");
-            break;
-        case 3:
-            alert("HÃNG ĐÃ TỒN TẠI");
-            break;
-        case 5:
-            alert("THÊM HÃNG THÀNH CÔNG");
-            window.location = prevLink;
-            break;
-        case 6:
-            alert("THÊM HÃNG THẤT BẠI, TÊN HÃNG CÓ THỂ ĐÃ TỒN TẠI");
-            break;
-    }
-
-   }
 }
 
 function validateBrandEdit() {
@@ -1766,48 +1766,270 @@ function validateBrandEdit() {
 }
 
 function editBrand() {
-   if(validateBrandEdit()) {
+    if (validateBrandEdit()) {
 
+        let form_data = new FormData();
+
+        let infoByForm = $("#brand_edit_form").serializeArray();
+        $.each(infoByForm, function(k, obj) {
+            form_data.append(obj.name, obj.value);
+        });
+
+        let image = $('#image')[0].files[0];
+        if (image != undefined) {
+            form_data.append("image", image);
+        }
+
+        form_data.append("action", "edit");
+
+        let sendEditBrand = sendAJax(
+            "process_brand.php",
+            "post",
+            "json",
+            form_data,
+            1
+        );
+
+        let status = sendEditBrand.status;
+        let prevLink = sendEditBrand.prevLink;
+
+        switch (status) {
+            case 1:
+                alert("THIẾU DỮ LIỆU");
+                break;
+            case 3:
+                alert("HÃNG ĐÃ TỒN TẠI");
+                break;
+            case 5:
+                alert("CẬP NHẬT HÃNG THÀNH CÔNG");
+                window.location = prevLink;
+                break;
+            case 6:
+                alert("CẬP NHẬT HÃNG THẤT BẠI, TÊN HÃNG CÓ THỂ ĐÃ TỒN TẠI");
+                break;
+        }
+
+    }
+}
+
+// =========================SLIDER MODULE===========================
+function validateSlideAdd() {
+
+    let test = true;
+
+    // xóa class lỗi
+    $('#cat').removeClass('error_field');
+    $('#slide').removeClass('error_field');
+
+    // xóa thông báo lỗi
+    $('#catErr').text('');
+    $('#slideErr').text('');
+
+    // lấy giá trị
+    let category = $('#cat').val();
+    let slide = $('#slide')[0].files;
+
+    // validate
+
+    // category
+    if (category == null) {
+        $('#cat').addClass('error_field');
+        $('#catErr').text('Không được để trống');
+        test = false;
+    }
+
+
+    // slide
+    let errorSlide = "";
+    if (slide == undefined) {
+        $('#slide').addClass('error_field');
+        $('#slideErr').text('Không được để trống');
+        test = false;
+    } else {
+        $.each(slide, function(k, v) {
+            let fileName = v.name;
+            let listExt = ['jpg', 'jpeg', 'png'];
+            let ext = fileName.split('.').pop().toLowerCase();
+            let size = v.size;
+
+            if (!listExt.some(val => val == ext)) {
+                errorSlide += fileName + ":File không hợp lệ|";
+            } else if (size > 500000) {
+                errorSlide += fileName + ":File quá lớn|";
+            }
+        });
+
+        if (errorSlide.length > 0) {
+            test = false;
+            $('#slideErr').text(errorSlide);
+        }
+    }
+
+    if (!test) {
+        $('.error_field').first().focus();
+    }
+
+    return test;
+}
+
+// hàm thêm slide
+function addSlide() {
+    if (validateSlideAdd()) {
+        let form_data = new FormData();
+
+        let infoByForm = $('#slide_add_form').serializeArray();
+
+        $.each(infoByForm, function(k, obj) {
+            form_data.append(obj.name, obj.value);
+        });
+
+        let listSlide = $('#slide')[0].files;
+        if (listSlide != undefined) {
+            $.each(listSlide, function(k, v) {
+                form_data.append('slide[]', v);
+            });
+        }
+
+        // thêm hành động
+        form_data.append('action', "add");
+
+        let sendAddSlide = sendAJax(
+            "process_slider.php",
+            "post",
+            "json",
+            form_data,
+            1
+        );
+
+        let status = sendAddSlide.status;
+        let prevLink = sendAddSlide.prevLink;
+        let upFileError = sendAddSlide.error;
+
+        switch (status) {
+            case 1:
+                alert("THIẾU DỮ LIỆU");
+                break;
+
+            case 5:
+
+                let notice = "THÊM SLIDE THÀNH CÔNG";
+
+                if (upFileError != "") {
+                    notice += "\nNOTICE:" + upFileError;
+                }
+
+                alert(notice);
+                window.location = prevLink;
+                break;
+        }
+    }
+}
+
+// UPDATE SLIDE
+
+function validateSlideEdit() {
+
+    let test = true;
+
+    // xóa class lỗi
+    $('#cat').removeClass('error_field');
+    $('#slide').removeClass('error_field');
+
+    // xóa thông báo lỗi
+    $('#catErr').text('');
+    $('#slideErr').text('');
+
+    // lấy giá trị
+    let category = $('#cat').val();
+    let slide = $('#slide')[0].files;
+
+    // validate
+
+    // category
+    if (category == null) {
+        $('#cat').addClass('error_field');
+        $('#catErr').text('Không được để trống');
+        test = false;
+    }
+
+
+    // slide
+    let errorSlide = "";
+    if (slide != undefined) {
+
+        $.each(slide, function(k, v) {
+            let fileName = v.name;
+            let listExt = ['jpg', 'jpeg', 'png'];
+            let ext = fileName.split('.').pop().toLowerCase();
+            let size = v.size;
+
+            if (!listExt.some(val => val == ext)) {
+                errorSlide += fileName + ":File không hợp lệ|";
+            } else if (size > 500000) {
+                errorSlide += fileName + ":File quá lớn|";
+            }
+        });
+
+        if (errorSlide.length > 0) {
+            test = false;
+            $('#slideErr').text(errorSlide);
+        }
+    }
+
+    if (!test) {
+        $('.error_field').first().focus();
+    }
+
+    return test;
+}
+
+// hàm update slide
+function editSlide() {
+
+    let test = true;
+
+    // form gửi dữ liệu lên server
     let form_data = new FormData();
 
-    let infoByForm = $("#brand_edit_form").serializeArray();
+    // dữ liệu từ form
+    let infoByForm = $('#slide_edit_form').serializeArray();
+
+    // thêm dữ liệu vào form gửi lên server
     $.each(infoByForm, function(k, obj) {
         form_data.append(obj.name, obj.value);
     });
 
-    let image = $('#image')[0].files[0];
-    if(image != undefined) {
-        form_data.append("image", image);
-    }
+    // file ảnh
+    let slide = $('#slide')[0].files[0];
 
-    form_data.append("action", "edit");
+    // thêm ảnh vào form data gửi lên server
+    form_data.append("newSlide", slide);
 
-    let sendEditBrand = sendAJax(
-        "process_brand.php",
-        "post",
-        "json",
+    // thêm hành động
+    form_data.append('action', "edit");
+
+    let sendEditSlide = sendAJax(
+        'process_slider.php',
+        'post',
+        'json',
         form_data,
         1
     );
 
-    let status = sendEditBrand.status;
-    let prevLink = sendEditBrand.prevLink;
+    let status = sendEditSlide.status;
+    let prevLink = sendEditSlide.prevLink;
 
-    switch(status) {
+    switch (status) {
         case 1:
             alert("THIẾU DỮ LIỆU");
             break;
-        case 3:
-            alert("HÃNG ĐÃ TỒN TẠI");
-            break;
+
         case 5:
-            alert("CẬP NHẬT HÃNG THÀNH CÔNG");
+            alert("CẬP NHẬT SLIDE THÀNH CÔNG");
             window.location = prevLink;
             break;
         case 6:
-            alert("CẬP NHẬT HÃNG THẤT BẠI, TÊN HÃNG CÓ THỂ ĐÃ TỒN TẠI");
+            alert("CẬP NHẬT HÃNG SLIDE THẤT BẠI");
             break;
     }
-
-   }
 }

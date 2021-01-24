@@ -442,6 +442,29 @@ function read_date($time) {
 		return db_get($getSQL, 1);
 	}
 
+	// hàm lấy danh sách slide
+	function getListSlide($limit = 0, $offset = 0) {
+		$getSQL = "
+		SELECT db_slider.*, db_category.cat_name FROM `db_slider` 
+		JOIN db_category ON db_slider.cat_id = db_category.cat_id
+		ORDER BY sld_pos ASC";
+
+		if($limit) {
+			$getSQL .= " LIMIT ? OFFSET ?";
+			return db_get($getSQL, 1, [$limit, $offset], "ii");
+		}
+
+		return db_get($getSQL, 1);
+	}
+
+	// hàm lấy 1 slide theo ID
+	function getSlideByID($sldID) {
+
+		$getSQL = "SELECT * FROM db_slider WHERE sld_id = ?";
+
+		return s_row($getSQL, [$sldID], "i");
+	}
+
 	// hàm kiểm tra sản phẩm có hóa đơn không
 	function hasOrder($proID) {
 		$checkSQL = "SELECT pro_id FROM db_order_detail WHERE pro_id = ? LIMIT 1";
@@ -571,4 +594,10 @@ function read_date($time) {
 			}
 
 			return db_get($getSQL, 1);
+	}
+
+	// hàm lấy vị trí cuối cùng của slide
+	function lastPostion() {
+		$getSQL = "SELECT MAX(sld_pos) as last_pos FROM db_slider";
+		return s_cell($getSQL);
 	}

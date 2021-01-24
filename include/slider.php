@@ -7,13 +7,13 @@
    $getSlideSQL = "  
    SELECT * FROM db_slider
    WHERE cat_id = '{$catID}'
-   ORDER BY sld_id DESC
+   ORDER BY sld_pos ASC
    LIMIT 10
    ";
  } else {
   $getSlideSQL = "  
   SELECT * FROM db_slider
-  ORDER BY RAND()
+  ORDER BY sld_pos ASC
   LIMIT 10
   ";
 }

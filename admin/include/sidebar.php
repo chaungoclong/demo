@@ -90,11 +90,11 @@
             <strong>slide</strong>
           </a>
           <div class="dropdown_menu border-0">
-            <a href="" class="dropdown-item">
+            <a href="<?= base_url('admin/slider/'); ?>" class="dropdown-item">
               <i class="fas fa-sliders-h mr-1"></i>
               Danh sách slide
             </a>
-            <a href="" class="dropdown-item">
+            <a href="<?= create_link( base_url('admin/slider/add.php'), ['from'=>getCurrentURL()]); ?>" class="dropdown-item">
               <i class="fas fa-plus-circle mr-1"></i>
               Thêm slide
             </a>

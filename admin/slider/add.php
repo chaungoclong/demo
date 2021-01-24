@@ -12,11 +12,6 @@ require_once '../include/navbar.php';
 // trang trước
 $prevLink = isset($_GET['from']) ? $_GET['from'] : "index.php";
 
-$sldID = data_input(input_get('sldid'));
-
-// slide cần sửa
-$slide = getSlideByID($sldID);
-
 // danh sách các thể loại
 $listCategory = db_fetch_table('db_category', 0);
 ?>
@@ -36,29 +31,23 @@ $listCategory = db_fetch_table('db_category', 0);
    </div>
 
    <div class="col-12 mb-5">
-      <form action="  " method="POST" id="slide_edit_form" enctype="multipart/form-data">
+      <form action="	" method="POST" id="slide_add_form" enctype="multipart/form-data">
          <!-- previous link -->
          <input type="hidden" name="prevLink" value="<?= $prevLink; ?>">
-
-         <!-- id slide -->
-         <input type="hidden" name="sldID" id="sldID" value="<?= $slide['sld_id']; ?>">
          
 
          <div class="row m-0">
             <div class="col-12">
                <div  id="backErr" class="alert-danger"></div>
 
-               <!-- tên slide -->
+               <!-- tên sản phẩm -->
                <div class="form-group">
                   <label for="cat"><strong>Danh mục:</strong></label>
 
                   <select name="cat" class="custom-select" id="cat">
                     <option value="0" disabled hidden selected="">Chọn danh mục</option>
                     <?php foreach ($listCategory as $key => $category): ?>
-                      <option 
-                        value="<?= $category['cat_id']; ?>" 
-                        <?= $category['cat_id'] == $slide['cat_id'] ? "selected" : ""; ?>
-                      >
+                      <option value="<?= $category['cat_id']; ?>">
                         <?= $category['cat_name']; ?>
                       </option>
                     <?php endforeach ?>
@@ -72,37 +61,13 @@ $listCategory = db_fetch_table('db_category', 0);
                <label for="slide"><strong>Ảnh slide:</strong></label>
                <input type="file" name="slide" id="slide" multiple>
 
-               <!-- old Slide -->
-               <input type="hidden" name="oldSlide" value="<?= $slide['sld_image']; ?>">
-
-               <div class="previewSlide">
-                 <img src="../../image/<?= $slide['sld_image']; ?>" alt="">
-               </div>
+               <div class="previewSlide"></div>
                <script>
                   $(document).on('change', '#slide', function() {
                     showImg(this, ".previewSlide", 1);
                   });
                </script>
                <div class="alert-danger" id="slideErr"></div>
-            </div>
-
-            <!-- vị trí -->
-            <div class="form-group">
-              <label for="pos"><strong>Vị trí:</strong></label>
-              <br>
-              <?php $maxPos = (int)lastPostion(); ?>
-
-              <!-- vị trí cũ -->
-              <input type="hidden" name="oldPos" value="<?= $slide['sld_pos'] ?>">
-
-              <!-- vị trí mới -->
-              <select name="newPos" id="newPos" class="custom-select w-25">
-                <?php for ($i = 1; $i <= $maxPos ; $i++): ?> 
-                  <option value="<?= $i; ?>" <?= $i == $slide['sld_pos'] ? "selected" : ""; ?>>
-                    <?= $i; ?>
-                  </option>
-                <?php endfor ?>
-              </select>
             </div>
 
 
@@ -123,12 +88,10 @@ $listCategory = db_fetch_table('db_category', 0);
 </html>
 <script>
    $(function() {
-    $(document).on('submit', "#slide_edit_form", function(e) {
-      e.preventDefault();
+   	$(document).on('submit', "#slide_add_form", function(e) {
+   		e.preventDefault();
         // validateSlideAdd();
-         editSlide();
-         // 
-         console.log($(this).serializeArray());
+         addSlide();
 
       });
    });
