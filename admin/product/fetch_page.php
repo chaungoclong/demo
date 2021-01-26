@@ -145,8 +145,7 @@
 							href="
 							' . 
 								create_link(base_url('admin/product/update.php'), [
-									"proid"=>$product['pro_id'],
-									"from"=>$_POST['prevPage']
+									"proid"=>$product['pro_id']
 								])
 							. '
 							"

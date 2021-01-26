@@ -22,9 +22,6 @@ if (!empty($_POST['action']) && $_POST['action'] == "add") {
 	// lấy ảnh
 	$imageFile = !empty($_FILES['image']) ? $_FILES['image'] : null;
 
-	// lấy đường dẫn trang trước
-	$prevLink  = isset($_POST['prevLink']) ? $_POST['prevLink'] : "index.php";
-
 	//validate
 	if($name === false || $imageFile == null) {
 		$status = 1;
@@ -54,8 +51,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "add") {
 	// biến lưu kết quả trả về
 	$res = [
 		"status"     => $status,
-		"imageErr"   => $upImageError,
-		"prevLink"   =>$prevLink
+		"imageErr"   => $upImageError
 	];
 
 	echo json_encode($res);
@@ -84,8 +80,6 @@ if (!empty($_POST['action']) && $_POST['action'] == "edit") {
 	// lấy ảnh
 	$imageFile = !empty($_FILES['image']) ? $_FILES['image'] : null;
 	
-	// lấy đường dẫn trang trước
-	$prevLink  = isset($_POST['prevLink']) ? $_POST['prevLink'] : "index.php";
 
 	//validate
 	if($name === false) {
@@ -132,8 +126,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "edit") {
 	// biến lưu kết quả trả về
 	$res = [
 		"status"     => $status,
-		"imageErr"   => $upImageError,
-		"prevLink"   =>$prevLink
+		"imageErr"   => $upImageError
 	];
 
 	echo json_encode($res);

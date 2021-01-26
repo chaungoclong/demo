@@ -427,12 +427,37 @@ function read_date($time) {
 		return db_get($fetchSQL, $mode);
 	}
 
+	// hàm lấy tất cả hãng
+	function getListBrand($limit = 0, $offset = 0) {
+		$getSQL = "SELECT * FROM db_brand ORDER BY bra_id DESC";
+
+		if($limit) {
+			$getSQL .= " LIMIT ? OFFSET ?";
+			return db_get($getSQL, 1, [$limit, $offset], "ii");
+		}
+
+		return db_get($getSQL, 1);
+	}
+
+	// hàm lấy tất cả danh mục
+	function getListCategory($limit = 0, $offset = 0) {
+		$getSQL = "SELECT * FROM db_category ORDER BY cat_id DESC";
+
+		if($limit) {
+			$getSQL .= " LIMIT ? OFFSET ?";
+			return db_get($getSQL, 1, [$limit, $offset], "ii");
+		}
+
+		return db_get($getSQL, 1);
+	}
+
 	// hàm lấy danh sách sản phẩm
 	function getListProduct($limit = 0, $offset = 0) {
 		$getSQL = "
 		SELECT db_product.*, db_brand.bra_name, db_category.cat_name FROM db_product 
 		JOIN db_category ON db_product.cat_id = db_category.cat_id
-		JOIN db_brand 	 ON db_product.bra_id = db_brand.bra_id";
+		JOIN db_brand 	 ON db_product.bra_id = db_brand.bra_id
+		ORDER BY pro_id ASC";
 
 		if($limit) {
 			$getSQL .= " LIMIT ? OFFSET ?";
@@ -455,6 +480,27 @@ function read_date($time) {
 		}
 
 		return db_get($getSQL, 1);
+	}
+
+	// hàm lấy danh sách tin tức
+	function getListNews($limit = 0, $offset = 0) {
+		$getSQL = "
+		SELECT * FROM db_news ";
+
+		if($limit) {
+			$getSQL .= " LIMIT ? OFFSET ?";
+			return db_get($getSQL, 1, [$limit, $offset], "ii");
+		}
+
+		return db_get($getSQL, 1);
+	}
+
+	// hàm lấy 1 tin tức theo ID
+	function getNewsByID($newsID) {
+
+		$getSQL = "SELECT * FROM db_news WHERE news_id = ?";
+
+		return s_row($getSQL, [$newsID], "i");
 	}
 
 	// hàm lấy 1 slide theo ID
@@ -599,5 +645,11 @@ function read_date($time) {
 	// hàm lấy vị trí cuối cùng của slide
 	function lastPostion() {
 		$getSQL = "SELECT MAX(sld_pos) as last_pos FROM db_slider";
+		return s_cell($getSQL);
+	}
+
+	// hàm đếm số bản ghi cho bảng
+	function countRow($table) {
+		$getSQL = "SELECT COUNT(*) AS totalRow FROM {$table}";
 		return s_cell($getSQL);
 	}

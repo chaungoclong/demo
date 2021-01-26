@@ -9,9 +9,6 @@ if(!is_login() || !is_admin()) {
 require_once '../include/sidebar.php';
 require_once '../include/navbar.php';
 
-// trang trước
-$prevLink = isset($_GET['from']) ? $_GET['from'] : "index.php";
-
 $sldID = data_input(input_get('sldid'));
 
 // slide cần sửa
@@ -127,8 +124,6 @@ $listCategory = db_fetch_table('db_category', 0);
       e.preventDefault();
         // validateSlideAdd();
          editSlide();
-         // 
-         console.log($(this).serializeArray());
 
       });
    });

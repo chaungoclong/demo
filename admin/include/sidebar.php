@@ -43,7 +43,7 @@
               <i class="fas fa-list-ul mr-1"></i>
               Danh sách danh mục
             </a>
-            <a href="<?= create_link( base_url('admin/category/add.php'), ['from'=>getCurrentURL()]); ?>" class="dropdown-item">
+            <a href="<?= base_url('admin/category/add.php'); ?>" class="dropdown-item">
               <i class="fas fa-plus-circle mr-1"></i>
               Thêm danh mục
             </a>
@@ -60,7 +60,7 @@
               <i class="fas fa-list-ul mr-1"></i>
               Danh sách sản phẩm
             </a>
-            <a href="<?= create_link( base_url('admin/product/add.php'), ['from'=>getCurrentURL()]); ?>" class="dropdown-item">
+            <a href="<?= base_url('admin/product/add.php'); ?>" class="dropdown-item">
               <i class="fas fa-plus-circle mr-1"></i>
               Thêm sản phẩm
             </a>
@@ -77,7 +77,7 @@
               <i class="far fa-images mr-1"></i>
               Danh sách hãng
             </a>
-            <a href="<?= create_link( base_url('admin/brand/add.php'), ['from'=>getCurrentURL()]); ?>" class="dropdown-item">
+            <a href="<?= base_url('admin/brand/add.php'); ?>" class="dropdown-item">
               <i class="fas fa-plus-circle mr-1"></i>
               Thêm hãng
             </a>
@@ -94,9 +94,26 @@
               <i class="fas fa-sliders-h mr-1"></i>
               Danh sách slide
             </a>
-            <a href="<?= create_link( base_url('admin/slider/add.php'), ['from'=>getCurrentURL()]); ?>" class="dropdown-item">
+            <a href="<?= base_url('admin/slider/add.php'); ?>" class="dropdown-item">
               <i class="fas fa-plus-circle mr-1"></i>
               Thêm slide
+            </a>
+          </div>
+        </li>
+        <!-- tin tức -->
+        <li class="nav-item mb-4 dropdown">
+          <a class="dropdown-toggle">
+            <i class="fas fa-newspaper mr-1"></i>
+            <strong>Tin tức</strong>
+          </a>
+          <div class="dropdown_menu border-0">
+            <a href="<?= base_url('admin/news/'); ?>" class="dropdown-item">
+              <i class="fas fa-sliders-h mr-1"></i>
+              Danh sách tin tức
+            </a>
+            <a href="<?= base_url('admin/news/add.php'); ?>" class="dropdown-item">
+              <i class="fas fa-plus-circle mr-1"></i>
+              Thêm tin tức
             </a>
           </div>
         </li>
@@ -120,7 +137,7 @@
               <i class="fas fa-list-ul mr-1"></i>
               Danh sách nhân viên
             </a>
-            <a href="<?= create_link( base_url('admin/user/add.php'), ['from'=>getCurrentURL()]); ?>" class="dropdown-item">
+            <a href="<?= base_url('admin/user/add.php'); ?>" class="dropdown-item">
               <i class="fas fa-user-plus mr-1"></i>
               Thêm nhân viên
             </a>

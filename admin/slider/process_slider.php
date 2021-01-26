@@ -5,8 +5,16 @@
 	// THÊM SLIDE
 	if(!empty($_POST['action']) && $_POST['action'] == "add") {
 
+		// số lượng slide giới hạn
+		$limitSlide  = 20;
+
+		// số lượng slide hiện tại
+		$currenQtySlide = (int)count(getListSlide()->fetch_all(MYSQLI_ASSOC));
+
+		// trạng thái xử lý
 		$status      = 5;
 		
+		// thông báo lỗi khi up file
 		$errorUpFile = "";
 		
 		$catID       = data_input(input_post('cat'));
@@ -17,10 +25,12 @@
 		
 		$fileSlide   = !empty($_FILES['slide']) ? $_FILES['slide'] : null;
 
-		$prevLink = !empty($_POST['prevLink']) ? $_POST['prevLink'] : 'index.php';
-
 		if($catID === false || $fileSlide == null) {
 			$status = 1;
+		} elseif((int)count($fileSlide['name']) + $currenQtySlide > $limitSlide) {
+
+			$errorUpFile = "số lượng ảnh vượt quá giới hạn cho phép($limitSlide ảnh)";
+			$status = 6;
 		} else {
 
 			// tải tất cả ảnh slide vào thư mục chưa ảnh
@@ -49,7 +59,7 @@
 			$status = 5;
 		}
 
-		$res = ['status'=>$status, 'error'=>$errorUpFile, 'prevLink'=>$prevLink];
+		$res = ['status'=>$status, 'error'=>$errorUpFile];
 
 		echo json_encode($res);
 	}
@@ -139,7 +149,6 @@
 		
 		$newSlideFile = !empty($_FILES['newSlide']) ? $_FILES['newSlide'] : null;
 		
-		$prevLink     = data_input(input_post('prevLink'));
 
 
 		if(
@@ -147,8 +156,7 @@
 			$catID    === false || 
 			$oldSlide === false || 
 			$oldPos   === false || 
-			$newPos   === false || 
-			$prevLink === false
+			$newPos   === false
 		) {
 
 			// thiếu dữ liệu
@@ -185,7 +193,7 @@
 
 		}
 
-		$res = ['status'=>$status, 'prevLink'=>$prevLink];
+		$res = ['status'=>$status];
 
 		echo json_encode($res);
 	}

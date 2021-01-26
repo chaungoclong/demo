@@ -1,12 +1,15 @@
 <?php 
 require_once '../../common.php';
 
-
+/**
+ * trường ảnh mô tả không bắt buộc-> nếu sai hoặc thiếu vẫn tải sản phẩm lên mà không tải những file bị sai
+ */
 if (!empty($_POST['action']) && $_POST['action'] == "add") {
 
-	$status = 5;
-	$upImageError = "";
+	$status         = 5;
+	$upImageError   = "";
 	$upLibraryError = ""; 
+	$limitImgLib    = 10;
 
 	//lấy dữ liệu gửi lên từ ajax
 	$name      = data_input(input_post("name"));
@@ -21,32 +24,16 @@ if (!empty($_POST['action']) && $_POST['action'] == "add") {
 	$active    = data_input(input_post("active"));
 	$active    = $active ? 1 : 0;
 
-
-
-	// echo $name . "<br>";
-	// echo $brand . "<br>";
-	// echo $category . "<br>";
-	// echo $price . "<br>";
-	// echo $quantity . "<br>";
-	// echo $color . "<br>";
-	// echo $shortDesc . "<br>";
-	// echo $desc . "<br>";
-	// echo $detail . "<br>";
-	// echo $active . "<br>";
-	// exit;
-
 	// đường dẫn đến thư mục lưu ảnh
-	$folder = "../../image/";
-
+	$folder      = "../../image/";
+	
 	//  danh sách đuôi file hợp lệ
-	$extension = ['jpg', 'jpeg', 'png'];
-
+	$extension   = ['jpg', 'jpeg', 'png'];
+	
 	// lấy ảnh
-	$imageFile = !empty($_FILES['image']) ? $_FILES['image'] : null;
+	$imageFile   = !empty($_FILES['image']) ? $_FILES['image'] : null;
 	$libraryFile = !empty($_FILES['library']) ? $_FILES['library'] : null;
 	
-	// lấy đường dẫn trang trước
-	$prevLink  = isset($_POST['prevLink']) ? $_POST['prevLink'] : "index.php";
 
 	//validate
 	if(
@@ -70,6 +57,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "add") {
 		$imageName = up_file($imageFile, $folder, $extension);
 		if(!$imageName) {
 			$upImageError = "Tải ảnh đại diện không thành công";
+			$imageName    = "";
 		}
 
 		$addProductSQL = "  
@@ -92,16 +80,28 @@ if (!empty($_POST['action']) && $_POST['action'] == "add") {
 
 			// nếu tồn tại file ảnh -> tải lên
 			if($libraryFile != null) {
-				$upLibrary = multiUploadFile($libraryFile, $folder, $extension);
-				$listFileName = $upLibrary['result'];
-				
-				foreach ($listFileName as $key => $fileName) {
-					$addLibrarySQL = "INSERT INTO db_image(pro_id, img_url) VALUES(?, ?)";
-					$runAddLibrary = db_run($addLibrarySQL, [$productID, $fileName], "is");
-				}
 
-				// danh sách lỗi upfile
-				$upLibraryError = implode("<br>", $upLibrary['error']);
+				// số lượng ảnh tải lên
+				$imgQty = count($libraryFile['name']);
+
+				// thông báo lỗi nếu số lượng ảnh tải lên > số lượng ảnh cho phép
+				if($imgQty > $limitImgLib) {
+
+					$upLibraryError = "số lượng ảnh vượt quá giới hạn cho phép($limitImgLib ảnh)";
+				} else {
+
+					$upLibrary = multiUploadFile($libraryFile, $folder, $extension);
+					$listFileName = $upLibrary['result'];
+					
+					foreach ($listFileName as $key => $fileName) {
+						$addLibrarySQL = "INSERT INTO db_image(pro_id, img_url) VALUES(?, ?)";
+						$runAddLibrary = db_run($addLibrarySQL, [$productID, $fileName], "is");
+					}
+
+					// danh sách lỗi upfile
+					$upLibraryError = implode("<br>", $upLibrary['error']);
+				}
+				
 			}
 
 			$status = 5;
@@ -111,13 +111,17 @@ if (!empty($_POST['action']) && $_POST['action'] == "add") {
 			$status = 6; 
 		}
 	}
-	
+
+	// lấy số trang mới sau khi thêm -> đi đến đúng trang
+	$totalPro = countRow('db_product');
+	$newPage = ceil($totalPro / 5);
+
 	// biến lưu kết quả trả về
 	$res = [
 		"status"     => $status,
 		"libraryErr" => $upLibraryError,
 		"imageErr"   => $upImageError,
-		"prevLink"   =>$prevLink
+		"newPage"    => $newPage
 	];
 
 	echo json_encode($res);
@@ -146,20 +150,6 @@ if (!empty($_POST['action']) && $_POST['action'] == "edit") {
 	$active    = data_input(input_post("active"));
 	$active    = $active ? 1 : 0;
 
-
-
-	// echo $name . "<br>";
-	// echo $brand . "<br>";
-	// echo $category . "<br>";
-	// echo $price . "<br>";
-	// echo $quantity . "<br>";
-	// echo $color . "<br>";
-	// echo $shortDesc . "<br>";
-	// echo $desc . "<br>";
-	// echo $detail . "<br>";
-	// echo $active . "<br>";
-	// exit;
-
 	// đường dẫn đến thư mục lưu ảnh
 	$folder = "../../image/";
 
@@ -170,8 +160,6 @@ if (!empty($_POST['action']) && $_POST['action'] == "edit") {
 	$imageFile = !empty($_FILES['image']) ? $_FILES['image'] : null;
 	$libraryFile = !empty($_FILES['library']) ? $_FILES['library'] : null;
 	
-	// lấy đường dẫn trang trước
-	$prevLink  = isset($_POST['prevLink']) ? $_POST['prevLink'] : "index.php";
 
 	//validate
 	if(
@@ -268,8 +256,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "edit") {
 	// biến lưu kết quả trả về
 	$res = [
 		"status"     => $status,
-		"libraryErr" => $upLibraryError,
-		"prevLink"   =>$prevLink
+		"libraryErr" => $upLibraryError
 	];
 
 	echo json_encode($res);
@@ -280,7 +267,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "edit") {
 if (!empty($_POST['action']) && $_POST['action'] == "switch_active") {
 	$status = 5;
 
-		// mã nhân viên
+		// mã sản phẩm
 	$proID = data_input(input_post("proID"));
 
 		// trạng thái muốn cập nhật
@@ -301,9 +288,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "switch_active") {
 
 	$res = [
 		"status"   =>$status,
-		"userID"   =>$userID,
-		"active"   =>$newActive,
-		"prevLink" =>$prevLink
+		"active"   =>$newActive
 	];
 
 	echo json_encode($res);

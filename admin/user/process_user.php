@@ -17,8 +17,6 @@ if (!empty($_POST['action']) && $_POST['action'] == "add") {
 	$rePwd     = data_input(input_post("rePwdRegister"));
 	$active    = $active ? 1 : 0;
 
-	$prevLink = isset($_POST['prevLink']) ? $_POST['prevLink'] : "index.php";
-
 	// nếu không có file tải lên thì tên file = ""
 	$imgFile = !empty($_FILES['avatar']) ? $_FILES['avatar'] : null;
 	if(!empty($imgFile)) {
@@ -64,8 +62,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "add") {
 
 	//tập hợp dữ liệu trả về
 	$res = [
-		"status"   => $status,
-		"prevPage" => $prevLink
+		"status"   => $status
 	];
 
 	// trả về dữ liệu
@@ -123,7 +120,6 @@ if (!empty($_POST['action']) && $_POST['action'] == "edit") {
 	$role      = data_input(input_post("role"));
 	$active    = $active ? 1 : 0;
 
-	$prevLink = isset($_POST['prevLink']) ? $_POST['prevLink'] : "index.php";
 
 	// nếu không có file tải lên thì tên file = tên file avatar cũ
 	$imgFile = !empty($_FILES['avatar']) ? $_FILES['avatar'] : null;
@@ -191,8 +187,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "edit") {
 
 	//tập hợp dữ liệu trả về
 	$res = [
-		"status"   => $status,
-		"prevPage" => $prevLink
+		"status"   => $status
 	];
 
 	// trả về dữ liệu
@@ -200,11 +195,11 @@ if (!empty($_POST['action']) && $_POST['action'] == "edit") {
 }
 
 
-// XÓA NGƯỜI DÙNG
+// XÓA NHÂN VIÊN
 if (!empty($_POST['action']) && $_POST['action'] == "remove") {
 	$status = 5;
 
-	// mã người dùng
+	// mã nhân viên
 	$userID = data_input(input_post("userID"));
 
 	if($userID === false) {

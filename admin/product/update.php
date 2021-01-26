@@ -13,9 +13,6 @@ require_once '../include/navbar.php';
 $productID    = input_get("proid");
 $product      = getProductById($productID);
 
-// trang trước
-$prevLink     = isset($_GET['from']) ? $_GET['from'] : "index.php";
-
 // danh sách hãng
 $listBrand    = db_fetch_table("db_brand", 0);
 
@@ -38,8 +35,7 @@ $listCategory = db_fetch_table("db_category", 0);
 
    <div class="col-12 mb-5">
       <form action="	" method="POST" id="product_edit_form" enctype="multipart/form-data">
-         <!-- previous link -->
-         <input type="hidden" name="prevLink" value="<?= $prevLink; ?>">
+
          <input type="hidden" name="proID" value="<?= $productID; ?>">
          
 
@@ -272,6 +268,7 @@ $listCategory = db_fetch_table("db_category", 0);
   // 
   $(document).on('submit', '#product_edit_form', function(e) {
     e.preventDefault();
+
     editProduct();
     
   });

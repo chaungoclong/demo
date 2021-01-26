@@ -144,8 +144,7 @@
 							href="
 							' . 
 								create_link(base_url('admin/slider/update.php'), [
-									"sldid"=>$slide['sld_id'],
-									"from"=>getCurrentURL()
+									"sldid"=>$slide['sld_id']
 								])
 							. '
 							"

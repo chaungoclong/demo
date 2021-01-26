@@ -22,7 +22,7 @@ require_once '../include/navbar.php';
 		<div class="row m-0 mb-3">
 			<div class="col-12 p-0 d-flex justify-content-between align-items-center">
 				<a href="
-					<?= create_link( base_url('admin/user/add.php'), ['from'=>getCurrentURL()]); ?>
+					<?= base_url('admin/user/add.php'); ?>
 					" 
 					class="btn btn-success" 
 					data-toggle="tooltip" 
@@ -175,8 +175,7 @@ require_once '../include/navbar.php';
 							href="
 							<?= 
 								create_link(base_url('admin/user/update.php'), [
-									"userid"=>$user['ad_id'],
-									"from"=>getCurrentURL()
+									"userid"=>$user['ad_id']
 								]);
 							?>
 							"
@@ -218,10 +217,10 @@ require_once '../include/navbar.php';
 		let q = "<?= $_GET['q'] ?? ""; ?>";
 		$('#search').val(q);
 	
-		// Thay đổi trạng thái của khách hàng
+		// Thay đổi trạng thái của nhân viên
 		$(document).on('change', '.btn_switch_active', function() {
 
-			// id khách hàng
+			// id nhân
 			let userID = $(this).data("user-id");
 
 			// trạng thái hiện tại
@@ -290,7 +289,7 @@ require_once '../include/navbar.php';
 		// xóa người dùng
 		$(document).on('click', '.btn_remove_user', function() {
 
-			let wantRemove = confirm("BẠN CÓ MUỐN XÓA NGƯỜI DÙNG NÀY? MỌI ĐƠN HÀNG LIÊN QUAN SẼ BỊ XÓA THEO");
+			let wantRemove = confirm("BẠN CÓ MUỐN XÓA NHÂN VIÊN NÀY");
 
 			if(wantRemove) {
 				// THỰC HIỆN HÀNH ĐỘNG

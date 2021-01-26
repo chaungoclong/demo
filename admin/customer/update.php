@@ -10,17 +10,13 @@ require_once '../include/navbar.php';
 $customerID = data_input(input_get("cusid"));
 $customer = get_user_by_id($customerID);
 
-// trang trước
-$prevLink = isset($_GET['from']) ? $_GET['from'] : "index.php";
-
 //vd($customer);
 ?>
 <!-- main content -row -->
 <div class="main_content bg-white row m-0 pt-4">
 	<div class="col-12">
 		<form action="	" method="POST" id="cus_info_edit_form">
-			<!-- previous Link -->
-			<input type="hidden" name="prevLink" value="<?= $prevLink; ?>">
+			
 			<div class="row m-0">
 				<div class="col-12">
 					<h5>CHỈNH SỬA THÔNG TIN KHÁCH HÀNG</h5>
@@ -192,8 +188,6 @@ $prevLink = isset($_GET['from']) ? $_GET['from'] : "index.php";
 	$(function() {
 		$(document).on('submit', "#cus_info_edit_form", function(e) {
 			e.preventDefault();
-			var prevLink = "<?= $prevLink; ?>";
-			console.log(prevLink);
 			editCustomerInfo();
 		});
 	});

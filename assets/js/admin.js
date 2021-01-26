@@ -208,7 +208,7 @@ function validateUserUpdate() {
             $('#avatar').addClass("error_field");
             $('#avatarErr').text("extention not match");
             test = false;
-        } else if (size > 500000) {
+        } else if (size > 5000000) {
             $('#avatar').addClass("error_field");
             $('#avatarErr').text("size is very big");
             test = false;
@@ -393,12 +393,12 @@ function validateEditCustomer() {
 
     //lấy dữ liệu
     let address = $('#address').val().trim();
-    let name = $('#name').val().trim();
-    let dob = $('#dob').val().trim();
-    let gender = Object.values($('#cus_info_edit_form')[0]['gender']);
-    let email = $('#email').val().trim();
-    let phone = $('#phone').val().trim();
-    let avatar = $('#avatar')[0].files[0];
+    let name    = $('#name').val().trim();
+    let dob     = $('#dob').val().trim();
+    let gender  = Object.values($('#cus_info_edit_form')[0]['gender']);
+    let email   = $('#email').val().trim();
+    let phone   = $('#phone').val().trim();
+    let avatar  = $('#avatar')[0].files[0];
 
 
     //VALIDATE
@@ -473,7 +473,7 @@ function validateEditCustomer() {
             $('#avatar').addClass("error_field");
             $('#avatarErr').text("extention not match");
             test = false;
-        } else if (size > 500000) {
+        } else if (size > 5000000) {
             $('#avatar').addClass("error_field");
             $('#avatarErr').text("size is very big");
             test = false;
@@ -544,7 +544,7 @@ function editCustomerInfo() {
                     // $('#backErr').text('Cập nhật thành công');
                     // $('#name').text(data.name);
                     alert('CẬP NHẬT THÀNH CÔNG');
-                    window.location = res.prevPage;
+                    window.location = document.referrer;
                     // $('[class*="acc_img"]').prop('src', "../image/" + data.avatar);
                     // $('[class*="acc_name"]').text(data.name);
 
@@ -581,12 +581,12 @@ function validateUserEdit() {
     $('#avatarErr').text("");
 
     //lấy dữ liệu
-    let uname = $('#uname').val().trim();
-    let name = $('#name').val().trim();
-    let dob = $('#dob').val().trim();
+    let uname  = $('#uname').val().trim();
+    let name   = $('#name').val().trim();
+    let dob    = $('#dob').val().trim();
     let gender = Object.values($('#user_info_edit_form')[0]['gender']);
-    let email = $('#email').val().trim();
-    let phone = $('#phone').val().trim();
+    let email  = $('#email').val().trim();
+    let phone  = $('#phone').val().trim();
     let avatar = $('#avatar')[0].files[0];
 
     //VALIDATE
@@ -665,7 +665,7 @@ function validateUserEdit() {
             $('#avatar').addClass("error_field");
             $('#avatarErr').text("extention not match");
             test = false;
-        } else if (size > 500000) {
+        } else if (size > 5000000) {
             $('#avatar').addClass("error_field");
             $('#avatarErr').text("size is very big");
             test = false;
@@ -735,7 +735,7 @@ function editUserInfo() {
                     // $('#backErr').text('Cập nhật thành công');
                     // $('#name').text(data.name);
                     alert('CẬP NHẬT THÀNH CÔNG');
-                    window.location = res.prevPage;
+                    window.location = document.referrer;
                     // $('[class*="acc_img"]').prop('src', "../image/" + data.avatar);
                     // $('[class*="acc_name"]').text(data.name);
 
@@ -881,7 +881,7 @@ function validateUserAdd() {
             $('#avatar').addClass("error_field");
             $('#avatarErr').text("extention not match");
             test = false;
-        } else if (size > 500000) {
+        } else if (size > 5000000) {
             $('#avatar').addClass("error_field");
             $('#avatarErr').text("size is very big");
             test = false;
@@ -951,7 +951,7 @@ function addUser() {
                     // $('#backErr').text('Cập nhật thành công');
                     // $('#name').text(data.name);
                     alert('THÊM THÀNH CÔNG');
-                    window.location = res.prevPage;
+                    window.location = document.referrer;
                     // $('[class*="acc_img"]').prop('src', "../image/" + data.avatar);
                     // $('[class*="acc_name"]').text(data.name);
 
@@ -1093,7 +1093,7 @@ function validateProductAdd() {
         if (!listExt.some(val => val == ext)) {
             $('#imageErr').text("file không hợp lệ");
             test = false;
-        } else if (size > 500000) {
+        } else if (size > 5000000) {
             $('#imageErr').text("kích cỡ file quá lớn");
             test = false;
         }
@@ -1114,7 +1114,7 @@ function validateProductAdd() {
 
                 if (!listExt.some(val => val == ext)) {
                     errorLibrary += imgName + ": file không hợp lệ| ";
-                } else if (size > 500000) {
+                } else if (size > 5000000) {
                     errorLibrary += imgName + ": file quá lớn| ";
                 }
             });
@@ -1170,11 +1170,11 @@ function addProduct() {
         );
 
         // lấy kết quả trả về
-        let imageErr = sendAddProduct.imageErr;
+        let imageErr   = sendAddProduct.imageErr;
         let libraryErr = sendAddProduct.libraryErr;
-        let status = sendAddProduct.status;
-        let prevLink = sendAddProduct.prevLink;
-
+        let status     = sendAddProduct.status;
+        let newPage    = sendAddProduct.newPage;
+        
         // lỗi tải ảnh đại diện
         if (imageErr != "") {
             alert(imageErr);
@@ -1195,7 +1195,7 @@ function addProduct() {
                 break;
             case 5:
                 alert("Thêm sản phẩm thành công");
-                window.location = prevLink;
+                window.location = "index.php?page=" + newPage;
                 break;
             case 6:
                 alert("Thêm sản phẩm thất bại , sản phẩm có thể đã tồn tại");
@@ -1329,7 +1329,7 @@ function validateProductEdit() {
         if (!listExt.some(val => val == ext)) {
             $('#imageErr').text("file không hợp lệ");
             test = false;
-        } else if (size > 500000) {
+        } else if (size > 5000000) {
             $('#imageErr').text("kích cỡ file quá lớn");
             test = false;
         }
@@ -1350,7 +1350,7 @@ function validateProductEdit() {
 
                 if (!listExt.some(val => val == ext)) {
                     errorLibrary += imgName + ": file không hợp lệ| ";
-                } else if (size > 500000) {
+                } else if (size > 5000000) {
                     errorLibrary += imgName + ": file quá lớn| ";
                 }
             });
@@ -1371,7 +1371,6 @@ function validateProductEdit() {
 
 
 function editProduct() {
-    console.log("ok");
     if (validateProductEdit()) {
         // biến chứa dữ liệu gửi lên server
         let form_data = new FormData();
@@ -1409,7 +1408,6 @@ function editProduct() {
         // lấy kết quả trả về
         let libraryErr = sendAddProduct.libraryErr;
         let status = sendAddProduct.status;
-        let prevLink = sendAddProduct.prevLink;
 
         // hiển thị trạng thái
         switch (status) {
@@ -1428,7 +1426,7 @@ function editProduct() {
 
                 alert(notice);
 
-                window.location = prevLink;
+                window.location = document.referrer;
                 break;
             case 6:
                 alert("cập nhật sản phẩm thất bại , tên sản phẩm có thể đã tồn tại");
@@ -1472,7 +1470,7 @@ function validateCategoryAdd() {
         if (!listExt.some(val => val == ext)) {
             $('#imageErr').text("file không hợp lệ");
             test = false;
-        } else if (size > 500000) {
+        } else if (size > 5000000) {
             $('#imageErr').text("kích cỡ file quá lớn");
             test = false;
         }
@@ -1511,7 +1509,6 @@ function addCategory() {
         );
 
         let status = sendAddCategory.status;
-        let prevLink = sendAddCategory.prevLink;
 
         switch (status) {
             case 1:
@@ -1522,7 +1519,7 @@ function addCategory() {
                 break;
             case 5:
                 alert("THÊM DANH MỤC THÀNH CÔNG");
-                window.location = prevLink;
+                window.location = document.referrer;
                 break;
             case 6:
                 alert("THÊM DANH MỤC THẤT BẠI, TÊN DANH MỤC CÓ THỂ ĐÃ TỒN TẠI");
@@ -1564,7 +1561,7 @@ function validateCategoryEdit() {
         if (!listExt.some(val => val == ext)) {
             $('#imageErr').text("file không hợp lệ");
             test = false;
-        } else if (size > 500000) {
+        } else if (size > 5000000) {
             $('#imageErr').text("kích cỡ file quá lớn");
             test = false;
         }
@@ -1603,7 +1600,6 @@ function editCategory() {
         );
 
         let status = sendEditCategory.status;
-        let prevLink = sendEditCategory.prevLink;
 
         switch (status) {
             case 1:
@@ -1614,7 +1610,7 @@ function editCategory() {
                 break;
             case 5:
                 alert("CẬP NHẬT DANH MỤC THÀNH CÔNG");
-                window.location = prevLink;
+                window.location = document.referrer;
                 break;
             case 6:
                 alert("CẬP NHẬT DANH MỤC THẤT BẠI, TÊN DANH MỤC CÓ THỂ ĐÃ TỒN TẠI");
@@ -1660,7 +1656,7 @@ function validateBrandAdd() {
         if (!listExt.some(val => val == ext)) {
             $('#imageErr').text("file không hợp lệ");
             test = false;
-        } else if (size > 500000) {
+        } else if (size > 5000000) {
             $('#imageErr').text("kích cỡ file quá lớn");
             test = false;
         }
@@ -1699,7 +1695,6 @@ function addBrand() {
         );
 
         let status = sendAddBrand.status;
-        let prevLink = sendAddBrand.prevLink;
 
         switch (status) {
             case 1:
@@ -1710,7 +1705,7 @@ function addBrand() {
                 break;
             case 5:
                 alert("THÊM HÃNG THÀNH CÔNG");
-                window.location = prevLink;
+                window.location = document.referrer;
                 break;
             case 6:
                 alert("THÊM HÃNG THẤT BẠI, TÊN HÃNG CÓ THỂ ĐÃ TỒN TẠI");
@@ -1752,7 +1747,7 @@ function validateBrandEdit() {
         if (!listExt.some(val => val == ext)) {
             $('#imageErr').text("file không hợp lệ");
             test = false;
-        } else if (size > 500000) {
+        } else if (size > 5000000) {
             $('#imageErr').text("kích cỡ file quá lớn");
             test = false;
         }
@@ -1791,7 +1786,6 @@ function editBrand() {
         );
 
         let status = sendEditBrand.status;
-        let prevLink = sendEditBrand.prevLink;
 
         switch (status) {
             case 1:
@@ -1802,7 +1796,7 @@ function editBrand() {
                 break;
             case 5:
                 alert("CẬP NHẬT HÃNG THÀNH CÔNG");
-                window.location = prevLink;
+                window.location = document.referrer;
                 break;
             case 6:
                 alert("CẬP NHẬT HÃNG THẤT BẠI, TÊN HÃNG CÓ THỂ ĐÃ TỒN TẠI");
@@ -1815,8 +1809,8 @@ function editBrand() {
 // =========================SLIDER MODULE===========================
 function validateSlideAdd() {
 
-    let test       = true;
-    
+    let test = true;
+
     let limitSlide = 20;
 
     // xóa class lỗi
@@ -1850,7 +1844,7 @@ function validateSlideAdd() {
     } else {
         let qtySlide = slide.length;
         if (qtySlide > limitSlide) {
-            errorSlide += "SỐ LƯỢNG FILE VƯỢT QUÁ GIỚI HẠN";  
+            errorSlide += "SỐ LƯỢNG FILE VƯỢT QUÁ GIỚI HẠN";
         } else {
             $.each(slide, function(k, v) {
                 let fileName = v.name;
@@ -1860,7 +1854,7 @@ function validateSlideAdd() {
 
                 if (!listExt.some(val => val == ext)) {
                     errorSlide += fileName + ":File không hợp lệ|";
-                } else if (size > 500000) {
+                } else if (size > 5000000) {
                     errorSlide += fileName + ":File quá lớn|";
                 }
             });
@@ -1909,7 +1903,6 @@ function addSlide() {
         );
 
         let status = sendAddSlide.status;
-        let prevLink = sendAddSlide.prevLink;
         let upFileError = sendAddSlide.error;
         var notice = "";
 
@@ -1927,7 +1920,7 @@ function addSlide() {
                 }
 
                 alert(notice);
-                window.location = prevLink;
+                window.location = document.referrer;
                 break;
 
             case 6:
@@ -1985,7 +1978,7 @@ function validateSlideEdit() {
 
             if (!listExt.some(val => val == ext)) {
                 errorSlide += fileName + ":File không hợp lệ|";
-            } else if (size > 500000) {
+            } else if (size > 5000000) {
                 errorSlide += fileName + ":File quá lớn|";
             }
         });
@@ -2005,51 +1998,309 @@ function validateSlideEdit() {
 
 // hàm update slide
 function editSlide() {
+    if (validateSlideEdit()) {
+
+        // form gửi dữ liệu lên server
+        let form_data = new FormData();
+
+        // dữ liệu từ form
+        let infoByForm = $('#slide_edit_form').serializeArray();
+
+        // thêm dữ liệu vào form gửi lên server
+        $.each(infoByForm, function(k, obj) {
+            form_data.append(obj.name, obj.value);
+        });
+
+        // file ảnh
+        let slide = $('#slide')[0].files[0];
+
+        // thêm ảnh vào form data gửi lên server
+        form_data.append("newSlide", slide);
+
+        // thêm hành động
+        form_data.append('action', "edit");
+
+        let sendEditSlide = sendAJax(
+            'process_slider.php',
+            'post',
+            'json',
+            form_data,
+            1
+        );
+
+        let status = sendEditSlide.status;
+        switch (status) {
+            case 1:
+                alert("THIẾU DỮ LIỆU");
+                break;
+
+            case 5:
+                alert("CẬP NHẬT SLIDE THÀNH CÔNG");
+                window.location = document.referrer;
+                break;
+            case 6:
+                alert("CẬP NHẬT HÃNG SLIDE THẤT BẠI");
+                break;
+        }
+    }
+
+}
+
+// ================ NEWS MODULE =============================/
+function validateNewsAdd() {
 
     let test = true;
 
-    // form gửi dữ liệu lên server
-    let form_data = new FormData();
+    // xóa class lỗi
+    $('#title').removeClass('error_field');
+    $('#desc').removeClass('error_field');
+    $('#content').removeClass('error_field');
+    $('#auth').removeClass('error_field');
 
-    // dữ liệu từ form
-    let infoByForm = $('#slide_edit_form').serializeArray();
+    // xóa thông báo lỗi
+    $('#titleErr').text('');
+    $('#descErr').text('');
+    $('#contentErr').text('');
+    $('#authErr').text('');
 
-    // thêm dữ liệu vào form gửi lên server
-    $.each(infoByForm, function(k, obj) {
-        form_data.append(obj.name, obj.value);
-    });
+    // lấy giá trị
+    let title   = $('#title').val().trim();
+    let desc    = $('#desc').val().trim();
+    let content = $('#content').val().trim();
+    let auth    = $('#auth').val().trim();
+    let image   = $('#image')[0].files[0];
 
-    // file ảnh
-    let slide = $('#slide')[0].files[0];
+    // validate
 
-    // thêm ảnh vào form data gửi lên server
-    form_data.append("newSlide", slide);
+    // title
+    if (title == "") {
+        $('#title').addClass('error_field');
+        $('#titleErr').text('Không được để trống');
+        test = false;
+    }
 
-    // thêm hành động
-    form_data.append('action', "edit");
+    // desc
+    if (desc == "") {
+        $('#desc').addClass('error_field');
+        $('#descErr').text('Không được để trống');
+        test = false;
+    }
 
-    let sendEditSlide = sendAJax(
-        'process_slider.php',
-        'post',
-        'json',
-        form_data,
-        1
-    );
+    // content
+    if (content == "") {
+        $('#content').addClass('error_field');
+        $('#contentErr').text('Không được để trống');
+        test = false;
+    }
 
-    let status = sendEditSlide.status;
-    let prevLink = sendEditSlide.prevLink;
+    // auth
+    if (auth == "") {
+        $('#auth').addClass('error_field');
+        $('#authErr').text('Không được để trống');
+        test = false;
+    }
 
-    switch (status) {
-        case 1:
-            alert("THIẾU DỮ LIỆU");
-            break;
+    // image
+    if (image == undefined) {
+        $('#image').addClass('error_field');
+        $('#imageErr').text('Không được để trống');
+        test = false;
+    } else {
+        let imgName = image.name;
+        let listExt = ["jpg", 'jpeg', 'png'];
+        let ext = imgName.split('.').pop().toLowerCase();
+        let size = image.size;
 
-        case 5:
-            alert("CẬP NHẬT SLIDE THÀNH CÔNG");
-            window.location = prevLink;
-            break;
-        case 6:
-            alert("CẬP NHẬT HÃNG SLIDE THẤT BẠI");
-            break;
+        if (!listExt.some(val => val == ext)) {
+            $('#image').addClass("error_field");
+            $('#imageErr').text("file không hợp lệ");
+            test = false;
+        } else if (size > 5000000) {
+            $('#image').addClass("error_field");
+            $('#imageErr').text("file quá lớn");
+            test = false;
+        }
+    }
+
+    if (!test) {
+        $('.error_field').first().focus();
+    }
+
+    return test;
+}
+
+// hàm thêm slide
+function addNews() {
+    if (validateNewsAdd()) {
+        let form_data = new FormData();
+
+        let infoByForm = $('#news_add_form').serializeArray();
+
+        $.each(infoByForm, function(k, obj) {
+            form_data.append(obj.name, obj.value);
+        });
+
+        let image = $('#image')[0].files[0];
+        form_data.append('image', image);
+
+        // thêm hành động
+        form_data.append('action', "add");
+
+        let sendAddNews = sendAJax(
+            "process_news.php",
+            "post",
+            "json",
+            form_data,
+            1
+        );
+
+        let status   = sendAddNews.status;
+
+        switch (status) {
+            case 1:
+                alert("THIẾU DỮ LIỆU");
+                break;
+
+            case 5:
+                alert("THÊM TIN TỨC THÀNH CÔNG");
+                window.location = document.referrer;
+                break;
+
+            case 6:
+                alert("THÊM TIN TỨC THẤT BẠI");
+                break;
+
+        }
+    }
+}
+
+// UPDATE SLIDE
+
+function validateNewsEdit() {
+
+    let test = true;
+
+    // xóa class lỗi
+    $('#title').removeClass('error_field');
+    $('#desc').removeClass('error_field');
+    $('#content').removeClass('error_field');
+    $('#auth').removeClass('error_field');
+
+    // xóa thông báo lỗi
+    $('#titleErr').text('');
+    $('#descErr').text('');
+    $('#contentErr').text('');
+    $('#authErr').text('');
+
+    // lấy giá trị
+    let title = $('#title').val().trim();
+    let desc = $('#desc').val().trim();
+    let content = $('#content').val().trim();
+    let auth = $('#auth').val().trim();
+    let image = $('#image')[0].files[0];
+
+    // validate
+
+    // title
+    if (title == "") {
+        $('#title').addClass('error_field');
+        $('#titleErr').text('Không được để trống');
+        test = false;
+    }
+
+    // desc
+    if (desc == "") {
+        $('#desc').addClass('error_field');
+        $('#descErr').text('Không được để trống');
+        test = false;
+    }
+
+    // content
+    if (content == "") {
+        $('#content').addClass('error_field');
+        $('#contentErr').text('Không được để trống');
+        test = false;
+    }
+
+    // auth
+    if (auth == "") {
+        $('#auth').addClass('error_field');
+        $('#authErr').text('Không được để trống');
+        test = false;
+    }
+
+    // image
+    if (image != undefined) {
+        let imgName = image.name;
+        let listExt = ["jpg", 'jpeg', 'png'];
+        let ext = imgName.split('.').pop().toLowerCase();
+        let size = image.size;
+
+        if (!listExt.some(val => val == ext)) {
+            $('#image').addClass("error_field");
+            $('#imageErr').text("file không hợp lệ");
+            test = false;
+        } else if (size > 5000000) {
+            $('#image').addClass("error_field");
+            $('#imageErr').text("file quá lớn");
+            test = false;
+        }
+    }
+
+    if (!test) {
+        $('.error_field').first().focus();
+    }
+
+    return test;
+}
+
+// hàm update slide
+function editNews() {
+
+    if (validateNewsEdit()) {
+        // form gửi dữ liệu lên server
+        let form_data = new FormData();
+
+        // dữ liệu từ form
+        let infoByForm = $('#news_edit_form').serializeArray();
+        console.log(infoByForm);
+
+        // thêm dữ liệu vào form gửi lên server
+        $.each(infoByForm, function(k, obj) {
+            form_data.append(obj.name, obj.value);
+        });
+
+        // file ảnh
+        let image = $('#image')[0].files[0];
+
+        // thêm ảnh vào form data gửi lên server
+        form_data.append("image", image);
+
+        // thêm hành động
+        form_data.append('action', "edit");
+
+        let sendEditNews = sendAJax(
+            'process_news.php',
+            'post',
+            'json',
+            form_data,
+            1
+        );
+
+        let status   = sendEditNews.status;
+
+        switch (status) {
+            case 1:
+                alert("THIẾU DỮ LIỆU");
+                break;
+
+            case 5:
+                alert("CẬP NHẬT BÀI VIẾT THÀNH CÔNG");
+                window.location = document.referrer;
+                break;
+            case 6:
+                alert("CẬP NHẬT BÀI VIẾT THẤT BẠI");
+                break;
+        }
     }
 }

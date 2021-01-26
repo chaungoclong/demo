@@ -125,8 +125,7 @@
 							href="
 							' . 
 								create_link(base_url('admin/customer/update.php'), [
-									"cusid"=>$customer['cus_id'],
-									"from"=>$_POST['prevPage']
+									"cusid"=>$customer['cus_id']
 								])
 							. '
 							"

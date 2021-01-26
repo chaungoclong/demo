@@ -13,16 +13,12 @@
    $userID = data_input(input_get("userid"));
    $user = get_user_by_id($userID, 1);
    
-   // trang trước
-   $prevLink = isset($_GET['from']) ? $_GET['from'] : "index.php";
-   //vd($customer);
    ?>
 <!-- main content -row -->
 <div class="main_content bg-white row m-0 pt-4">
    <div class="col-12">
       <form action="	" method="POST" id="user_info_edit_form">
-         <!-- previous link -->
-         <input type="hidden" name="prevLink" value="<?= $prevLink; ?>">
+        
          <div class="row m-0">
             <div class="col-12">
                <h5>THÔNG TIN NHÂN VIÊN</h5>
@@ -214,9 +210,7 @@
    $(function() {
    	$(document).on('submit', "#user_info_edit_form", function(e) {
    		e.preventDefault();
-   		// var prevLink = "<?= $prevLink; ?>";
-   		// console.log(prevLink);
-   		// editCustomerInfo();
+   	
    		editUserInfo();
    	});
    });

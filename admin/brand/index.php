@@ -25,7 +25,7 @@ require_once '../include/navbar.php';
 		<div class="row m-0 mb-3">
 			<div class="col-12 p-0 d-flex justify-content-between align-items-center">
 				<a href="
-					<?= create_link( base_url('admin/brand/add.php'), ['from'=>getCurrentURL()]); ?>
+					<?= base_url('admin/brand/add.php'); ?>
 					" 
 					class="btn btn-success" 
 					data-toggle="tooltip" 
@@ -148,8 +148,7 @@ require_once '../include/navbar.php';
 							href="
 							<?= 
 								create_link(base_url('admin/brand/update.php'), [
-									"braid"=>$brand['bra_id'],
-									"from"=>getCurrentURL()
+									"braid"=>$brand['bra_id']
 								]);
 							?>
 							"
@@ -261,10 +260,10 @@ require_once '../include/navbar.php';
 		});
 
 
-		// xóa danh mcuj
+		// xóa hãng
 		$(document).on('click', '.btn_remove_bra', function() {
 
-			let wantRemove = confirm("BẠN CÓ MUỐN XÓA DANH MỤC NÀY");
+			let wantRemove = confirm("BẠN CÓ MUỐN XÓA HÃNG NÀY");
 
 			if(wantRemove) {
 
@@ -285,7 +284,7 @@ require_once '../include/navbar.php';
 						break;
 
 					case "2":
-						alert("KHÔNG THỂ XÓA DANH MỤC ĐANG CÓ SẢN PHẨM");
+						alert("KHÔNG THỂ XÓA HÃNG ĐANG CÓ SẢN PHẨM");
 						break;
 
 					case "5":

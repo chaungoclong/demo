@@ -9,9 +9,6 @@ if(!is_login() || !is_admin()) {
 require_once '../include/sidebar.php';
 require_once '../include/navbar.php';
 
-// trang trước
-$prevLink = isset($_GET['from']) ? $_GET['from'] : "index.php";
-
 // danh sách hãng
 $listBrand = db_fetch_table("db_brand", 0);
 
@@ -34,9 +31,6 @@ $listCategory = db_fetch_table("db_category", 0);
 
    <div class="col-12 mb-5">
       <form action="	" method="POST" id="product_add_form" enctype="multipart/form-data">
-         <!-- previous link -->
-         <input type="hidden" name="prevLink" value="<?= $prevLink; ?>">
-         
 
          <div class="row m-0">
             <div class="col-12">
@@ -205,7 +199,8 @@ $listCategory = db_fetch_table("db_category", 0);
    $(function() {
    	$(document).on('submit', "#product_add_form", function(e) {
    		e.preventDefault();
-         addProduct();
+
+      addProduct();
 
       });
    });

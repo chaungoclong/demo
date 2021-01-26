@@ -25,7 +25,7 @@ require_once '../include/navbar.php';
 		<div class="row m-0 mb-3">
 			<div class="col-12 p-0 d-flex justify-content-between align-items-center">
 				<a href="
-					<?= create_link( base_url('admin/category/add.php'), ['from'=>getCurrentURL()]); ?>
+					<?= base_url('admin/category/add.php'); ?>
 					" 
 					class="btn btn-success" 
 					data-toggle="tooltip" 
@@ -74,11 +74,11 @@ require_once '../include/navbar.php';
 			
 
 			// chia trang
-			$totalCategory = $listCategory->num_rows;
+			$totalCategory   = $listCategory->num_rows;
 			$categoryPerPage = 5;
-			$currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
-			$currentLink = create_link(base_url("admin/category/index.php"), ["page"=>'{page}', 'q'=>$q]);
-			$page = paginate($currentLink, $totalCategory, $currentPage, $categoryPerPage);
+			$currentPage     = isset($_GET['page']) ? $_GET['page'] : 1;
+			$currentLink     = create_link(base_url("admin/category/index.php"), ["page"=>'{page}', 'q'=>$q]);
+			$page            = paginate($currentLink, $totalCategory, $currentPage, $categoryPerPage);
 
 			// danh sách nhân viên sau khi chia trang
 			if($q != "") {
@@ -148,8 +148,7 @@ require_once '../include/navbar.php';
 							href="
 							<?= 
 								create_link(base_url('admin/category/update.php'), [
-									"catid"=>$category['cat_id'],
-									"from"=>getCurrentURL()
+									"catid"=>$category['cat_id']
 								]);
 							?>
 							"
@@ -260,7 +259,7 @@ require_once '../include/navbar.php';
 		});
 
 
-		// xóa danh mcuj
+		// xóa danh mục
 		$(document).on('click', '.btn_remove_cat', function() {
 
 			let wantRemove = confirm("BẠN CÓ MUỐN XÓA DANH MỤC NÀY");

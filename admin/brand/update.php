@@ -9,9 +9,6 @@ if(!is_login() || !is_admin()) {
 require_once '../include/sidebar.php';
 require_once '../include/navbar.php';
 
-// trang trước
-$prevLink = isset($_GET['from']) ? $_GET['from'] : "index.php";
-
 // thể loại
 $brandID = data_input(input_get("braid"));
 $brand   = getBrandByID($brandID);
@@ -32,8 +29,7 @@ $brand   = getBrandByID($brandID);
 
    <div class="col-12 mb-5">
       <form action="	" method="POST" id="brand_edit_form" enctype="multipart/form-data">
-         <!-- previous link -->
-         <input type="hidden" name="prevLink" value="<?= $prevLink; ?>">
+
          <input type="hidden" name="braID" value = "<?= $brand['bra_id']; ?>">
          <div class="row m-0">
             <div class="col-12">

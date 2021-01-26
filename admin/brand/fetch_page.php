@@ -123,8 +123,7 @@
 							href="
 							' . 
 								create_link(base_url('admin/brand/update.php'), [
-									"braid"=>$brand['bra_id'],
-									"from"=>getCurrentURL()
+									"braid"=>$brand['bra_id']
 								])
 							. '
 							"

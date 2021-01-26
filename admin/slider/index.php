@@ -22,7 +22,7 @@ require_once '../include/navbar.php';
 		<div class="row m-0 mb-3">
 			<div class="col-12 p-0 d-flex justify-content-between align-items-center">
 				<a href="
-					<?= create_link( base_url('admin/slider/add.php'), ['from'=>getCurrentURL()]); ?>
+					<?= base_url('admin/slider/add.php'); ?>
 					" 
 					class="btn btn-success" 
 					data-toggle="tooltip" 
@@ -161,8 +161,7 @@ require_once '../include/navbar.php';
 							href="
 							<?= 
 								create_link(base_url('admin/slider/update.php'), [
-									"sldid"=>$slide['sld_id'],
-									"from"=>getCurrentURL()
+									"sldid"=>$slide['sld_id']
 								]);
 							?>
 							"

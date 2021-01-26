@@ -149,8 +149,7 @@
 							href="
 							' . 
 								create_link(base_url('admin/user/update.php'), [
-									"userid"=>$user['ad_id'],
-									"from"=>$_POST['prevPage']
+									"userid"=>$user['ad_id']
 								])
 							. '
 							"

@@ -172,7 +172,7 @@
             <?php if ($news['news_active']): ?>
               <div class="card" style="max-width: calc(100% / 3);">
                 <a href='<?= create_link(base_url("news_detail.php"), ["newsid" => $news["news_id"]]); ?>'>
-                  <img src=" <?= $news['news_img']; ?>" alt="" class="card-img-top">
+                  <img src="image/<?= $news['news_img']; ?>" alt="" class="card-img-top">
                 </a>
                 <div class="card-body">
                   <ul class="card-title nav">

@@ -47,7 +47,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "edit") {
 	$oldAvatar = data_input(input_post('oldAvatar'));
 	$active    = data_input(input_post("active"));
 	$active    = $active ? 1 : 0;
-	$prevLink = isset($_POST['prevLink']) ? $_POST['prevLink'] : "index.php";
+
 	
 	// echo $cusID.$address.$name.$dob.$gender.$email.$phone.$oldAvatar.$active;
 	// nếu không có file tải lên thì tên file = tên file avatar cũ
@@ -115,8 +115,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "edit") {
 
 	//tập hợp dữ liệu trả về
 	$res = [
-		"status"   => $status,
-		"prevPage" => $prevLink
+		"status"   => $status
 	];
 
 	// trả về dữ liệu

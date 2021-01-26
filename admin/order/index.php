@@ -216,10 +216,10 @@ require_once '../include/navbar.php';
 		let q = "<?= $_GET['q'] ?? ""; ?>";
 		$('#search').val(q);
 	
-		// Thay đổi trạng thái của khách hàng
+		// Thay đổi trạng thái của đơn hàng
 		$(document).on('click', '.btn_confirm', function() {
 
-			// id khách hàng
+			// id đơn hàng
 			let orderID = $(this).data("order-id");
 
 			// gửi yêu cầu thay đổi trạng thái
@@ -246,7 +246,7 @@ require_once '../include/navbar.php';
 			$('.content_table').html(fetchPage);
 		});
 
-		// Thay đổi trạng thái của khách hàng
+		// Thay đổi trạng thái của đơn hàng
 		$(document).on('click', '.btn_cancel', function() {
 
 			// id khách hàng

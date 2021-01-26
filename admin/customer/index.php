@@ -90,22 +90,6 @@ require_once '../include/navbar.php';
 			// số thứ tự
 			$stt = 1 + (int)$page['offset'];
 
-			// //
-			// $listCustomer = getListUser(0);
-
-			// // chia trang
-			// $totalCustomer = $listCustomer->num_rows;
-			// $customerPerPage = 5;
-			// $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
-			// $currentLink = create_link(base_url("admin/customer/index.php"), ["page"=>'{page}']);
-			// $page = paginate($currentLink, $totalCustomer, $currentPage, $customerPerPage);
-
-			// //khách hàng sau khi chia trang
-			// $listCustomerPaginate = getListUser(0, $page['limit'], $page['offset']);
-			// $totalCustomerPaginate = $listCustomerPaginate->num_rows;
-
-			// // số thứ tự
-			// $stt = 1 + (int)$page['offset'];
 		?>
 		<div class="content_table">
 			<table class="table table-hover table-bordered" style="font-size: 13px;">
@@ -158,8 +142,7 @@ require_once '../include/navbar.php';
 							href="
 							<?= 
 								create_link(base_url('admin/customer/update.php'), [
-									"cusid"=>$customer['cus_id'],
-									"from"=>getCurrentURL()
+									"cusid"=>$customer['cus_id']
 								]);
 							?>
 							"

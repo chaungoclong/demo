@@ -123,8 +123,7 @@
 							href="
 							' . 
 								create_link(base_url('admin/category/update.php'), [
-									"catid"=>$category['cat_id'],
-									"from"=>getCurrentURL()
+									"catid"=>$category['cat_id']
 								])
 							. '
 							"
