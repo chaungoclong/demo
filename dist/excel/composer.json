@@ -1,0 +1,5 @@
+{
+    "require": {
+        "shuchkin/simplexlsxgen": "^0.9.23"
+    }
+}

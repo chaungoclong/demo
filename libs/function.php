@@ -1,11 +1,11 @@
 <?php
 	//lấy giá trị của biến $_POST có key = $key
 function input_post($key) {
-	return isset($_POST[$key]) ? trim($_POST[$key]) : false;
+	return isset($_POST[$key]) ? $_POST[$key] : false;
 }
 	//lấy giá trị của biến $_GET có key = $key
 function input_get($key) {
-	return isset($_GET[$key]) ? trim($_GET[$key]) : false;
+	return isset($_GET[$key]) ? $_GET[$key] : false;
 }
 	//hàm tạo url(chỉ dùng để điều hướng thanh menu)
 function base_url($path = '') {
@@ -652,4 +652,12 @@ function read_date($time) {
 	function countRow($table) {
 		$getSQL = "SELECT COUNT(*) AS totalRow FROM {$table}";
 		return s_cell($getSQL);
+	}
+
+	function isMyOrder($orderID, $cusID) {
+		if(!is_login() || is_admin()) {
+			redirect('login_from.php');
+		}
+		$checkOrderSQL = "SELECT COUNT(*) FROM db_order WHERE or_id = ? AND cus_id = ?";
+		return s_cell($checkOrderSQL, [$orderID, $cusID], "ii");
 	}

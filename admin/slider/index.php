@@ -122,7 +122,7 @@ require_once '../include/navbar.php';
 
 					<!-- ảnh  -->
 					<td>
-						<img src="<?= $slide['sld_image']; ?>" width="100%">
+						<img src="<?= base_url('image/' . $slide['sld_image']); ?>" width="100%">
 					</td>
 
 					<!-- vị trí -->

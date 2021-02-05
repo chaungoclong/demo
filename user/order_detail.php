@@ -1,13 +1,9 @@
 <?php
 require_once '../common.php';
+!is_login() || is_admin() && redirect('login_form.php');
+$user = getUserById($_SESSION['user_token']['id']);
 
-//check is login
-if(!is_login()) {
-	redirect("login_form.php");
-} else {
-	$user = getUserById($_SESSION['user_token']['id']);
-}
-
+// add file
 require_once RF . '/user/include/header.php';
 require_once RF . '/user/include/navbar.php';
 ?>
@@ -30,6 +26,10 @@ require_once RF . '/user/include/navbar.php';
 				<!-- lấy đơn hàng -->
 				<?php 
 					$orderID = data_input(input_get('orid'));
+					if(!isMyOrder($orderID, $user['cus_id'])) {
+						echo "<h5 class='alert alert-danger text-center'>KHÔNG CÓ ĐƠN HÀNG NÀY</h5>";
+						return false;
+					}
 					$order   = getOrderByID($orderID);
 				 ?>
 

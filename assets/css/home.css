@@ -15,7 +15,7 @@ body {
 }
 
 #header {
-    background: #000 ;
+    background:  #0975f5;
 }
     /*header top*/
 
@@ -170,7 +170,7 @@ body {
 
     #slide img {
         width: 100% !important;
-        height: 400px !important;
+        height: 300px !important;
     }
 
     .carousel-indicators li {

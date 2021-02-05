@@ -27,171 +27,199 @@ if($cat) {
 ?>
 <main>
 	<div style="padding-left: 85px; padding-right: 85px;">
-		<!-- list brand -->
-		<div id="listBrand" class="py-3" style="">
-			<div class="d-flex justify-content-start flex-wrap">
-				<?php foreach ($listBrands as $key => $brand): ?>
-					<?php if ($brand['bra_active']): ?>
-						<a class="card" href='
-						<?php
-						/**
-						* Nếu có danh mục sản phẩm: in các sản phẩm có danh mục = danh mục && hãng = hãng
-						* Nếu chỉ có hãng: in các sản phẩm có hãng bằng hãng
-						*/
-						$cat = input_get("cat");
-						if($cat) {
-							echo create_link(base_url("product.php"), ["cat"=>$cat, "bra"=>$brand["bra_id"]]);
+		<div class="row m-0 mt-3">
+			<!-- filter -->
+			<div class="col-3" id="pro-filter">
+				<h4>FILTER</h4>
+
+				<!-- price -->
+				<div class="list-group mb-3">
+					<h5>PRICE</h5>
+					<p id="show_price"></p>
+					<input type="hidden" id="min_price" class="price">
+					<input type="hidden" id="max_price" class="price">
+					<div id="price_range"></div>
+				</div>
+
+				<!-- category -->
+				<div class="list-group mb-3" id="cat_filter">
+					<h5>CATEGORY</h5>
+					<!-- danh sách danh mục -->
+					<?php 
+						$catID = input_get('cat');
+						$param = [];
+						$format = "";
+						if($catID) {
+							$getListCategorySQL = "SELECT * FROM db_category 
+							WHERE cat_id = ?";
+							$param[] = $catID;
+							$format .= "i";
 						} else {
-							echo create_link(base_url("product.php"), ["bra"=>$brand["bra_id"]]);
+							$getListCategorySQL = "SELECT * FROM db_category 
+							WHERE cat_id IN(
+							SELECT cat_id FROM db_product
+							)
+							AND cat_active = 1
+							";
 						}
-						?>
-							'>
-							<img src="<?= $brand['bra_logo']; ?>" alt="">
-						</a>
-					<?php endif ?>
-				<?php endforeach ?>
+						$listCategory = db_get($getListCategorySQL, 0, $param, $format);
+					 ?>
+
+					 <!-- in danh sách danh mục -->
+					 <?php foreach ($listCategory as $key => $category): ?>
+					 	<div class="list-group-item">
+					 		<label class="form-check-label">
+					 			<input  class="form-check-input filter_item category" type="checkbox" value="<?= $category['cat_id']; ?>" <?= $catID ? "checked disabled" : ""; ?>>
+					 			<?= $category['cat_name']; ?>
+					 		</label>
+					 	</div>
+					 <?php endforeach ?>
+				</div>
+
+				<!-- brand -->
+				<div class="list-group">
+					<h5>BRAND</h5>
+					<!-- danh sách hãng -->
+					<?php 
+						$braID = input_get('bra');
+						$param = [];
+						$format = "";
+						if(!$catID && !$braID) {
+							$getListBrandSQL = "SELECT * FROM db_brand 
+							WHERE bra_id IN(
+							SELECT bra_id FROM db_product
+							)
+							AND bra_active = 1
+							";
+						} elseif($braID) {
+							$getListBrandSQL = "SELECT * FROM db_brand WHERE bra_id = ?";
+							$param[] = $braID;
+							$format .= "i";
+						} elseif($catID) {
+							$getListBrandSQL = "SELECT * FROM db_brand WHERE bra_id IN(
+								SELECT bra_id FROM db_product WHERE cat_id = ?
+							)";
+							$param[] = $catID;
+							$format .= "i";
+						} 
+						$listBrand = db_get($getListBrandSQL, 0, $param, $format);
+					 ?>
+
+					 <!-- in danh sách hãng -->
+					 <?php foreach ($listBrand as $key => $brand): ?>
+					 	<div class="list-group-item">
+					 		<label class="form-check-label">
+					 			<input  class="form-check-input filter_item brand" type="checkbox" value="<?= $brand['bra_id']; ?>" <?= $braID ? "checked disabled" : ""; ?>>
+					 			<?= $brand['bra_name']; ?>
+					 		</label>
+					 	</div>
+					 <?php endforeach ?>
+				</div>
+			</div>
+
+			<!-- product -->
+			<div class="col-9 p-0">
+				<div class="d-flex justify-content-end mb-3">
+					<select id="sort" class="custom-select w-25">
+						<option value="1" selected>Tên: A-Z</option>
+						<option value="2">Tên: Z-A</option>
+						<option value="3">Giá: Tăng dần</option>
+						<option value="4">Giá: Giảm dần</option>
+						<option value="5">Mới nhất</option>
+						<option value="6">Cũ nhất</option>
+					</select>
+				</div>
+				<div id="product_box"></div>
+				
 			</div>
 		</div>
-		<!-- /list brand -->
-		<?php
-		$getProSQL = "SELECT * FROM db_product WHERE pro_active = 1";
-
-		//tạo câu sql lấy sản phẩm
-		$getProSQL = $cat ? $getProSQL .= " AND cat_id = '{$cat}'" : $getProSQL;
-		$getProSQL = $bra ? $getProSQL .= " AND bra_id = '{$bra}'" : $getProSQL;
-
-		//lấy số lượng sản phẩm
-		$listRecord = get_list($getProSQL, 2);
-		$numRecord  = $listRecord->num_rows;
-
-		//phân trang
-		//tạo link trang hiện tại
-		$currentLink = create_link(base_url("product.php"), ["cat"=>$cat, "bra"=>$bra, "page"=>"{page}"]);
-
-		//số sản phẩm trên trang
-		$proPerPage  = 8;
-
-		//trang hiện tại
-		$currentPage = input_get("page") ? input_get("page") : 1;
-
-		//biến chứa thông trả về từ hàm phân trang (offset, limit, html)
-		$page = paginate($currentLink, $numRecord, $currentPage, $proPerPage);
-
-		//câu SQL sau khi phân trang
-		$getProSQL   .= " LIMIT {$page['limit']} OFFSET {$page['offset']}";
-
-		//hiển thị sản phẩm sau khi phân trang
-		$listPro = get_list($getProSQL, 2);
-		$numPro  = $listPro->num_rows;
-		$numCol  = 4;
-		$numRow  = row_qty($numPro, $numCol);
-		$catName = fetch_rows("db_category", "cat_id = '{$cat}'", ["*"]);
-		?>
-
-		<section class="product my-5 shadow">
-			<h2 class="text-center mb-3"><?= isset($catName["cat_name"]) ? $catName["cat_name"] : ""; ?></h2>
-			<div class="list_product_body">
-				<!-- list products bar -->
-				<div class="product_bar bg-info px-2 py-2 d-flex justify-content-between">
-					<span class="badge  bg-faded">
-						<span><?= $numRecord; ?> sản phẩm</span>
-						<span>
-							(
-								<?php
-								$start = $numRecord > 0 ? (int)$page["offset"] + 1 : 0;
-								$end   = (int)$page["offset"] + (int)$page["limit"];
-								$end   = $end <= $numRecord ? $end : $numRecord;
-								echo $start . " - " . $end;
-								?>
-								)
-							</span>
-						</span>
-					</div>
-					<!-- list products -->
-					<?php for ($i = 0; $i < $numRow ; $i++): ?>
-						<?php $countCol = 0; ?>
-						<div class="card-group">
-							<?php while ($pro = $listPro->fetch_assoc()): ?>
-
-								<!-- ------------------------------------product ----------------------------------- -->
-								<div class="card text-center" style="max-width: 25%;">
-									<?php if ($pro['pro_qty'] == 0): ?>
-										<span class="product_status badge badge-pill badge-warning">Bán hết</span>
-									<?php endif ?>
-									<a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $pro["pro_id"]]); ?>'>
-										<img src="image/<?= $pro['pro_img']; ?>" alt="" class="card-img-top">
-									</a>
-									<div class="card-body">
-										<!-- thông tin sản phẩm -->
-										<h5 class="card-title">
-											<a href="
-											<?php
-											echo create_link(
-											base_url("product_detail.php"),
-											['proid' => $pro['pro_id']]
-											);
-											?>
-											">
-											<?= $pro['pro_name']; ?>
-										</a>
-									</h5>
-									<?php
-									$catName = fetch_rows("db_category", "cat_id = '{$pro["cat_id"]}'", ["cat_name"]);
-									?>
-									<p class="text-uppercase card-subtitle">
-										<?= $catName['cat_name']; ?>
-									</p>
-									<h6 class="text-danger">
-										<strong><?= number_format($pro['pro_price'], 0, ',', '.'); ?> &#8363;</strong>
-									</h6>
-									<hr>
-
-									<!-- thêm vào giỏ hàng -->
-									<?php if ($pro['pro_qty']): ?>
-										<a class="btn_add_cart_out btn btn-success text-light" data-pro-id="<?= $pro['pro_id']; ?>"
-											data-toggle="tooltip" data-placement="top" title="Thêm vào giỏ hàng"
-											>
-											<i class="fas fa-cart-plus fa-lg"></i>
-										</a>
-									<?php endif ?>
-
-									<!-- xem chi tiết sản phẩm -->
-									<a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-primary" data-toggle="tooltip" data-placement="top" title="chi tiết sản phẩm">
-										<i class="far fa-eye fa-lg"></i>
-									</a>
-
-									<!-- danh sách yêu thích -->
-									<a href='<?= create_link(base_url("wishlist.php"), ["proid"=> $pro["pro_id"]]); ?>' class="btn btn-default btn-danger"
-										data-toggle="tooltip" data-placement="top" title="Thêm vào danh sách yêu thích">
-										<i class="far fa-heart fa-lg"></i>
-									</a>
-								</div>
-							</div>
-
-							<!-- ------------------------------------/product ----------------------------------- -->
-							<?php
-							$countCol++ ;
-							if($countCol == $numCol) {
-								break;
-							}
-							?>
-						<?php endwhile ?>
-					</div>
-				<?php endfor ?>
-			</div>
-		</section>
-		<!-- /product -->
 	</div>
 </main>
-<script>
-	$(function() {
-		
-	});
-</script>
-<!-- phân trang -->
-<?php
-echo $page['html'];
-?>
+
 <?php
 require_once RF . '/include/footer.php';
 ?>
+<script>
+	// hàm thực hiện lọc và trả về html sau khi tìm kiếm sắp xếp và phân trang
+	function filtering(currentPage) {
+		let action = "fetch";
+		let sort = $('#sort').val();
+		let min_price = $('#min_price').val();
+		let max_price = $('#max_price').val();
+		let brand = getOption("brand");
+		let category = getOption("category");
+		let data = {
+			action: action,
+			sort: sort,
+			min_price: min_price,
+			max_price: max_price,
+			brand: brand, 
+			category: category, 
+			currentPage: currentPage
+		};
+		let filter = $.ajax({
+			url: "fetch_product.php",
+			type: "POST",
+			dataType: "text",
+			data: data
+		});
+
+		filter.done(function(res) {
+			$('#product_box').html(res);
+			$('body').tooltip({selector: '[data-toggle="tooltip"]'});
+		});
+		console.log(data);
+	}
+
+	// hàm lấy các lựa chọn của một mục tìm kiếm
+	function getOption(className) {
+		let listOption = [];
+		$('.' + className + ':checked').each(function() {
+			listOption.push($(this).val());
+		});
+		return listOption;
+	}
+
+	$(function() {
+		// thực hiện lock khi vừa vào trang
+		filtering(1);
+
+		$(document).on('change', '#sort', function() {
+			// console.log($('li.active'));
+			// let currentPage = parseInt($('li.page-item.active').data('page-number'));
+			// if(isNaN(currentPage)) {
+			// 	currentPage = 1;
+			// };
+			filtering(1);
+		});
+
+		// thực hiện lọc khi một lựa chọn được click vào
+		$(document).on('click', '.filter_item', function() {
+			filtering(1);
+		});
+
+		// thực hiện lọc khi nhấn nút phân trang
+		$(document).on('click', '.page-item', function() {
+			let currentPage = parseInt($(this).data('page-number'));
+			if(isNaN(currentPage)) {
+				currentPage = 1;
+			};
+			filtering(currentPage);
+		})
+
+		$('#price_range').slider({
+			range: true,
+			min: 1,
+			max: 60000000,
+			value: [1, 60000000],
+			stop: function( event, ui ) {
+				$('#show_price').html(ui.values[0] + "-" + ui.values[1]);
+				$('#min_price').val(ui.values[0]);
+				$('#max_price').val(ui.values[1]);
+
+				// thực hiện lọc sau khi ngừng di chuyển thanh trượt trên thanh giá sản phẩm
+				filtering(1);
+			}
+		});
+	});
+</script>

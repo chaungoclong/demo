@@ -1,0 +1,10 @@
+FIX:
+ - mật khẩu đổi về MD5 
+ - sau khi thêm tự nhảy về trang cuối
+ - sau khi cập nhật thì nhảy về trang trước
+ - hóa đơn sắp xếp theo thời gian mới nhất
+ - tạo lựa chọn sắp xếp các bảng theo thời gian , A-Z Z-A
+ - thêm thống kê bằng biểu đồ, bảng có xuất sang excel
+ - sửa lại cách lấy dữ liệu từ ajax(rõ ràng, đơn giản hơn)
+ - validate bằng jquery validation
+ - thêm bộ lọc sản phẩm

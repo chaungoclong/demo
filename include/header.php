@@ -48,7 +48,7 @@
               <input id="boxSearch" type="search" name="q" placeholder="tìm kiếm..." class="form-control"
               value="<?= isset($_GET['q'] ) ? $_GET['q'] : ''; ?>" autocomplete = "off"
               >
-              <button id="btnSearch" class="btn btn-primary">
+              <button id="btnSearch" class="btn btn-success">
                 <i class="fas fa-search"></i>
               </button>
             </form>

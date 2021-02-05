@@ -4,7 +4,7 @@ include_once 'common.php';
 // $test = getOrderDetailByID(29);
 // vd($test);
 //set_login(1, "abc@123.com");
-$test = lastPostion();
+$test = isMyOrder(69, 69);
 if($test) {
 	echo 1;
 } else {

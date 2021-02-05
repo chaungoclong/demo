@@ -12,7 +12,10 @@
     </li>
 
     <!-- in danh sách danh mục -->
-    <?php  $listCategory = fetch_list("db_category", "1"); ?>
+    <?php
+    $getCatSQL = "SELECT * FROM db_category WHERE cat_id IN (SELECT cat_id FROM db_product) AND cat_active = 1";
+    $listCategory = db_get($getCatSQL);
+    ?>
     <?php foreach ($listCategory as $key => $category): ?>
 
       <?php if ($category['cat_active']): ?>
