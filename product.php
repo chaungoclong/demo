@@ -29,21 +29,21 @@ if($cat) {
 	<div style="padding-left: 85px; padding-right: 85px;">
 		<div class="row m-0 mt-3">
 			<!-- filter -->
-			<div class="col-3" id="pro-filter">
-				<h4>FILTER</h4>
+			<div class="col-3 pl-0	" id="pro-filter">
+				<h4></h4>
 
 				<!-- price -->
 				<div class="list-group mb-3">
-					<h5>PRICE</h5>
-					<p id="show_price"></p>
+					<h5>Giá</h5>
+					<p id="show_price">Mức giá</p>
 					<input type="hidden" id="min_price" class="price">
 					<input type="hidden" id="max_price" class="price">
-					<div id="price_range"></div>
+					<div id="price_range" class="ml-2 bg-warning"></div>
 				</div>
 
 				<!-- category -->
 				<div class="list-group mb-3" id="cat_filter">
-					<h5>CATEGORY</h5>
+					<h5>Danh mục</h5>
 					<!-- danh sách danh mục -->
 					<?php 
 						$catID = input_get('cat');
@@ -67,7 +67,7 @@ if($cat) {
 
 					 <!-- in danh sách danh mục -->
 					 <?php foreach ($listCategory as $key => $category): ?>
-					 	<div class="list-group-item">
+					 	<div class="list-group-item pl-4">
 					 		<label class="form-check-label">
 					 			<input  class="form-check-input filter_item category" type="checkbox" value="<?= $category['cat_id']; ?>" <?= $catID ? "checked disabled" : ""; ?>>
 					 			<?= $category['cat_name']; ?>
@@ -78,7 +78,7 @@ if($cat) {
 
 				<!-- brand -->
 				<div class="list-group">
-					<h5>BRAND</h5>
+					<h5>Hãng</h5>
 					<!-- danh sách hãng -->
 					<?php 
 						$braID = input_get('bra');
@@ -107,7 +107,7 @@ if($cat) {
 
 					 <!-- in danh sách hãng -->
 					 <?php foreach ($listBrand as $key => $brand): ?>
-					 	<div class="list-group-item">
+					 	<div class="list-group-item pl-4">
 					 		<label class="form-check-label">
 					 			<input  class="form-check-input filter_item brand" type="checkbox" value="<?= $brand['bra_id']; ?>" <?= $braID ? "checked disabled" : ""; ?>>
 					 			<?= $brand['bra_name']; ?>
@@ -116,6 +116,27 @@ if($cat) {
 					 <?php endforeach ?>
 				</div>
 			</div>
+
+			<?php 
+				$getRangePriceSQL = "
+				SELECT MIN(pro_price) AS min_price, MAX(pro_price) AS max_price FROM db_product WHERE 1
+				";
+				$param = [];
+				$format = "";
+				if($catID) {
+					$getRangePriceSQL .= " AND cat_id = ?";
+					$param[] = $catID;
+					$format .= "i";
+				}
+				if($braID) {
+					$getRangePriceSQL .= " AND bra_id = ?";
+					$param[] = $braID;
+					$format .= "i";
+				}
+				$rangePrice = s_row($getRangePriceSQL, $param, $format);
+				$minPrice = $rangePrice['min_price'];
+				$maxPrice = $rangePrice['max_price'];
+			 ?>
 
 			<!-- product -->
 			<div class="col-9 p-0">
@@ -209,11 +230,12 @@ require_once RF . '/include/footer.php';
 
 		$('#price_range').slider({
 			range: true,
-			min: 1,
-			max: 60000000,
+			min: <?= (int)$minPrice; ?>,
+			max: <?= (int)$maxPrice; ?>,
 			value: [1, 60000000],
 			stop: function( event, ui ) {
-				$('#show_price').html(ui.values[0] + "-" + ui.values[1]);
+				let format = new Intl.NumberFormat('vi-VN', {style: "currency", currency: "VND"});
+				$('#show_price').html(format.format(ui.values[0]) + " - " + format.format(ui.values[1]));
 				$('#min_price').val(ui.values[0]);
 				$('#max_price').val(ui.values[1]);
 

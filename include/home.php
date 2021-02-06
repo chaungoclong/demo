@@ -4,7 +4,11 @@
     <section id="category" class="py-5">
       <h2 class="text-center mb-3">Danh mục</h2>
       <?php
-      $listCategory = db_fetch_table("db_category", 0);
+      $getListCatSQL = "SELECT * FROM db_category WHERE cat_id IN(
+        SELECT cat_id FROM db_product
+      )
+      AND cat_active = 1";
+      $listCategory = db_get($getListCatSQL);
       ?>
       <!-- ?in các hãng? -->
       <div class="row">
