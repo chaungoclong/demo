@@ -139,8 +139,11 @@ if($cat) {
 			 ?>
 
 			<!-- product -->
-			<div class="col-9 p-0">
-				<div class="d-flex justify-content-end mb-3">
+			<div class="col-9 p-0" id="right_content">
+				<div class="d-flex justify-content-end align-items-center mb-3">
+					<span class="btn mr-3" id="change-show">
+						<i class="fas fa-list fa-2x"></i>
+					</span>
 					<select id="sort" class="custom-select w-25">
 						<option value="1" selected>Tên: A-Z</option>
 						<option value="2">Tên: Z-A</option>
@@ -226,13 +229,14 @@ require_once RF . '/include/footer.php';
 				currentPage = 1;
 			};
 			filtering(currentPage);
+			$('html, body').scrollTop(150);
 		})
 
 		$('#price_range').slider({
 			range: true,
 			min: <?= (int)$minPrice; ?>,
 			max: <?= (int)$maxPrice; ?>,
-			value: [1, 60000000],
+			value: [<?= (int)$minPrice; ?>, <?= (int)$maxPrice; ?>],
 			stop: function( event, ui ) {
 				let format = new Intl.NumberFormat('vi-VN', {style: "currency", currency: "VND"});
 				$('#show_price').html(format.format(ui.values[0]) + " - " + format.format(ui.values[1]));
@@ -243,5 +247,10 @@ require_once RF . '/include/footer.php';
 				filtering(1);
 			}
 		});
+
+		$(document).on('click', '#change-show', function() {
+			$('.card').toggleClass('col-12 col-4');
+			$(this).find('i').toggleClass('fa-list fa-th');
+		})
 	});
 </script>

@@ -7,126 +7,101 @@ require_once RF . '/include/navbar.php';
 $q = input_get('q');
 $keyWord = "%" . $q . "%";
 
-//câu sql lấy kêt quả tìm kiếm
-$getResultSQL = "SELECT * FROM db_product WHERE pro_active = 1  AND pro_name LIKE(?)";
-
-//số lượng bản ghi
-$listRecord = db_get($getResultSQL, 1, [$keyWord], "s");
-$numRecord = $listRecord->num_rows;
-
-//phân trang
-$currentLink = create_link(base_url("search.php"), ["q"=>$q, "page"=>"{page}"]);
-$resultPerPage = 8;
-$currentPage = input_get("page") ? input_get("page") : 1;
-$page = paginate($currentLink, $numRecord, $currentPage, $resultPerPage);
-
-//danh sách ản phẩm sau khi phân trang
-$listResult = fetch_list(
-    "db_product",
-    "pro_active = 1 AND pro_name LIKE('%$keyWord%') LIMIT {$page['limit']} OFFSET {$page['offset']}",
-    ["*"],
-    2
-);
-
-//chia hàng để hiển thị
-$numResult = $listResult->num_rows;
-$numCol = 4;
-$numRow = row_qty($numResult, $numCol);
 ?>
 
 <main>
     <div style="padding-left: 85px; padding-right: 85px;">
-        <section class="product my-5 shadow">
-            <h2 class="text-center py-3">TÌM THẤY <?= $numRecord; ?> SẢN PHẨM</h2>
-            <div class="list_product_body">
-                <!-- list products bar -->
-                <div class="product_bar bg-info px-2 py-2 d-flex justify-content-between">
-                    <span class="badge  bg-faded">
-                        <span><?= $numRecord; ?> sản phẩm</span>
-                        <span>
-                            (
-                                <?php
-                                $start = (int)$page["offset"] + 1;
-                                $end   = (int)$page["offset"] + (int)$page["limit"];
-                                $end   = $end <= $numRecord ? $end : $numRecord;
-                                echo $start . " - " . $end;
-                                ?>
-                            )
-                            </span>
-                        </span>
-                    </div>
-                    <!-- list products -->
-                    <?php for ($i = 0; $i < $numRow ; $i++): ?>
-                        <?php $countCol = 0; ?>
-                        <div class="card-group">
-                            <?php while ($result = $listResult->fetch_assoc()): ?>
-                                <!-- ------------------------------------product ----------------------------------- -->
-                                <div class="card text-center" style="max-width: 25%;">
 
-                                    <?php if ($result['pro_qty'] == 0): ?>
-                                        <span class="product_status badge badge-pill badge-warning">Sale out</span>
-                                    <?php endif ?>
-
-                                    <a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $result["pro_id"]]); ?>'>
-                                        <img src="image/<?= $result['pro_img']; ?>" alt="" class="card-img-top">
-                                    </a>
-
-                                    <div class="card-body">
-
-                                        <!-- thông tin sản phẩm -->
-                                        <h5 class="card-title"><a href=""><?= $result['pro_name']; ?></a></h5>
-                                        <?php
-                                        $cat = fetch_rows("db_category", "cat_id = '{$result["cat_id"]}'", ["cat_name"]);
-                                        ?>
-
-                                        <p class="text-uppercase card-subtitle"><?= $cat['cat_name']; ?></p>
-
-                                        <h6 class="text-danger">
-                                            <strong><?= number_format($result['pro_price'], 0, ',', '.'); ?> &#8363;</strong>
-                                        </h6>
-                                        <hr>
-
-                                        <!-- thêm vào giỏ hàng -->
-                                        <?php if ($result['pro_qty']): ?>
-
-                                            <a class="btn_add_cart_out btn btn-success text-light" data-pro-id="<?= $result['pro_id']; ?>"
-                                                data-toggle="tooltip" data-placement="top" title="Thêm vào giỏ hàng"
-                                                >
-                                                <i class="fas fa-cart-plus fa-lg"></i>
-                                            </a>
-
-                                        <?php endif ?>
-
-                                        <!-- xem chi tiết sản phẩm -->
-                                        <a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $result["pro_id"]]); ?>' class="btn btn-default btn-primary" data-toggle="tooltip" data-placement="top" title="chi tiết sản phẩm">
-                                          <i class="far fa-eye fa-lg"></i>
-                                      </a>
-
-                                      <!-- danh sách yêu thích -->
-                                      <a href='<?= create_link(base_url("wishlist.php"), ["proid"=> $result["pro_id"]]); ?>' class="btn btn-default btn-danger"
-                                          data-toggle="tooltip" data-placement="top" title="Thêm vào danh sách yêu thích">
-                                          <i class="far fa-heart fa-lg"></i>
-                                      </a>
-                                  </div>
-                                </div>
-                                <!-- ------------------------------------/product ----------------------------------- -->
-                          <?php
-                          $countCol++ ;
-                          if($countCol == $numCol) {
-                            break;
-                        }
-                        ?>
-                    <?php endwhile ?>
+        <!-- sort -->
+        <div class="d-flex justify-content-between align-items-center my-3">
+            <!-- option -->
+            <div class="">
+                <div class="form-check-inline">
+                    <label class="form-check-label" style="font-size: 18px;">
+                        <input type="radio" class="form-check-input type_option" name="type" value="product" checked>Sản phẩm
+                    </label>
                 </div>
-            <?php endfor ?>
+                <div class="form-check-inline">
+                    <label class="form-check-label" style="font-size: 18px;">
+                        <input type="radio" class="form-check-input type_option" name="type" value="news">Tin tức
+                    </label>
+                </div>
+            </div>
+            
+            <div>
+                <!-- change display -->
+                <span class="btn mr-3" id="change-show">
+                    <i class="fas fa-list fa-2x"></i>
+                </span>
+                <!-- sort -->
+                <select id="sort" class="custom-select" style="width: 200px;">
+                    <option value="1" selected>Tên: A-Z</option>
+                    <option value="2">Tên: Z-A</option>
+                    <option class="only_product" value="3">Giá: Tăng dần</option>
+                    <option class="only_product" value="4">Giá: Giảm dần</option>
+                    <option value="5">Cũ nhất</option>
+                    <option value="6">Mới nhất</option>
+                </select>
+            </div>
         </div>
-    </section>
-</div>
+
+        <!-- show result -->
+        <div class="" id="show-result">
+            
+        </div>
+    </div>
 </main>
 
 <?php
-//phân trang
-echo $page['html'];
-
 require_once RF . '/include/footer.php';
 ?>
+
+<script>
+    function getResult(currentPage) {
+        let type = $('.type_option:checked').val();
+        let keyWord = '<?= $keyWord ?? "%%"; ?>';
+        let sort = $('#sort').val();
+        let action = "search";
+        let data = {type: type, keyWord: keyWord, currentPage: currentPage, sort: sort, action: action};
+        let search = sendAJax("fetch_search.php", "post", "html", data);
+        $('#show-result').html(search);
+        $('body').tooltip({selector: '[data-toggle="tooltip"]'});
+
+         // ẩn các tùy chọn chỉ có trên sản phẩm nếu thể loại là tin tức
+        if(type == "news") {
+            $('.only_product').prop('hidden', true);
+        } else {
+             $('.only_product').prop('hidden', false);
+        }
+    }
+
+    $(function() {
+        getResult(1);
+
+        // lấy kết quả tìm kiếm khi thay đổi thể loại tìm kiếm
+        $(document).on('click', '.type_option', function() {
+            getResult(1);
+        });
+
+        // Lấy kết quả tìm kiếm khi sắp xếp
+        $(document).on('change', '#sort', function() {
+            getResult(1);
+        });
+
+        // Lấy kết quả tìm kiếm khi chuyển trang
+        $(document).on('click', '.page-item', function() {
+            let currentPage = parseInt($(this).data('page-number'));
+            if(isNaN(currentPage)) {
+                currentPage = 1;
+            }
+            getResult(currentPage);
+            $('html, body').scrollTop(150);
+        });
+
+        // thay đổi cách hiển thị danh sách sản phẩm
+        $(document).on('click', '#change-show', function() {
+            $('.card').toggleClass('col-12 col-3');
+            $(this).find('i').toggleClass('fa-list fa-th');
+        });
+    });
+</script>
