@@ -92,30 +92,37 @@ if(!empty($_POST['action']) && $_POST['action'] == "fetch") {
 			<!-- ------------------------------------product ----------------------------------- -->
 			<div class="card text-center col-4">
 				<?php if ($pro['pro_qty'] == 0): ?>
-				<span class="product_status badge badge-pill badge-warning">Bán hết</span>
+				<span class="product_status badge badge-warning"><strong>Bán hết</strong></span>
 				<?php endif ?>
 				<a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $pro["pro_id"]]); ?>'>
 					<img src="image/<?= $pro['pro_img']; ?>" alt="" class="card-img-top">
 				</a>
 				<div class="card-body">
 
-
-					<!-- thông tin sản phẩm -->
-					<h5 class="card-title text-uppercase">
-						<a href="
-							<?php
-								echo create_link(
-									base_url("product_detail.php"),
-									['proid' => $pro['pro_id']]
-								);
-							?>
-						">
+					<!-- tên -->
+					<h5 class="card-title">
+						<a href="<?= create_link(base_url("product_detail.php"), ['proid' => $pro['pro_id']]); ?>">
 							<?= $pro['pro_name']; ?>
 						</a>
 					</h5>
-					<h6 class="text-danger">
-					<strong><?= number_format($pro['pro_price'], 0, ',', '.'); ?> &#8363;</strong>
-					</h6>
+
+					<!-- giá -->
+					<h5 class="badge badge-danger py-1" style="font-size: 15px;">
+						<?= number_format($pro['pro_price'], 0, ',', '.'); ?> &#8363;
+					</h5>
+					
+					<!-- sao đánh giá -->
+					<div class="">
+						<?php $star = getStar($pro['pro_id']);?>
+						<?php if ($star['timeRate']): ?>
+							<span class="" style="color: yellow;">
+								<?php showStar($star['star']); ?>
+							</span>
+							<span>
+								<?php echo "(" . $star['timeRate'] . " đánh giá)"; ?>
+							</span>
+						<?php endif ?>
+					</div>
 					<hr>
 
 					<!-- thêm vào giỏ hàng -->

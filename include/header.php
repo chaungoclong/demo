@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="assets/css/home.css">
   <link rel="stylesheet" href="assets/css/login_register.css">
   <link rel="stylesheet" href="dist/jquery/jquery-ui.min.css">
+  <link rel="stylesheet" href="dist/carousel/dist/assets/owl.carousel.min.css">
+  <link rel="stylesheet" href="dist/carousel/dist/assets/owl.theme.default.min.css">
   <script src="dist/jquery/jquery-3.5.1.js"></script>
   <script src="dist/jquery/jquery-ui.min.js"></script>
   <script src="assets/js/common.js"></script>
@@ -19,6 +21,7 @@
   <script src="dist/popper/popper.min.js"></script>
   <script src="dist/bootstrap/js/bootstrap.js"></script>
   <script src="dist/ckeditor/ckeditor.js"></script>
+  <script src="dist/carousel/dist/owl.carousel.min.js"></script>
 </head>
 <body>
   <!-- header -->
@@ -38,7 +41,7 @@
       <div id="headerMidleContent" class="container-fluid">
         <div class="row m-0">
           <!-- logo -->
-          <div class="col-3 p-0">
+          <div class="col-3 p-0 d-flex align-items-center">
             <a id="headerLogo" href="<?= base_url('index.php'); ?>" class="navbar-brand">LongVietMobile</a>
           </div>
           <!-- search box -->

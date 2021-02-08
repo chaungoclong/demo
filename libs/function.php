@@ -661,3 +661,34 @@ function read_date($time) {
 		$checkOrderSQL = "SELECT COUNT(*) FROM db_order WHERE or_id = ? AND cus_id = ?";
 		return s_cell($checkOrderSQL, [$orderID, $cusID], "ii");
 	}
+
+	function getStar($proID) {
+		$getStarSQL = "
+		SELECT SUM(r_star) as total_star, COUNT(*) as time_rate FROM db_rate
+		WHERE pro_id = ? 
+		AND cus_id IN(SELECT cus_id FROM db_customer)";
+		$result = s_row($getStarSQL, [$proID], "i");
+		$totalStar = (int)$result['total_star'];
+		$timeRate = (int)$result['time_rate'];
+		if($timeRate) {
+			$star = round($totalStar / $timeRate, 1);
+		} else {
+			$star = 0;
+		}
+		return ['totalStar'=>$totalStar, 'timeRate'=>$timeRate, 'star'=>$star];
+	}
+
+	function showStar($star) {
+		
+		
+		for ($i = 1; $i <= 5 ; $i++) { 
+			if(round($star - 0.25) >= $i) {
+				echo "<i class='fas fa-star'></i>";
+			} elseif(round($star + 0.25) >= $i) {
+				echo "<i class='fas fa-star-half-alt'></i>";
+			} else {
+				echo "<i class='far fa-star'></i>";
+			}
+		}
+
+	}

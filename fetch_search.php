@@ -120,7 +120,7 @@
 				<div class="card-body">
 
 					<!-- thông tin sản phẩm -->
-					<h5 class="card-title text-uppercase">
+					<h5 class="card-title">
 						<a href="
 							<?php
 								echo create_link(
@@ -132,10 +132,25 @@
 							<?= $result['pro_name']; ?>
 						</a>
 					</h5>
-					<h6 class="text-danger">
-					<strong><?= number_format($result['pro_price'], 0, ',', '.'); ?> &#8363;</strong>
-					</h6>
-					<hr>
+					<!-- giá -->
+                    <h5 class="badge badge-danger py-1" style="font-size: 15px;">
+                      <?= number_format($result['pro_price'], 0, ',', '.'); ?> &#8363;
+                    </h5>
+
+                    <!-- sao đánh giá -->
+                    <div>
+                      <?php $star = getStar($result['pro_id']);?>
+                      <?php if ($star['timeRate']): ?>
+                        <span class="" style="color: yellow;">
+                          <?php showStar($star['star']); ?>
+                        </span>
+                        <span>
+                          <?php echo "(" . $star['timeRate'] . " đánh giá)"; ?>
+                        </span>
+                      <?php endif ?>
+                    </div>
+
+					<hr class="my-2">
 
 					<!-- thêm vào giỏ hàng -->
 					<?php if ($result['pro_qty']): ?>

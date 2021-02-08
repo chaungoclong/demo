@@ -149,8 +149,8 @@ if($cat) {
 						<option value="2">Tên: Z-A</option>
 						<option value="3">Giá: Tăng dần</option>
 						<option value="4">Giá: Giảm dần</option>
-						<option value="5">Mới nhất</option>
-						<option value="6">Cũ nhất</option>
+						<option value="5">Cũ nhất</option>
+						<option value="6">Mới nhất</option>
 					</select>
 				</div>
 				<div id="product_box"></div>
@@ -251,6 +251,6 @@ require_once RF . '/include/footer.php';
 		$(document).on('click', '#change-show', function() {
 			$('.card').toggleClass('col-12 col-4');
 			$(this).find('i').toggleClass('fa-list fa-th');
-		})
+		});
 	});
 </script>

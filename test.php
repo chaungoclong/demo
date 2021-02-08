@@ -4,14 +4,9 @@ include_once 'common.php';
 // $test = getOrderDetailByID(29);
 // vd($test);
 //set_login(1, "abc@123.com");
-$test = isMyOrder(69, 69);
-if($test) {
-	echo 1;
-} else {
-	echo 0;
-}
+$test = getStar(61);
 vd($test);
-
+showStar(2);
 ?>
 
 // $updateRateSQL = "UPDATE db_rate 

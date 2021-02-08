@@ -28,7 +28,7 @@ require_once 'include/navbar.php';
 	
 	//lấy các ảnh của sản phẩm, thể loại, hãng
 	if(!empty($product)) {
-		$getImgProSQL = "SELECT img_url FROM db_image WHERE pro_id = ? LIMIT 4";
+		$getImgProSQL = "SELECT img_url FROM db_image WHERE pro_id = ?";
 		$listImg = db_get($getImgProSQL, 0, [$proID], "i");
 		
 		$getCatProSQL = "SELECT cat_name FROM db_category WHERE cat_id = ?";
@@ -47,28 +47,41 @@ require_once 'include/navbar.php';
 				<div id="product_image" class="col-6 p-3">
 					<!-- product image content -->
 					<div class="card text-center py-3 h-100">
-						<div class="row p-0 m-0">
-							<div class="col-12 mb-3">
-								<img src="image/<?= $product['pro_img']; ?>" alt="" class="big_img card-img-top w-75" style="border-radius: 5px;">
-							</div>
-							<div class="col-12">
-								<div class="row">
+						<div class="p-0 m-0">
+							<div id="carousel-list-img" class="card card-body border-0 carousel slide" data-ride="carousel" data-interval="false">
+								<!-- nội dung -->
+								<div class="carousel-inner">
 									<?php if (!empty($listImg)): ?>
 										<?php foreach ($listImg as $key => $img): ?>
-											<div class="col-3">
-												<img src="image/<?= $img['img_url']; ?>" class="small_img img-thumbnail" alt="" style="width: 80px; height: 80px;">
+											<div class="<?= $key == 0 ? 'carousel-item active' : 'carousel-item' ?>">
+												<img src="image/<?= $img['img_url']; ?>" class="card-img-top">
 											</div>
 										<?php endforeach ?>
 									<?php endif ?>
 								</div>
+
+								<!-- điều khiển -->
+								<div href="#carousel-list-img" class="carousel-control-prev" data-slide="prev">
+									<div class="carousel-control-prev-icon"></div>
+								</div>
+								<div href="#carousel-list-img" class="carousel-control-next" data-slide="next">
+									<div class="carousel-control-next-icon"></div>
+								</div>
+
+								<!-- chỉ mục -->
+								<div class="bg-white p-2"><strong class="img-current-id"></strong></div>
+								<div class="carousel-indicators" style="bottom: -20px; display: none;">
+									<?php for($i = 0; $i < count($listImg); $i++): ?>
+										<li data-target="#carousel-list-img" data-slide-to="<?= $i ?>" <?= !$i ? "class='active'" : ""; ?>>
+										</li>
+									<?php endfor ?>
+								</div>
 							</div>
+
 						</div>
 						<script>
 							
-							//thay đổi ảnh
-							$(document).on('click', '.small_img', function() {
-								$('.big_img').attr("src", $(this).attr("src"));
-							});
+
 						</script>
 					</div>
 					<!-- /product image content -->
@@ -253,13 +266,16 @@ require_once 'include/navbar.php';
 		<?php
 		$getRelatedProSQL = "
 		SELECT * FROM db_product
-		WHERE cat_id = ? AND pro_id != ?
+		WHERE 
+			cat_id = ? 
+			AND pro_id != ? 
+			AND pro_price BETWEEN ? - 2000000 AND ? + 2000000
 		";
 		$listRelatedPro = db_get(
 			$getRelatedProSQL,
 			0,
-			[$product['cat_id'], $product['pro_id']],
-			"ii"
+			[$product['cat_id'], $product['pro_id'], $product['pro_price'], $product['pro_price']],
+			"iiii"
 		);
 		//vd($listRelatedPro);
 		?>
@@ -267,108 +283,89 @@ require_once 'include/navbar.php';
 			<h2 class="text-center mb-3">SẢN PHẨM LIÊN QUAN</h2>
 			<div class="list_product_body">
 				<!-- list products bar -->
-				<div class="product_bar bg-info px-2 py-2 d-flex justify-content-between">
-					<span class="badge  bg-faded">
-						<?= !empty($listRelatedPro) ? count($listRelatedPro) : "0"; ?>
-						sản phẩm liên quan
-					</span>
-					<a href="
-					<?php
-					echo create_link(
-					base_url("product.php"),
-					['cat' => $product['cat_id']]
-					);
-					?>
-					"
-					class="badge badge-pill bg-danger">Xem tất cả</a>
-				</div>
+				<!-- <div class="product_bar bg-info px-2 py-2 d-flex justify-content-between"></div> -->
 				<!-- list products -->
-				<div class="card-group">
+				<div class="owl-carousel owl-theme">
 					<?php if (!empty($listRelatedPro)): ?>
-						<?php
-						$limit = 4;
-						$count = 0;
-						?>
 						<?php foreach ($listRelatedPro as $key => $relatedPro): ?>
-							<div class="card text-center" style="max-width: 25%;">
-								<?php if (empty($relatedPro['pro_qty'])): ?>
-									<span class="product_status badge badge-pill badge-warning">
-										bán hết
-									</span>
+							<div class="card text-center">
+								<?php if ($relatedPro['pro_qty'] == 0): ?>
+									<span class="product_status badge badge-warning"><strong>Bán hết</strong></span>
 								<?php endif ?>
-								<a href="
-								<?php
-								echo create_link(
-								base_url("product_detail.php"),
-								['proid' => $relatedPro['pro_id']]
-								);
-								?>
-								">
-								<img src="<?= $relatedPro['pro_img']; ?>" alt="" class="card-img-top">
-							</a>
-							<div class="card-body">
-								<h5 class="card-title text-uppercase">
-									<a href="
-									<?php
-									echo create_link(
-									base_url("product_detail.php"),
-									["proid" => $relatedPro['pro_id']]
-									);
-									?>
-									">
-									<?= $relatedPro['pro_name']; ?>
+								<a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $relatedPro["pro_id"]]); ?>' class="d-flex justify-content-center">
+									<img src="image/<?= $relatedPro['pro_img']; ?>" alt="" class="card-img-top">
 								</a>
-							</h5>
-							<p class="text-uppercase card-subtitle">
-								<?= $category; ?>
-							</p>
-							<h6 class="text-danger">
-								<strong>
-									<?= number_format($relatedPro['pro_price'], 0, ",", "."); ?>
-									&#8363;
-								</strong>
-							</h6>
-							<hr>
-							<!-- thêm vào giỏ hàng -->
-							<?php if ($relatedPro['pro_qty']): ?>
+								<div class="card-body">
 
-								<a class="btn_add_cart_out btn btn-success text-light" data-pro-id="<?= $relatedPro['pro_id']; ?>"
-									data-toggle="tooltip" data-placement="top" title="Thêm vào giỏ hàng"
-									>
-									<i class="fas fa-cart-plus fa-lg"></i>
-								</a>
+									<!-- tên -->
+									<h5 class="card-title">
+										<a href="<?= create_link(base_url("product_detail.php"), ['proid' => $relatedPro['pro_id']]); ?>">
+											<?= $relatedPro['pro_name']; ?>
+										</a>
+									</h5>
 
-							<?php endif ?>
+									<!-- giá -->
+									<h5 class="badge badge-danger py-1" style="font-size: 15px;">
+										<?= number_format($relatedPro['pro_price'], 0, ',', '.'); ?> &#8363;
+									</h5>
 
-							<!-- xem chi tiết sản phẩm -->
-							<a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $relatedPro["pro_id"]]); ?>' class="btn btn-default btn-primary" data-toggle="tooltip" data-placement="top" title="chi tiết sản phẩm">
-								<i class="far fa-eye fa-lg"></i>
-							</a>
+									<!-- sao đánh giá -->
+									<div class="">
+										<?php $star = getStar($relatedPro['pro_id']);?>
+										<?php if ($star['timeRate']): ?>
+											<span class="" style="color: yellow;">
+												<?php showStar($star['star']); ?>
+											</span>
+											<span>
+												<?php echo "(" . $star['timeRate'] . " đánh giá)"; ?>
+											</span>
+										<?php endif ?>
+									</div>
 
-							<!-- danh sách yêu thích -->
-							<a href='<?= create_link(base_url("wishlist.php"), ["proid"=> $relatedPro["pro_id"]]); ?>' class="btn btn-default btn-danger"
-								data-toggle="tooltip" data-placement="top" title="Thêm vào danh sách yêu thích">
-								<i class="far fa-heart fa-lg"></i>
-							</a>
-						</div>
-					</div>
-					<?php
-					++$count;
-					if($count === $limit) {
-						break;
-					}
-					?>
-				<?php endforeach ?>
-			<?php endif ?>
-		</div>
-	</div>
-</section>
+									<hr class="my-2">
+
+									<!-- thêm vào giỏ hàng -->
+									<?php if ($relatedPro['pro_qty']): ?>
+										<a class="btn_add_cart_out btn btn-success text-light" data-pro-id="<?= $relatedPro['pro_id']; ?>"
+											data-toggle="tooltip" data-placement="top" title="Thêm vào giỏ hàng"
+											>
+											<i class="fas fa-cart-plus fa-lg"></i>
+										</a>
+									<?php endif ?>
+
+									<!-- xem chi tiết sản phẩm -->
+									<a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $relatedPro["pro_id"]]); ?>' class="btn btn-default btn-primary" data-toggle="tooltip" data-placement="top" title="chi tiết sản phẩm">
+										<i class="far fa-eye fa-lg"></i>
+									</a>
+								</div>
+							</div>
+						<?php endforeach ?>
+					<?php endif ?>
+				</div>
+			</div>
+		</section>
 <!-- /product -->
 </div>
 </main>
 <?php require_once 'include/footer.php'; ?>
 <script>
 	$(function() {
+
+		// băng chuyền sản phẩm liên quan
+		$(".owl-carousel").owlCarousel({
+			autoHeight: true,
+			items:4,
+			nav: true,
+			smartSpeed: 900,
+			navText: ["<i class=' btn fa fa-chevron-left'></i>","<i class='btn fa fa-chevron-right'></i>"]
+		});
+
+		// slide ảnh sản phẩm
+		showCurrentImgID();
+		$(document).on('click', '.carousel-control-prev, .carousel-control-next', function() {
+			showCurrentImgID();
+		});
+
 		// ==================XỬ LÝ GIỎ HÀNG==========================//
 		//send cart
 		$('.btn_add_cart').on('click', function() {
@@ -506,4 +503,15 @@ require_once 'include/navbar.php';
 			}
 		});
 	});
+
+	function showCurrentImgID() {
+		let currentImg = $('.carousel-indicators li.active').data('slide-to') + 1;
+		let totalImg = <?= count($listImg); ?>;
+		if(totalImg) {
+			$('.img-current-id').text("Ảnh " + currentImg + " / " + totalImg);
+		} else {
+			$('.img-current-id').html("KHÔNG CÓ ẢNH"+"<br>"+"đang cập nhật...");
+		}
+	}
+		
 </script>
