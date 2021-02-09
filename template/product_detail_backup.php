@@ -96,13 +96,7 @@ require_once 'include/navbar.php';
 									<?= ucwords(strtolower($product['pro_name'])); ?>
 								</strong>
 							</h2>
-							<div class="rateInfo">
-								<!-- <p>
-									<strong class="avgRate text-warning" style="font-size: 30px"></strong>
-								</p>
-								<span class="avgStar"></span>
-								<strong class="timeRate"></strong> -->
-							</div>
+							<div class="rateAvg"></div>
 							<hr>
 							<h3 class="card-text my-4" style="color:red;">
 								<strong>
@@ -154,7 +148,7 @@ require_once 'include/navbar.php';
 		</section>
 		
 		<!-- tab info -->
-		<section id="product_tab" class="border shadow p-3 my-5">
+		<section id="product_tab" class="border p-3 my-5">
 			<!-- tab index -->
 			<ul class="nav nav-justified nav-tabs">
 				<li class="nav-item">
@@ -172,13 +166,12 @@ require_once 'include/navbar.php';
 				<div id="desc" class="active tab-pane p-3">
 					<h6><strong>MÔ TẢ</strong></h6>
 
-					<div id="moreText" class="position-relative" style="height: 600px; overflow: hidden;">
+					<div id="moreText" style="height: 300px; overflow: hidden;">
 						<?= !empty($product['pro_desc']) ? $product['pro_desc'] : "";  ?>
-						<div class="fade_more_txt position-absolute" ></div>
 					</div>
 
-					<div class="d-flex justify-content-center mt-3">
-						<button class="btn btn-outline-primary dropdown-toggle" id="toggleShow">Xem thêm</button>
+					<div class="d-flex justify-content-center">
+						<button class="btn btn-primary dropdown-toggle" id="toggleShow">Xem thêm</button>
 					</div>
 
 					<script>
@@ -187,13 +180,11 @@ require_once 'include/navbar.php';
 								let textValue = $(this).text();
 								if(textValue == "Xem thêm") {
 									$(this).text("Ẩn bớt");
-									$('#moreText').css({height: "auto", minHeight: '600px'});
-									$('.fade_more_txt').hide();
+									$('#moreText').css('height', '100%');
 								} else {
 									$(this).text("Xem thêm");
-									$('#moreText').css('height', '600px');
-									$('html, body').scrollTop($('#product_tab').offset().top);
-									$('.fade_more_txt').show();
+									$('#moreText').css('height', '300px');
+
 								}
 							});
 						});
@@ -206,7 +197,10 @@ require_once 'include/navbar.php';
 				<div id="rate" class="tab-pane fade py-3">
 					<!-- đánh giá trung bình-->
 					<div class="rate_title row m-0 mb-5">
-						<div class="col-12 p-0 rateInfo">
+						<div class="col-12 p-0 mb-3">
+							<h5 class="text-uppercase">có <span class="qtyRate"></span> đánh giá cho <?= $product['pro_name']; ?></h5>
+						</div>
+						<div class="col-12 p-0 rateAvg">
 						</div>
 
 					</div>
@@ -220,19 +214,19 @@ require_once 'include/navbar.php';
 							</p>
 							<!-- chọn số sao -->
 							<div class="choose_star">
-								<button class="shadow btn starr m-1" data-rate="1" id="star_rate_1">
+								<button class="btn starr m-1" data-rate="1" id="star_rate_1">
 									<i class="fas fa-star"></i>
 								</button>
-								<button class="shadow btn starr m-1" data-rate="2" id="star_rate_2">
+								<button class="btn starr m-1" data-rate="2" id="star_rate_2">
 									<i class="fas fa-star"></i>
 								</button>
-								<button class="shadow btn  starr m-1" data-rate="3" id="star_rate_3">
+								<button class="btn  starr m-1" data-rate="3" id="star_rate_3">
 									<i class="fas fa-star"></i>
 								</button>
-								<button class="shadow btn  starr m-1" data-rate="4" id="star_rate_4">
+								<button class="btn  starr m-1" data-rate="4" id="star_rate_4">
 									<i class="fas fa-star"></i>
 								</button>
-								<button class="shadow btn  starr m-1" data-rate="5" id="star_rate_5">
+								<button class="btn  starr m-1" data-rate="5" id="star_rate_5">
 									<i class="fas fa-star"></i>
 								</button>
 							</div>
@@ -254,12 +248,6 @@ require_once 'include/navbar.php';
 					<!-- /tạo đánh giá -->
 					
 					<!-- hiển thị các đánh giá -->
-					<div class="d-flex justify-content-end mb-3">
-						<select id="sort" class="custom-select shadow" style="width: 100px;">
-							<option value="1" selected>Mới nhất</option>
-							<option value="2">Cũ nhất</option>
-						</select>
-					</div>
 					<div class="show_rate">
 						<!-- display rate -->
 					</div>
@@ -443,20 +431,6 @@ require_once 'include/navbar.php';
 		//lấy bình luận ngay khi vào trang
 		fetchRate(proID);
 
-		// Lấy bình luận khi sắp xếp
-		$(document).on('change', '#sort', function() {
-			fetchRate(proID);
-		});
-
-		// lấy bình luận khi phân trang
-		$(document).on('click', '.page-item', function() {
-			let currentPage = parseInt($(this).data('page-number'));
-			if(isNaN(currentPage)) {
-				currentPage = 1;
-			}
-			fetchRate(proID, currentPage);
-		});
-
 		//xử lý chọn sao
 		$('.starr').on('click', function() {
 
@@ -482,14 +456,52 @@ require_once 'include/navbar.php';
 
 		//XỬ LÝ THÊM , CẬP NHẬT ĐÁNH GIÁ
 		$('#sendRate').on('click', function() {
-			rating();
+			//e.prenventDefault();
+			let checkLogin = <?= is_login() ? 1 : 0; ?>;
+			if(checkLogin == 0) {
+				alert("BẠN CHƯA ĐĂNG NHẬP");
+			} else {
+				let rateContent = $('#rateContent').val();
+				let rateValue = $('#rateValue').val();
+				let cusID = <?= 
+				isset($_SESSION['user_token']['id']) ?
+				$_SESSION['user_token']['id'] : 0; 
+				?>;
+				let proID = <?= $product['pro_id']; ?>;
+
+				if(rateContent == '') {
+					alert('VUI LÒNG NHẬP BÌNH LUẬN');
+				} else if(rateValue == '') {
+					alert('VUI LÒNG CHỌN SAO ĐÁNH GIÁ');
+				} else {
+
+					//kiểm tra đánh giá của người cusID về sản phẩm proID đã tồn tại chưa
+					let checkRateExist = rateExist(cusID, proID, "rate_exist");
+					if(checkRateExist) {
+						//cập nhât lại đánh giá nếu đánh giá đã tồn tại và người dùng muốn cập nhật
+						if(confirm("BẠN CÓ MUỐN CẬP NHẬT LẠI BÌNH LUẬN CỦA BẠN VỀ SẢN PHẨM NÀY")) {
+							let resultUpdate = setRate(
+								cusID, proID, rateValue, rateContent, "update_rate"
+								);
+							alert(resultUpdate.msg);
+							fetchRate(proID);
+						}
+					} else {
+						//nếu đánh giá chưa tồn tại thì thêm mới đánh giá
+						let resultAdd = setRate(
+							cusID, proID, rateValue, rateContent, "add_rate"
+							);
+						alert(resultAdd.msg);
+						fetchRate(proID);
+					}
+				}
+			}
 		});
 	});
 
-	// hàm hiển thị số thứ tự của ảnh đang được hiển thị trên slide ảnh chi tiết sản phẩm
 	function showCurrentImgID() {
 		let currentImg = $('.carousel-indicators li.active').data('slide-to') + 1;
-		let totalImg   = <?= count($listImg); ?>;
+		let totalImg = <?= count($listImg); ?>;
 		if(totalImg) {
 			$('.img-current-id').text("Ảnh " + currentImg + " / " + totalImg);
 		} else {
@@ -497,104 +509,8 @@ require_once 'include/navbar.php';
 		}
 	}
 
-	// hàm thêm || cập nhật đánh giá
 	function rating() {
-		let checkLogin = <?= is_login() ? 1 : 0; ?>;
-		if(checkLogin == 0) {
-			alert("BẠN CHƯA ĐĂNG NHẬP");
-		} else {
-			// dữ liệu
-			let cusID       = <?= isset($_SESSION['user_token']['id']) ? $_SESSION['user_token']['id'] : 0; ?>;
-			let proID       = <?= $product['pro_id']; ?>;
-			let rateContent = $('#rateContent').val();
-			let rateValue   = $('#rateValue').val();
-
-			// validate
-			if(rateContent == '') {
-				alert('VUI LÒNG NHẬP BÌNH LUẬN');
-				$('#rateContent').focus();
-			} else if(rateValue == '') {
-				alert('VUI LÒNG CHỌN SAO ĐÁNH GIÁ');
-			} else {
-
-				//kiểm tra đánh giá của người cusID về sản phẩm proID đã tồn tại chưa
-				let checkRateExist = rateExist(cusID, proID, "rate_exist");
-				if(checkRateExist) {
-
-					//cập nhật lại đánh giá nếu đánh giá đã tồn tại và người dùng muốn cập nhật
-					if(confirm("BẠN CÓ MUỐN CẬP NHẬT LẠI BÌNH LUẬN CỦA BẠN VỀ SẢN PHẨM NÀY")) {
-						let resultUpdate = createRate(
-							cusID, proID, rateValue, rateContent, "update_rate"
-							);
-						alert(resultUpdate.msg);
-						fetchRate(proID);
-					}
-				} else {
-
-					//nếu đánh giá chưa tồn tại thì thêm mới đánh giá
-					let resultAdd = createRate(
-						cusID, proID, rateValue, rateContent, "add_rate"
-						);
-					alert(resultAdd.msg);
-					fetchRate(proID);
-				}
-			}
-		}
-	}
-
-	// hàm lấy đánh giá
-	function fetchRate(proID, currentPage = 1) {
-		let sort = $('#sort').val();
-	    let data = { proID: proID, action: "fetch_rate", sort: sort, currentPage: currentPage};
-	    let result = sendAJax('fetch_rate.php', 'post', 'json', data);
-	    if (result) {
-	        $('.show_rate').html(result.html);
-	        let star = result.star;
-
-	        let rateInfo = `<h4>
-	        	<strong>Đánh giá trung bình: </strong>
-	        	<strong class="text-warning">${star['star']} sao</strong>
-	        </h4>`;
-	        rateInfo += "<span class='avgStar'>";
-	        // sao trung bình
-	      	for(let i = 1; i <= 5; ++i) {
-	      		if(Math.round(star['star'] - .25) >= i) {
-	      			rateInfo += "<i class='fas fa-star'></i>";
-	      		} else if(Math.round(star['star'] + .25) >= i) {
-	      			rateInfo += "<i class='fas fa-star-half-alt'></i>"
-	      		} else {
-	      			rateInfo += "<i class='far fa-star'></i>";
-	      		}
-	      	}
-	      	rateInfo += "</span>";
-	      	rateInfo += `<strong style='font-size: 18px;' class='text-danger'> ( ${star['timeRate']} đánh giá ) </strong>`;
-
-	        $('.qtyRate').text(star['timeRate']);
-	        if(star['timeRate'] > 0) {
-	        	$('.rateInfo').html(rateInfo);
-	        }
-	    }
-	}
-
-	//hàm kiểm tra đánh giá của người dùng cusID  về sản phẩm proID đã tồn tại hay chưa
-	function rateExist(cusID, proID, action) {
-		let result = sendAJax(
-			'process_rate.php',
-			'post',
-			'text',
-			{cusID:cusID, proID:proID, action:action}
-		);
-		if(result == '1'){
-			return true;
-		}
-		return false;
-	}
-
-	//hàm tạo đánh giá (chuyển đổi thông qua biến action)
-	function createRate(cusID, proID, rateValue, rateContent, action) {
-		let data = {cusID:cusID, proID:proID, rateValue:rateValue, rateContent:rateContent, action:action }
-		let result = sendAJax("process_rate.php", "post", "json", data);
-		return result;
+		
 	}
 		
 </script>

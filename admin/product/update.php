@@ -169,7 +169,7 @@ $listCategory = db_fetch_table("db_category", 0);
             <!-- mô tả ngắn -->
             <div class="form-group">
                <label for="short_desc"><strong>Mô tả ngắn:</strong></label>
-               <textarea name="shortDesc" id="short_desc" value="<?= $product['pro_short_desc']; ?>">
+               <textarea name="shortDesc" id="short_desc">
                 <?= $product['pro_short_desc']; ?>
                </textarea>
                <script>
@@ -183,7 +183,7 @@ $listCategory = db_fetch_table("db_category", 0);
             <!-- mô tả chi tiết -->
             <div class="form-group">
                <label for="desc"><strong>Mô tả chi tiết:</strong></label>
-               <textarea name="desc" id="desc" value="<?= $product['pro_desc']; ?>">
+               <textarea name="desc" id="desc">
                  <?= $product['pro_desc']; ?>
                </textarea>
                <script>
@@ -268,7 +268,6 @@ $listCategory = db_fetch_table("db_category", 0);
   // 
   $(document).on('submit', '#product_edit_form', function(e) {
     e.preventDefault();
-
     editProduct();
     
   });

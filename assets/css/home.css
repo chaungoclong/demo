@@ -445,12 +445,12 @@ select.quantity  {
 
 /*tab product detail*/
 #product_tab {
-    border: 1px solid grey !important;
+    border: 1px solid #eeeeee !important;
     border-radius: 5px;
 }
 
 #product_tab .nav-item {
-     border-bottom: 1px solid grey !important;
+     border-bottom: 1px solid #eeeeee !important;
 }
 #product_tab .nav-link {
     padding: 20px;
@@ -464,6 +464,17 @@ select.quantity  {
     border-bottom: 3px  #1266f1 solid;
     background: #f3f5f6;
     color: #1266f1;
+}
+.fade_more_txt {
+    bottom: 0;
+    height: 60px;
+    left: 0;
+    right: 0;
+    background-image: linear-gradient(to bottom, 
+        rgba(255, 255, 255, 0), 
+        rgba(243, 245, 246, 0.8)
+        100%  
+    );
 }
 
 /*review*/

@@ -679,8 +679,6 @@ function read_date($time) {
 	}
 
 	function showStar($star) {
-		
-		
 		for ($i = 1; $i <= 5 ; $i++) { 
 			if(round($star - 0.25) >= $i) {
 				echo "<i class='fas fa-star'></i>";
@@ -690,5 +688,4 @@ function read_date($time) {
 				echo "<i class='far fa-star'></i>";
 			}
 		}
-
 	}

@@ -256,7 +256,9 @@ if (!empty($_POST['action']) && $_POST['action'] == "edit") {
 	// biến lưu kết quả trả về
 	$res = [
 		"status"     => $status,
-		"libraryErr" => $upLibraryError
+		"libraryErr" => $upLibraryError,
+		"desc"=> $desc,
+		"shortdesc"=>$shortDesc
 	];
 
 	echo json_encode($res);

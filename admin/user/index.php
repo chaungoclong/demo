@@ -104,7 +104,7 @@ require_once '../include/navbar.php';
 			$stt = 1 + (int)$page['offset'];
 		?>
 		<div class="content_table">
-			<table class="table table-hover table-bordered" style="font-size: 13px;">
+			<table class="table table-hover table-bordered w-100" style="font-size: 15px;">
 				<tr>
 					<th>STT</th>
 					<th>Mã</th>

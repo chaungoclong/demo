@@ -1519,7 +1519,7 @@ function addCategory() {
                 break;
             case 5:
                 alert("THÊM DANH MỤC THÀNH CÔNG");
-                window.location = document.referrer;
+                //window.location = document.referrer;
                 break;
             case 6:
                 alert("THÊM DANH MỤC THẤT BẠI, TÊN DANH MỤC CÓ THỂ ĐÃ TỒN TẠI");

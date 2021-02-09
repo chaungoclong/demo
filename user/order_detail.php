@@ -27,7 +27,7 @@ require_once RF . '/user/include/navbar.php';
 				<?php 
 					$orderID = data_input(input_get('orid'));
 					if(!isMyOrder($orderID, $user['cus_id'])) {
-						echo "<h5 class='alert alert-danger text-center'>KHÔNG CÓ ĐƠN HÀNG NÀY</h5>";
+						echo "<h5 class='alert alert-danger text-center'>KHÔNG CÓ ĐƠN HÀNG NÀY :(</h5>";
 						return false;
 					}
 					$order   = getOrderByID($orderID);
