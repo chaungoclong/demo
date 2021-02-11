@@ -1,92 +1,65 @@
 <?php 
-
-	/**
-	 * 	==============================TRANG LÀM MỚI====================================
-	 * 	Mô tả: làm mới nội dung bảng ở trang index sau khi có 1 hàng thay đổi(cập nhật, xóa)
-	 * 	Hoạt động:
-	 * 	 - nhận dữ liệu gửi sang từ ajax -> kiểm tra có action = "fetch"
-	 * 	 - kiểm tra có biến yêu cầu tìm kiếm:
-	 * 	 	+ rỗng => lấy hết danh sách kết quả có thể lấy
-	 * 	 	+ không rỗng => lấy hết danh sách kết quả theo yêu cầu
-	 * 	 - chia trang
-	 * 	 	+ xác định trang hiện tại thông qua biến $_POST['currentPage'](để khi làm mới vẫn giữ được đúng trang 	ban đầu)
-	 * 	 	+ tạo đường link của trang yêu cầu
-	 * 	 	+ phân trang bằng hàm 
-	 *   - lấy danh sách kết quả sau khi chia trang
-	 *   	+ có tìm kiếm : lấy danh sách kết quả thỏa mãn yêu cầu tìm kiếm sau khi phân trang
-	 *   	+ không có tìm kiếm: lấy danh sách kết quả sau khi phân trang
-	 * 
-	 */
-	
-
-
-
 	require_once '../../common.php';
-	if(isset($_POST['action']) && $_POST['action'] == "fetch") {
-		$html = '';
+	if(!empty($_POST['action']) && $_POST['action'] == "fetch") {
+		$getCategorySQL = "SELECT * FROM db_category WHERE 1";
+		$param = [];
+		$format = "";
 
-		$q = data_input(input_get('q'));
-			$key = "%" . $q . "%";
+		// tìm kiếm theo tên, mã danh mục
+		$q = !empty($_POST['q']) ? $_POST['q'] : "%%";
+		$getCategorySQL .= " AND CONCAT(cat_name, cat_id) LIKE(?)";
+		$param[] = $q;
+		$format .= "s";
 
-			if($q != "") {
-				$searchSQL = "
-				SELECT * FROM db_category 
-				WHERE 
-					cat_name LIKE(?) 
-				";
+		// tìm kiếm theo trạng thái
+		$status = !empty($_POST['status']) ? $_POST['status'] : "all";
+		switch ($status) {
+			case "all":
+				break;
+			case 'on':
+				$getCategorySQL .= " AND cat_active = 1";
+				break;
+			case 'off':
+				$getCategorySQL .= " AND cat_active = 0";
+				break;
+			default:
+				break;
+		}
 
-				$param = [$key];
-				$listCategory = db_get($searchSQL, 1, $param, "s");
-			} else {
+		// sắp xếp
+		$sort = !empty($_POST['sort']) ? (int)$_POST['sort'] : 1;
+		switch ($sort) {
+			case 1:
+				$getCategorySQL .= " ORDER BY cat_name ASC";
+				break;
+			case 2:
+				$getCategorySQL .= " ORDER BY cat_name DESC";
+				break;
+			default:
+				$getCategorySQL .= " ORDER BY cat_name ASC";
+				break;
+		}
 
-				$listCategory = db_fetch_table("db_category", 1);
-			}
-			
-
-			// chia trang
-			$totalCategory = $listCategory->num_rows;
-			$categoryPerPage = 5;
-			$currentPage = isset($_POST['currentPage']) ? $_POST['currentPage'] : 1;
-			$currentLink = create_link(base_url("admin/category/index.php"), ["page"=>'{page}', 'q'=>$q]);
-			$page = paginate($currentLink, $totalCategory, $currentPage, $categoryPerPage);
-
-			// danh sách nhân viên sau khi chia trang
-			if($q != "") {
-				$searchResultSQL = $searchSQL . " LIMIT ? OFFSET ?";
-				$param = [$key, $page['limit'], $page['offset']];
-
-				// danh sách người dùng sau khi tìm kiếm và chia trang chia trang
-				$listCategoryPaginate = db_get($searchResultSQL, 1, $param, "sii");
-			} else {
-
-				$listCategoryPaginate = db_fetch_table("db_category", 1, $page['limit'], $page['offset']);
-			}
-
-			
-			$totalCategoryPaginate = $listCategoryPaginate->num_rows;
-
-			// số thứ tự
-			$stt = 1 + (int)$page['offset'];
-
-		$html .= ' 
-			<table class="table table-hover table-bordered" style="font-size: 13px;">
-				<tr>
-					<th>STT</th>
-					<th>Mã</th>
-					<th>Tên</th>
-					<th>Ảnh</th>
-					<th>Trạng thái</th>
-					<th>Sửa</th>
-					<th>Xóa</th>
-				</tr>
-		';
-
-		// in các đơn hàng
+		$listCategory = db_get($getCategorySQL, 0, $param, $format);
+		$totalCategory = count($listCategory);
 		
-		if ($totalCategoryPaginate > 0) {
-			foreach ($listCategoryPaginate as $key => $category) {
+		// chia trang
+		$currentPage = !empty($_POST['currentPage']) ? (int)$_POST['currentPage'] : 1;
+		$catPerPage = 2;
+		$offset = ($currentPage - 1) * $catPerPage;
+
+		$getCategorySQL .= " LIMIT ? OFFSET ?";
+		$param = [...$param, $catPerPage, $offset];
+		$format .= "ii";
+		$listCategory = db_get($getCategorySQL, 0, $param, $format);
+
+		$categories = '';
+		$stt = 1 + $offset;
+
+		if ($totalCategory > 0) {
+			foreach ($listCategory as $key => $category) {
 				$checked = $category['cat_active'] ? "checked" : "";
-				$html .= '   
+				$categories .= '   
 				<tr>
 					<!--stt -->
 					<td>' . $stt++ . '</td>
@@ -136,7 +109,8 @@
 					<!-- remove -->
 					<td>
 						<a 
-							class="btn_remove_cat btn btn-danger"
+							class="btn_delete_cat btn btn-danger"
+							id="btn_delete_' . $category['cat_id'] . '"
 							data-cat-id="' . $category['cat_id'] . '">
 							<i class="fas fa-trash-alt"></i>
 						</a>
@@ -145,12 +119,8 @@
 				';
 			}
 		}
-		$html .= '   
-			</table>
-		';
 
-		$html .= $page['html'];
-
-		echo $html;
-				
+		$pagination = paginateAjax($totalCategory, $currentPage, $catPerPage);
+		$output = ['categories'=>$categories, 'pagination'=>$pagination];
+		echo json_encode($output);
 	}

@@ -13,16 +13,17 @@ require_once '../include/navbar.php';
 <!-- main content -row -->
 <div class="main_content bg-white row m-0 pt-4">
 	<div class="col-12">
-		<div>
-			<h5>DANH SÁCH SẢN DANH MỤC</h5>
-			<p class="mb-4">Dánh sách danh mục là nơi bạn kiểm tra và chỉnh sửa thông tin danh mục</p>
+		<!-- tiêu đề -->
+		<div class="d-flex justify-content-between align-items-center mb-2">
+			<h5>DANH SÁCH DANH MỤC</h5>
 			<a class="btn_back btn btn-warning py-0 px-3" onclick="javascript:history.go(-1)">
 				<i class="fas fa-arrow-alt-circle-left"></i>
 			</a>
-			<hr>
 		</div>
 
+		<!-- nút thêm danh mục và thanh tìm kiếm -->
 		<div class="row m-0 mb-3">
+			<!-- nút thêm danh mục -->
 			<div class="col-12 p-0 d-flex justify-content-between align-items-center">
 				<a href="
 					<?= base_url('admin/category/add.php'); ?>
@@ -35,143 +36,47 @@ require_once '../include/navbar.php';
 					<i class="fas fa-plus"></i>
 				</a>
 
-				<div class="form-group m-0 p-0 d-flex align-items-center">
-					<form action="" class="form-inline" id="search_box">
-						<input 
-							type        ="text" 
-							name        ="q" 
-							id          ="search" 
-							class       ="form-control"
-							placeholder ="Search..." 
-							value       ="<?= $_GET['q'] ?? ""; ?>"
-							>
-						<button class="btn btn-outline-success">
-							<i class="fas fa-search"></i>
-						</button>
-					</form>
+				<!-- tìm kiếm -->
+				<div class="filter d-flex">
+					<!-- sắp xếp -->
+					<select id="sort" class="custom-select">
+						<option value="1" selected>Tên: A - Z</option>
+						<option value="2">Tên: Z - A</option>
+					</select>
+
+					<!-- lọc trạng thái danh mục -->
+					<select id="filter_status" class='custom-select'>
+						<option value="all" selected>Tất cả</option>
+						<option value="on">Bật</option>
+						<option value="off">Tắt</option>
+					</select>
+
+					<!-- tìm kiếm tên , id danh mục -->
+					<input type="text" class="form-control" id="search" placeholder="search">
 				</div>
 			</div>
 		</div>
-		<!-- lấy danh sách nhân viên-->
-		<?php
 
-			$q = data_input(input_get('q'));
-			$key = "%" . $q . "%";
-
-			if($q != "") {
-				$searchSQL = "
-				SELECT * FROM db_category 
-				WHERE 
-					cat_name LIKE(?) 
-				";
-
-				$param = [$key];
-				$listCategory = db_get($searchSQL, 1, $param, "s");
-			} else {
-
-				$listCategory = db_fetch_table("db_category", 1);
-			}
-			
-
-			// chia trang
-			$totalCategory   = $listCategory->num_rows;
-			$categoryPerPage = 5;
-			$currentPage     = isset($_GET['page']) ? $_GET['page'] : 1;
-			$currentLink     = create_link(base_url("admin/category/index.php"), ["page"=>'{page}', 'q'=>$q]);
-			$page            = paginate($currentLink, $totalCategory, $currentPage, $categoryPerPage);
-
-			// danh sách nhân viên sau khi chia trang
-			if($q != "") {
-				$searchResultSQL = $searchSQL . " LIMIT ? OFFSET ?";
-				$param = [$key, $page['limit'], $page['offset']];
-
-				// danh sách người dùng sau khi tìm kiếm và chia trang chia trang
-				$listCategoryPaginate = db_get($searchResultSQL, 1, $param, "sii");
-			} else {
-
-				$listCategoryPaginate = db_fetch_table("db_category", 1, $page['limit'], $page['offset']);
-			}
-
-			
-			$totalCategoryPaginate = $listCategoryPaginate->num_rows;
-
-			// số thứ tự
-			$stt = 1 + (int)$page['offset'];
-		?>
-		<div class="content_table">
+		<!-- danh sách danh mục -->
+		<div>
 			<table class="table table-hover table-bordered" style="font-size: 13px;">
-				<tr>
-					<th>STT</th>
-					<th>Mã</th>
-					<th>Tên</th>
-					<th>Ảnh</th>
-					<th>Trạng thái</th>
-					<th>Sửa</th>
-					<th>Xóa</th>
-				</tr>
-				<!-- in các đơn hàng -->
-				<?php if ($totalCategoryPaginate > 0): ?>
-				<?php foreach ($listCategoryPaginate as $key => $category): ?>
-				<tr>
-					<!--stt -->
-					<td><?= $stt++; ?></td>
+				<thead>
+					<tr>
+						<th>STT</th>
+						<th>Mã</th>
+						<th>Tên</th>
+						<th>Ảnh</th>
+						<th>Trạng thái</th>
+						<th>Sửa</th>
+						<th>Xóa</th>
+					</tr>
+				</thead>
 
-					<!-- mã -->
-					<td><?= $category['cat_id']; ?></td>
-
-					<!-- tên danh mục -->
-					<td><?= $category['cat_name']; ?></td>
-
-					<!-- ảnh  -->
-					<td>
-						<img src="../../image/<?= $category['cat_logo']; ?>" width="30px" height="30px">
-					</td>
-
-					<!-- active -->
-					<td>
-						<div class="custom-control custom-switch">
-							<input 
-								type="checkbox" 
-								id="switch_active_<?= $category['cat_id']; ?>" 
-								data-cat-id="<?= $category['cat_id']; ?>"
-								class="btn_switch_active custom-control-input" 
-								value="<?= $category['cat_active']; ?>"
-								<?= $category['cat_active'] ? "checked" : ""; ?>
-							>
-							<label for="switch_active_<?= $category['cat_id']; ?>" class="custom-control-label"></label>
-						</div>
-					</td>
-
-					<!-- edit -->
-					<td>
-						<a
-							href="
-							<?= 
-								create_link(base_url('admin/category/update.php'), [
-									"catid"=>$category['cat_id']
-								]);
-							?>
-							"
-							class="btn_edit_cat btn btn-success"
-							data-cat-id="<?= $category['cat_id']; ?>">
-							<i class="fas fa-edit"></i>
-						</a>
-					</td>
-
-					<!-- remove -->
-					<td>
-						<a 
-							class="btn_remove_cat btn btn-danger"
-							data-cat-id="<?= $category['cat_id']; ?>">
-							<i class="fas fa-trash-alt"></i>
-						</a>
-					</td>
-				</tr>
-				
-				<?php endforeach ?>
-				<?php endif ?>
+				<tbody class="list_category">
+				</tbody>
+			
 			</table>
-			<?php echo $page['html']; ?>
+			<div class="page"></div>
 		</div>
 	</div>
 </div>
@@ -185,136 +90,99 @@ require_once '../include/navbar.php';
 
 <script>
 	$(function() {
+		fetchPage();
 
-		// cập nhật nội dung thẻ search
-		let q = "<?= $_GET['q'] ?? ""; ?>";
-		$('#search').val(q);
-	
-		// Thay đổi trạng thái của danh mục
-		$(document).on('change', '.btn_switch_active', function() {
-
-			// id danh mục
-			let catID = $(this).data("cat-id");
-
-			// trạng thái hiện tại
-			let prevActive = $(this).val();
-			console.log(prevActive);
-
-			// trạng thái muốn thay đổi
-			let newActive = $(this).prop('checked');
-			newActive = newActive ? 1 : 0;
-			console.log(newActive);
-
-			// gửi yêu cầu thay đổi trạng thái
-			let sendSwitchActive = sendAJax(
-				"process_category.php",
-				"post",
-				"json",
-				{catID: catID, newActive: newActive, action: "switch_active"}
-			)
-			//alert(sendSwitchActive.status);
-
-			// nếu không thành công khôi phục về trạng thái trước đó
-			// if(sendSwitchActive.status == 1) {
-			// 	alert("THIẾU DỮ LIỆU");
-			// 	if(prevActive == 1) {
-			// 		$("#switch_active_" + customerID).prop("checked", true);
-			// 	} else {
-			// 		$("#switch_active_" + customerID).prop("checked", false);
-			// 	}
-			// }
-
-			// // nếu thành công thay đổi trang thái của nút trạng thái theo trạng thái được trả về
-			// if(sendSwitchActive.status == 5) {
-
-			// 	// mã khách hàng trả về
-			// 	let customerID = sendSwitchActive.customerID;
-
-			// 	// trạng thái trả về
-			// 	let resActive = sendSwitchActive.active;
-			// 	// alert(resActive);
-
-			// 	// thay đổi trạng thái
-			// 	if(resActive == 1) {
-			// 		$("#switch_active_" + customerID).prop("checked", true);
-			// 	} else {
-			// 		$("#switch_active_" + customerID).prop("checked", false);
-			// 	}
-			// }
-			
-
-			// làm mới trang
-			let q           = "<?= $_GET['q'] ?? ""; ?>";
-
-			let prevPage    = "<?= getCurrentURL(); ?>";
-			let currentPage = <?= $currentPage ?>;
-			let fetchPage = sendAJax(
-				"fetch_page.php",
-				"post",
-				"html",
-				{action: "fetch", prevPage: prevPage, q: q, currentPage: currentPage }
-			);
-
-			$('.content_table').html(fetchPage);
+		// lấy danh sách danh mục khi nhập tìm kiếm
+		$(document).on('input', '#search', function() {
+			fetchPage();
+		});
+		$(document).on('change', '#filter_status', function() {
+			fetchPage();
 		});
 
+		// lấy danh sách danh mục khi nhập tìm kiếm
+		$(document).on('change', '#sort', function() {
+			fetchPage();
+		});
 
-		// xóa danh mục
-		$(document).on('click', '.btn_remove_cat', function() {
-
-			let wantRemove = confirm("BẠN CÓ MUỐN XÓA DANH MỤC NÀY");
-
-			if(wantRemove) {
-
-				// THỰC HIỆN HÀNH ĐỘNG
-				let catID = $(this).data('cat-id');
-				let prevLink = "<?= getCurrentURL() ?>";
-				
-				let sendRemove = sendAJax(
-					"process_category.php",
-					"post",
-					"text",
-					{catID: catID, action: "remove"}
-				);
-
-				switch(sendRemove) {
-					case "1":
-						alert("THIẾU DỮ LIỆU");
-						break;
-
-					case "2":
-						alert("KHÔNG THỂ XÓA DANH MỤC ĐANG CÓ SẢN PHẨM");
-						break;
-
-					case "5":
-						alert("XÓA THÀNH CÔNG");
-						break;
-
-					case "6":
-						alert("ĐÃ XẢY RA LỖI");
-						break;
-				}
-
-				// LÀM MỚI TRANG
-				// trang trước(chuyển hướng đến sau khi cập nhật -dùng cho update)
-				let prevPage    = "<?= getCurrentURL(); ?>";
-				
-				// trang hiện tại(phân trang)
-				let currentPage = <?= $currentPage ?>;
-				
-				let q           = "<?= $_GET['q'] ?? ""; ?>";
-
-				// làm mới trang
-				let fetchPage = sendAJax(
-					"fetch_page.php",
-					"post",
-					"html",
-					{action: "fetch", prevPage: prevPage, q: q, currentPage: currentPage }
-				);
-
-				$('.content_table').html(fetchPage);
+		// lấy danh sách danh mục khi chuyển trang
+		$(document).on('click', '.page-item', function() {
+			let currentPage = parseInt($(this).data("page-number"));
+			if(isNaN(currentPage)) {
+				currentPage = 1;
 			}
+			fetchPage(currentPage);
+		});
 
+		// thay đổi trạng thái của 1 danh mục
+		$(document).on('change', '.btn_switch_active', function() {
+			changeStatus(this.id);
+		});
+
+		// xóa 1 danh mục
+		$(document).on('click', '.btn_delete_cat', function() {
+			deleteRow(this.id);
 		});
 	});
+
+	// hàm lấy danh sách các mục
+	function fetchPage(currentPage = 1) {
+		let q = "%" + $('#search').val() + "%";
+		let sort = $('#sort').val();
+		let status = $('#filter_status').val();
+		let action = "fetch";
+		let data = {q : q, status: status, sort: sort, currentPage: currentPage, action: action};
+		let result = sendAJax("fetch_page.php", "post", "json", data);
+		$('.list_category').html(result.categories);
+		$('.page').html(result.pagination);
+	}
+
+	// hàm thay đổi trạng thái của danh mục
+	function changeStatus(btnID) {
+		let catID = $(`#${btnID}`).data('cat-id');
+		let status = $(`#${btnID}`).prop('checked');
+		let active = status ? 1 : 0;
+		let action = "switch_active";
+		let data = {catID: catID, active: active, action: action};
+		let result = sendAJax("process_category.php", "post", "json", data);
+		if(!result.ok) {
+			alert("có lỗi khi thay đổi trạng thái");
+		}
+		// cập nhật lại sau khi thay đổi
+		let currentPage = parseInt($('li.page-item.active').data('page-number'));
+		if(isNaN(currentPage)) {
+			currentPage = 1;
+		};
+		fetchPage(currentPage);
+	}
+
+	function deleteRow(btnID) {
+		let catID = $(`#${btnID}`).data('cat-id'); 
+		let action = "delete";
+		let data = {catID : catID, action: action};
+		let result = sendAJax("process_category.php", "post", "json", data);
+		console.log(result);
+		let status = result.status;
+		switch (status) {
+			case "success":
+				alert("XÓA THÀNH CÔNG");
+				break;
+			case "has_product":
+				alert("KHÔNG THỂ XÓA DANH MỤC ĐÃ CÓ SẢN PHẨM");
+				break;
+			case "error":
+				alert("ĐÃ CÓ LỖI XẢY RA, VUI LÒNG THỬ LẠI");
+				break;
+			default:
+				alert("ĐÃ CÓ LỖI XẢY RA, VUI LÒNG THỬ LẠI");
+				break;
+		}
+
+		// cập nhật danh sách sau khi xóa
+		let currentPage = parseInt($('li.page-item.active').data('page-number'));
+		if(isNaN(currentPage)) {
+			currentPage = 1;
+		};
+		fetchPage(currentPage);
+	}
 </script>	

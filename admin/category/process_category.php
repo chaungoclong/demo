@@ -135,59 +135,42 @@ if (!empty($_POST['action']) && $_POST['action'] == "edit") {
 
 // THAY ĐỔI TRẠNG THÁI
 if (!empty($_POST['action']) && $_POST['action'] == "switch_active") {
-	$status = 5;
+	$ok                 = true;
+	$catID              = input_post("catID");
+	$newActive          = $_POST['active'];
+	$switchActiveSQL    = "UPDATE db_category SET cat_active = ? WHERE cat_id = ?";
+	$runSwitchActiveSQL = db_run($switchActiveSQL, [$newActive, $catID], 'ii');
 
-		// mã danh mục
-	$catID = data_input(input_post("catID"));
-
-		// trạng thái muốn cập nhật
-	$newActive = $_POST['newActive'] ?? null;
-
-		// validate
-	if($catID === false || $newActive === null) {
-		$status = 1;
+	if($runSwitchActiveSQL) {
+		// ẩn các sản phẩm của danh mục này
+		$turnOffSQL    = "UPDATE db_product SET pro_active = ? WHERE cat_id = ?";
+		$runTurnOff = db_run($turnOffSQL, [$newActive, $catID], 'ii');
+		$ok = true;
 	} else {
-		$switchActiveSQL    = "UPDATE db_category SET cat_active = ? WHERE cat_id = ?";
-		$runSwitchActiveSQL = db_run($switchActiveSQL, [$newActive, $catID], 'ii');
-
-		if($runSwitchActiveSQL) {
-
-			// ẩn các sản phẩm của danh mục này
-			$turnOffSQL    = "UPDATE db_product SET pro_active = ? WHERE cat_id = ?";
-			$runTurnOff = db_run($turnOffSQL, [$newActive, $catID], 'ii');
-			$status = 5;
-		} else {
-			$status = 6;
-		}
+		$ok = false;
 	}
-
-	$res = [
-		"status"   =>$status
-	];
-
-	echo json_encode($res);
+	
+	$output = ["ok" => $ok];
+	echo json_encode($output);
 }
 
 
 
 // xóa sản phẩm
-if (!empty($_POST['action']) && $_POST['action'] == "remove") {
-	$status = 5;
+if (!empty($_POST['action']) && $_POST['action'] == "delete") {
+	$status = "success";
+	$catID = input_post("catID");
 
-	// mã sản phẩm
-	$catID = data_input(input_post("catID"));
-
-	if($catID === false) {
-		$status = 1;
-	} else if(hasProduct("cat_id", $catID)) {
-		$status = 2;
+	if(hasProduct("cat_id", $catID)) {
+		$status = "has_product";
 	} else {
 		$removeCatSQL = "DELETE FROM db_category WHERE cat_id = ?";
 		$runRemoveCat = db_run($removeCatSQL, [$catID], "i");
-		$status = ($runRemoveCat) ? 5 : 6;
+		$status = ($runRemoveCat) ? "success" : "error";
 	}
 
-	echo $status;
+	$output = ['status' => $status];
+	echo json_encode($output);
 }
 
 
