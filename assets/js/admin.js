@@ -1500,7 +1500,7 @@ function addCategory() {
 
         form_data.append("action", "add");
 
-        let sendAddCategory = sendAJax(
+        let result = sendAJax(
             "process_category.php",
             "post",
             "json",
@@ -1508,24 +1508,22 @@ function addCategory() {
             1
         );
 
-        let status = sendAddCategory.status;
+        let status = result.status;
+        let error = result.error;
 
-        switch (status) {
-            case 1:
-                alert("THIẾU DỮ LIỆU");
-                break;
-            case 3:
-                alert("DANH MỤC ĐÃ TỒN TẠI");
-                break;
-            case 5:
-                alert("THÊM DANH MỤC THÀNH CÔNG");
-                //window.location = document.referrer;
-                break;
-            case 6:
-                alert("THÊM DANH MỤC THẤT BẠI, TÊN DANH MỤC CÓ THỂ ĐÃ TỒN TẠI");
-                break;
+        if(status == "success") {
+            alert("THÊM DANH MỤC THÀNH CÔNG");
+            window.location = "index.php";
+        } else {
+            alert("THÊM DANH MỤC THẤT BẠI");
+
+            if(error['name'] != "") {
+               $('#name').addClass("error_field");
+            }
+            $('#nameErr').text(error['name']);
+
+            $('#imageErr').text(error['file']);
         }
-
     }
 }
 
@@ -1591,7 +1589,7 @@ function editCategory() {
 
         form_data.append("action", "edit");
 
-        let sendEditCategory = sendAJax(
+        let result = sendAJax(
             "process_category.php",
             "post",
             "json",
@@ -1599,24 +1597,23 @@ function editCategory() {
             1
         );
 
-        let status = sendEditCategory.status;
+        let status = result.status;
+        let error = result.error;
 
-        switch (status) {
-            case 1:
-                alert("THIẾU DỮ LIỆU");
-                break;
-            case 3:
-                alert("DANH MỤC ĐÃ TỒN TẠI");
-                break;
-            case 5:
-                alert("CẬP NHẬT DANH MỤC THÀNH CÔNG");
-                window.location = document.referrer;
-                break;
-            case 6:
-                alert("CẬP NHẬT DANH MỤC THẤT BẠI, TÊN DANH MỤC CÓ THỂ ĐÃ TỒN TẠI");
-                break;
+        if(status == 'success') {
+            alert("CẬP NHẬT THÀNH CÔNG");
+            window.location = "index.php";
+          
+        } else {
+            alert("CẬP NHẬT THẤT BẠI");
+
+            if(error['name'] != "") {
+                $('#name').addClass('error_field');
+            }
+            $('#nameErr').text(error['name']);
+
+            $('#imageErr').text(error['file']);
         }
-
     }
 }
 
