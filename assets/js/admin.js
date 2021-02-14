@@ -1683,7 +1683,7 @@ function addBrand() {
 
         form_data.append("action", "add");
 
-        let sendAddBrand = sendAJax(
+        let result = sendAJax(
             "process_brand.php",
             "post",
             "json",
@@ -1691,24 +1691,22 @@ function addBrand() {
             1
         );
 
-        let status = sendAddBrand.status;
+        let status = result.status;
+        let error = result.error;
 
-        switch (status) {
-            case 1:
-                alert("THIẾU DỮ LIỆU");
-                break;
-            case 3:
-                alert("HÃNG ĐÃ TỒN TẠI");
-                break;
-            case 5:
-                alert("THÊM HÃNG THÀNH CÔNG");
-                window.location = document.referrer;
-                break;
-            case 6:
-                alert("THÊM HÃNG THẤT BẠI, TÊN HÃNG CÓ THỂ ĐÃ TỒN TẠI");
-                break;
+        if(status == "success") {
+            alert("THÊM HÃNG THÀNH CÔNG");
+            window.location = "index.php";
+        } else {
+             alert("THÊM HÃNG THẤT BẠI");
+
+             if(error['name'] != "") {
+                $('#name').addClass('error_field');
+             }
+
+             $('#nameErr').text(error['name']);
+             $('#imageErr').text(error['file']);
         }
-
     }
 }
 
@@ -1774,7 +1772,7 @@ function editBrand() {
 
         form_data.append("action", "edit");
 
-        let sendEditBrand = sendAJax(
+        let result = sendAJax(
             "process_brand.php",
             "post",
             "json",
@@ -1782,24 +1780,21 @@ function editBrand() {
             1
         );
 
-        let status = sendEditBrand.status;
+        let status = result.status;
+        let error = result.error;
 
-        switch (status) {
-            case 1:
-                alert("THIẾU DỮ LIỆU");
-                break;
-            case 3:
-                alert("HÃNG ĐÃ TỒN TẠI");
-                break;
-            case 5:
-                alert("CẬP NHẬT HÃNG THÀNH CÔNG");
-                window.location = document.referrer;
-                break;
-            case 6:
-                alert("CẬP NHẬT HÃNG THẤT BẠI, TÊN HÃNG CÓ THỂ ĐÃ TỒN TẠI");
-                break;
+        if(status == 'success') {
+            alert('CẬP NHẬT HÃNG THÀNH CÔNG');
+            window.location = "index.php";
+        } else {
+            alert("CẬP NHẬT HÃNG KHÔNG THÀNH CÔNG");
+
+            if(error['name'] != "") {
+                $('#name').addClass("error_field");
+            }
+            $('#nameErr').text(error['name']);
+            $('#imageErr').text(error['file']);
         }
-
     }
 }
 

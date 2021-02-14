@@ -8,7 +8,6 @@ if(!is_login() || !is_admin()) {
 
 require_once '../include/sidebar.php';
 require_once '../include/navbar.php';
-
 ?>
 <!-- main content -row -->
 <div class="main_content bg-white row m-0 pt-4">
@@ -40,8 +39,10 @@ require_once '../include/navbar.php';
 				<div class="filter d-flex">
 					<!-- sắp xếp -->
 					<select id="sort" class="custom-select">
-						<option value="1" selected>Tên: A - Z</option>
+						<option value="1">Tên: A - Z</option>
 						<option value="2">Tên: Z - A</option>
+						<option value="3" selected>Mới nhất</option>
+						<option value="4">Cũ nhất</option>
 					</select>
 
 					<!-- lọc trạng thái danh mục -->
@@ -90,19 +91,21 @@ require_once '../include/navbar.php';
 
 <script>
 	$(function() {
-		fetchPage();
+		// khôi phục trang trước(nếu quay lại từ trang update sau khi update)
+		// hoặc làm mới trang(lấy danh sách danh mục tại trang đầu tiên vơi các tùy chọn tìm kiếm mặc định)
+		fetchPageFirstTime();
 
 		// lấy danh sách danh mục khi nhập tìm kiếm
 		$(document).on('input', '#search', function() {
-			fetchPage();
+			fetchPage(1);
 		});
 		$(document).on('change', '#filter_status', function() {
-			fetchPage();
+			fetchPage(1);
 		});
 
 		// lấy danh sách danh mục khi nhập tìm kiếm
 		$(document).on('change', '#sort', function() {
-			fetchPage();
+			fetchPage(1);
 		});
 
 		// lấy danh sách danh mục khi chuyển trang
@@ -123,11 +126,16 @@ require_once '../include/navbar.php';
 		$(document).on('click', '.btn_delete_cat', function() {
 			deleteRow(this.id);
 		});
+
+		// lưu dữ liệu của trang index trước khi chuyển sang trang update(để quay lại đúng trang sau khi update)
+		$(document).on('click', '.btn_edit_cat', function() {
+			setPrevPageData();
+		});
 	});
 
 	// hàm lấy danh sách các mục
 	function fetchPage(currentPage = 1) {
-		let q = "%" + $('#search').val() + "%";
+		let q = "%" + $('#search').val().trim() + "%";
 		let sort = $('#sort').val();
 		let status = $('#filter_status').val();
 		let action = "fetch";
@@ -184,5 +192,45 @@ require_once '../include/navbar.php';
 			currentPage = 1;
 		};
 		fetchPage(currentPage);
+	}
+
+	/**
+	 * hàm tạo dữ liệu của trang trước (để khi quay lại trang đó thì khôi phục lại)
+	 */
+	function setPrevPageData() {
+		localStorage.setItem("search", $('#search').val());
+		localStorage.setItem("sort", $('#sort').val());
+		localStorage.setItem("status", $('#filter_status').val());
+		localStorage.setItem("oldPage", parseInt($('li.page-item.active').data('page-number')));
+	}
+
+	// hàm lấy trang lần đầu tiên (nếu quay về từ trang update thì khôi phục các thông tin về tùy chọn tìm kiếm, vị trí trang hiện tại)
+	// nếu lần đầu vào trang hoặc quay về từ trang khác khác trang update thì làm mới trang(lấy dữ liệu trang đầu tiên, các tùy chọn tìm kiếm mặc định)
+	function fetchPageFirstTime() {
+		let search  = localStorage.getItem("search");
+		if(search != null) {
+			$('#search').val(search);
+			localStorage.removeItem("search");
+		}
+
+		let sort    = localStorage.getItem("sort");
+		if(sort != null) {
+			$('#sort').val(sort);
+			localStorage.removeItem("sort");
+		}
+
+		let status  = localStorage.getItem("status");
+		if(status != null) {
+			$('#filter_status').val(status);
+			localStorage.removeItem("status");
+		}
+
+		let oldPage = localStorage.getItem("oldPage");
+		if(oldPage != null) {
+			fetchPage(oldPage);
+			localStorage.removeItem("oldPage");
+		} else {
+			fetchPage(1);
+		}
 	}
 </script>	

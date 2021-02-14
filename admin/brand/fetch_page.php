@@ -1,92 +1,73 @@
 <?php 
-
-	/**
-	 * 	==============================TRANG LÀM MỚI====================================
-	 * 	Mô tả: làm mới nội dung bảng ở trang index sau khi có 1 hàng thay đổi(cập nhật, xóa)
-	 * 	Hoạt động:
-	 * 	 - nhận dữ liệu gửi sang từ ajax -> kiểm tra có action = "fetch"
-	 * 	 - kiểm tra có biến yêu cầu tìm kiếm:
-	 * 	 	+ rỗng => lấy hết danh sách kết quả có thể lấy
-	 * 	 	+ không rỗng => lấy hết danh sách kết quả theo yêu cầu
-	 * 	 - chia trang
-	 * 	 	+ xác định trang hiện tại thông qua biến $_POST['currentPage'](để khi làm mới vẫn giữ được đúng trang 	ban đầu)
-	 * 	 	+ tạo đường link của trang yêu cầu
-	 * 	 	+ phân trang bằng hàm 
-	 *   - lấy danh sách kết quả sau khi chia trang
-	 *   	+ có tìm kiếm : lấy danh sách kết quả thỏa mãn yêu cầu tìm kiếm sau khi phân trang
-	 *   	+ không có tìm kiếm: lấy danh sách kết quả sau khi phân trang
-	 * 
-	 */
-	
-
-
-
 	require_once '../../common.php';
-	if(isset($_POST['action']) && $_POST['action'] == "fetch") {
-		$html = '';
+	if(!empty($_POST['action']) && $_POST['action'] == "fetch") {
+		$getBrandSQL = "SELECT * FROM db_brand WHERE 1";
+		$param = [];
+		$format = "";
 
-		$q = data_input(input_get('q'));
-			$key = "%" . $q . "%";
+		// tìm kiếm theo tên, mã hãng
+		$q = !empty($_POST['q']) ? $_POST['q'] : "%%";
+		$getBrandSQL .= " AND CONCAT(bra_name, bra_id) LIKE(?)";
+		$param[] = $q;
+		$format .= "s";
 
-			if($q != "") {
-				$searchSQL = "
-				SELECT * FROM db_brand
-				WHERE 
-					bra_name LIKE(?) 
-				";
+		// tìm kiếm theo trạng thái
+		$status = !empty($_POST['status']) ? $_POST['status'] : "all";
+		switch ($status) {
+			case "all":
+				break;
+			case 'on':
+				$getBrandSQL .= " AND bra_active = 1";
+				break;
+			case 'off':
+				$getBrandSQL .= " AND bra_active = 0";
+				break;
+			default:
+				break;
+		}
 
-				$param = [$key];
-				$listBrand = db_get($searchSQL, 1, $param, "s");
-			} else {
+		// sắp xếp
+		$sort = !empty($_POST['sort']) ? (int)$_POST['sort'] : 1;
+		switch ($sort) {
+			case 1:
+				$getBrandSQL .= " ORDER BY bra_name ASC";
+				break;
+			case 2:
+				$getBrandSQL .= " ORDER BY bra_name DESC";
+				break;
+			case 3: 
+				$getBrandSQL .= " ORDER BY bra_create_at DESC";
+				break;
+			case 4:
+				$getBrandSQL .= " ORDER BY bra_create_at ASC";
+				break;
+			default:
+				$getBrandSQL .= " ORDER BY bra_create_at ASC";
+				break;
+		}
 
-				$listBrand = db_fetch_table("db_brand", 1);
-			}
-			
-
-			// chia trang
-			$totalBrand = $listBrand->num_rows;
-			$brandPerPage = 5;
-			$currentPage = isset($_POST['currentPage']) ? $_POST['currentPage'] : 1;
-			$currentLink = create_link(base_url("admin/brand/index.php"), ["page"=>'{page}', 'q'=>$q]);
-			$page = paginate($currentLink, $totalBrand, $currentPage, $brandPerPage);
-
-			// danh sách nhân viên sau khi chia trang
-			if($q != "") {
-				$searchResultSQL = $searchSQL . " LIMIT ? OFFSET ?";
-				$param = [$key, $page['limit'], $page['offset']];
-
-				// danh sách người dùng sau khi tìm kiếm và chia trang chia trang
-				$listBrandPaginate = db_get($searchResultSQL, 1, $param, "sii");
-			} else {
-
-				$listBrandPaginate = db_fetch_table("db_brand", 1, $page['limit'], $page['offset']);
-			}
-
-			
-			$totalBrandPaginate = $listBrandPaginate->num_rows;
-
-			// số thứ tự
-			$stt = 1 + (int)$page['offset'];
-
-		$html .= ' 
-			<table class="table table-hover table-bordered" style="font-size: 13px;">
-				<tr>
-					<th>STT</th>
-					<th>Mã</th>
-					<th>Tên</th>
-					<th>Ảnh</th>
-					<th>Trạng thái</th>
-					<th>Sửa</th>
-					<th>Xóa</th>
-				</tr>
-		';
-
-		// in các đơn hàng
+		$listBrand  = db_get($getBrandSQL, 0, $param, $format);
+		$totalBrand = count($listBrand);
 		
-		if ($totalBrandPaginate > 0) {
-			foreach ($listBrandPaginate as $key => $brand) {
+		// chia trang
+		$braPerPage  = 2;
+		$totalPage   = ceil($totalBrand / $braPerPage);
+		$currentPage = !empty($_POST['currentPage']) ? (int)$_POST['currentPage'] : 1;
+		$currentPage = $currentPage > $totalPage ? $totalPage : $currentPage;
+		$offset      = ($currentPage - 1) * $braPerPage;
+
+		$getBrandSQL .= " LIMIT ? OFFSET ?";
+		$param          = [...$param, $braPerPage, $offset];
+		$format         .= "ii";
+		$listBrand   = db_get($getBrandSQL, 0, $param, $format);
+		
+		$brands     = '';
+		$stt            = 1 + $offset;
+
+		if ($totalBrand > 0) {
+			foreach ($listBrand as $key => $brand) {
 				$checked = $brand['bra_active'] ? "checked" : "";
-				$html .= '   
+				$brands .= '   
 				<tr>
 					<!--stt -->
 					<td>' . $stt++ . '</td>
@@ -94,7 +75,7 @@
 					<!-- mã -->
 					<td>' . $brand['bra_id'] . '</td>
 
-					<!-- tên danh mục -->
+					<!-- tên hãng -->
 					<td>' . $brand['bra_name'] . '</td>
 
 					<!-- ảnh  -->
@@ -136,7 +117,8 @@
 					<!-- remove -->
 					<td>
 						<a 
-							class="btn_remove_bra btn btn-danger"
+							class="btn_delete_bra btn btn-danger"
+							id="btn_delete_' . $brand['bra_id'] . '"
 							data-bra-id="' . $brand['bra_id'] . '">
 							<i class="fas fa-trash-alt"></i>
 						</a>
@@ -145,13 +127,8 @@
 				';
 			}
 		}
-		$html .= '   
-			</table>
-		';
 
-		$html .= $page['html'];
-
-		echo $html;
-
-				
+		$pagination = paginateAjax($totalPage, $currentPage);
+		$output = ['brands'=>$brands, 'pagination'=>$pagination];
+		echo json_encode($output);
 	}

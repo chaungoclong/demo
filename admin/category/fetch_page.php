@@ -35,26 +35,34 @@
 			case 2:
 				$getCategorySQL .= " ORDER BY cat_name DESC";
 				break;
+			case 3: 
+				$getCategorySQL .= " ORDER BY cat_create_at DESC";
+				break;
+			case 4:
+				$getCategorySQL .= " ORDER BY cat_create_at ASC";
+				break;
 			default:
-				$getCategorySQL .= " ORDER BY cat_name ASC";
+				$getCategorySQL .= " ORDER BY cat_create_at ASC";
 				break;
 		}
 
-		$listCategory = db_get($getCategorySQL, 0, $param, $format);
+		$listCategory  = db_get($getCategorySQL, 0, $param, $format);
 		$totalCategory = count($listCategory);
 		
 		// chia trang
+		$catPerPage  = 2;
+		$totalPage   = ceil($totalCategory / $catPerPage);
 		$currentPage = !empty($_POST['currentPage']) ? (int)$_POST['currentPage'] : 1;
-		$catPerPage = 2;
-		$offset = ($currentPage - 1) * $catPerPage;
+		$currentPage = $currentPage > $totalPage ? $totalPage : $currentPage;
+		$offset      = ($currentPage - 1) * $catPerPage;
 
 		$getCategorySQL .= " LIMIT ? OFFSET ?";
-		$param = [...$param, $catPerPage, $offset];
-		$format .= "ii";
-		$listCategory = db_get($getCategorySQL, 0, $param, $format);
-
-		$categories = '';
-		$stt = 1 + $offset;
+		$param          = [...$param, $catPerPage, $offset];
+		$format         .= "ii";
+		$listCategory   = db_get($getCategorySQL, 0, $param, $format);
+		
+		$categories     = '';
+		$stt            = 1 + $offset;
 
 		if ($totalCategory > 0) {
 			foreach ($listCategory as $key => $category) {
@@ -120,7 +128,7 @@
 			}
 		}
 
-		$pagination = paginateAjax($totalCategory, $currentPage, $catPerPage);
+		$pagination = paginateAjax($totalPage, $currentPage);
 		$output = ['categories'=>$categories, 'pagination'=>$pagination];
 		echo json_encode($output);
 	}

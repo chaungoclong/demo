@@ -9,8 +9,9 @@ if(!is_login() || !is_admin()) {
 require_once '../include/sidebar.php';
 require_once '../include/navbar.php';
 
-// // danh sách thể loại
-// $listCategory = db_fetch_table("db_category", 0);
+// thể loại
+$brandID = data_input(input_get("braid"));
+$brand   = getBrandByID($brandID);
 ?>
 
 <!-- main content -row -->
@@ -19,16 +20,17 @@ require_once '../include/navbar.php';
    <div class="col-12">
       <div class="row m-0">
          <div class="col-12">
-            <h5>THÊM DANH MỤC</h5>
-            <p class="mb-4">Thêm danh mục mới</p>
+            <h5>SỬA HÃNG</h5>
+            <p class="mb-4">Sửa hãng</p>
             <hr>
          </div>
       </div>
    </div>
 
    <div class="col-12 mb-5">
-      <form action="	" method="POST" id="category_add_form" enctype="multipart/form-data">
+      <form action="	" method="POST" id="brand_edit_form" enctype="multipart/form-data">
 
+         <input type="hidden" name="braID" value = "<?= $brand['bra_id']; ?>">
          <div class="row m-0">
             <div class="col-12">
                <div  id="backErr" class="alert-danger"></div>
@@ -36,7 +38,7 @@ require_once '../include/navbar.php';
                <!-- tên sản phẩm -->
                <div class="form-group">
                   <label for="name"><strong>Tên danh mục:</strong></label>
-                  <input type="text" class="form-control" name="name" id="name">
+                  <input type="text" class="form-control" name="name" id="name" value="<?= $brand['bra_name']; ?>">
                   <div class="alert-danger" id="nameErr"></div>
                </div>
 
@@ -45,11 +47,14 @@ require_once '../include/navbar.php';
                 <div class="form-group col-6">
                    <label for="image"><strong>Logo danh mục:</strong></label>
                    <input type="file" name="image" id="image">
+                   <input type="hidden" name="oldImage" value="<?= $brand['bra_logo']; ?>">
 
-                   <div class="previewLogo"></div>
+                   <div class="previewImage">
+                     <img src="../../image/<?= $brand['bra_logo']; ?>" class="img-fluid">
+                   </div>
                    <script>
                       $(document).on('change', '#image', function() {
-                        showImg(this, ".previewLogo", 0);
+                        showImg(this, ".previewImage", 0);
                       });
                    </script>
                    <div class="alert-danger" id="imageErr"></div>
@@ -63,12 +68,12 @@ require_once '../include/navbar.php';
                id    ="active"
                name  ="active"
                class ="custom-control-input"
-               checked
+               <?= $brand['bra_active'] ? "checked" : ""; ?>
                >
                <label for="active" class="custom-control-label">Trạng thái</label>
             </div>
 
-            <button class="btn_add_cat btn btn-block btn-success"><strong>THÊM</strong></button>
+            <button class="btn_edit_bra btn btn-block btn-success"><strong>LƯU</strong></button>
               
          </div>
       </div>
@@ -85,9 +90,10 @@ require_once '../include/navbar.php';
 </html>
 <script>
    $(function() {
-   	$(document).on('submit', "#category_add_form", function(e) {
+   	$(document).on('submit', "#brand_edit_form", function(e) {
    		e.preventDefault();
-         addCategory();
+         editBrand();
+
       });
    });
 </script>

@@ -9,8 +9,8 @@ if(!is_login() || !is_admin()) {
 require_once '../include/sidebar.php';
 require_once '../include/navbar.php';
 
-// // danh sách thể loại
-// $listCategory = db_fetch_table("db_category", 0);
+// danh sách thể loại
+$listCategory = db_fetch_table("db_category", 0);
 ?>
 
 <!-- main content -row -->
@@ -88,6 +88,7 @@ require_once '../include/navbar.php';
    	$(document).on('submit', "#category_add_form", function(e) {
    		e.preventDefault();
          addCategory();
+
       });
    });
 </script>

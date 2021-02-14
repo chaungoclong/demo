@@ -233,6 +233,26 @@ function read_date($time) {
 		return preg_match($pattern, $string);
 	}
 
+	function is_email($string) {
+		return filter_var(data_input($string), FILTER_VALIDATE_EMAIL);
+	}
+
+	// hàm kiểm tra số nguyên
+	function int($value) {
+		return filter_var(data_input($value), FILTER_VALIDATE_INT);
+	}
+
+	// hàm kiểm tra số thực
+	function float($value) {
+		return filter_var(data_input($value), FILTER_VALIDATE_FLOAT);
+	}
+
+	// hàm kiểm tra boolean
+	function bool($value) {
+		return filter_var(data_input($value), FILTER_VALIDATE_BOOLEAN);
+	}
+
+
 	// hàm kiểm tra ngày tháng
 	function check_date($string) {
 		$pattern = '/^[12]\d{3}-(0[1-9]|1[12])-(0[1-9]|[12]\d|3[01])$/';
@@ -246,7 +266,12 @@ function read_date($time) {
 
 	// hàm kiểm tra tên
 	function check_name($string) {
-		$pattern = '/^([a-zA-Z]{1,10}\s?)+$/';
+		$pattern = '/^([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,10}\s?)+$/';
+		return preg_match($pattern, $string);
+	}
+
+	function check_word($string) {
+		$pattern = '/^([a-zA-Z0-9ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\-\_\.\,\/\(\)\[\]]{1,20}\s?)+$/';
 		return preg_match($pattern, $string);
 	}
 
@@ -688,4 +713,50 @@ function read_date($time) {
 				echo "<i class='far fa-star'></i>";
 			}
 		}
+	}
+
+	// hàm chia trang ajax
+	function paginateAjax($totalPage, $currentPage) {
+		$pagination = "";
+		if($totalPage) {
+		$pagination .= '
+		<nav aria-label="...">
+			<ul class="pagination justify-content-center">
+				';
+				// link trang trước
+				if($totalPage > 1 && $currentPage > 1) {
+				$pagination .= '
+				<li class="page-item page-link" data-page-number="' .($currentPage - 1). '">Trước</li>
+				';
+				}
+				// link các trang
+				for ($i = 1; $i <= $totalPage ; $i++) {
+				if($i != $currentPage) {
+				$pagination .= '
+				<li class="page-item page-link" data-page-number="' .$i. '">' .$i. '</li>
+				';
+				} else {
+				$pagination .= '
+				<li class="page-item active" data-page-number="' .$i. '">
+					<span class="page-link">
+						' .$i. '
+						<span class="sr-only">(current)</span>
+					</span>
+				</li>
+				';
+				}
+				}
+				// link trang sau
+				if($totalPage > 1 && $currentPage < $totalPage) {
+				$pagination .= '
+				<li class="page-item page-link" data-page-number="' .($currentPage + 1). '">Sau</li>
+				';
+				}
+				$pagination .= '
+			</ul>
+		</nav>
+		';
+		}
+
+		return $pagination;
 	}

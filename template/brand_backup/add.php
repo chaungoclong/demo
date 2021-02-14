@@ -9,8 +9,8 @@ if(!is_login() || !is_admin()) {
 require_once '../include/sidebar.php';
 require_once '../include/navbar.php';
 
-// // danh sách thể loại
-// $listCategory = db_fetch_table("db_category", 0);
+// danh sách thể loại
+$listBrand = db_fetch_table("db_brand", 0);
 ?>
 
 <!-- main content -row -->
@@ -19,23 +19,24 @@ require_once '../include/navbar.php';
    <div class="col-12">
       <div class="row m-0">
          <div class="col-12">
-            <h5>THÊM DANH MỤC</h5>
-            <p class="mb-4">Thêm danh mục mới</p>
+            <h5>THÊM HÃNG</h5>
+            <p class="mb-4">Thêm hãng mới</p>
             <hr>
          </div>
       </div>
    </div>
 
    <div class="col-12 mb-5">
-      <form action="	" method="POST" id="category_add_form" enctype="multipart/form-data">
-
+      <form action="	" method="POST" id="brand_add_form" enctype="multipart/form-data">
+         <!-- previous link -->
+         
          <div class="row m-0">
             <div class="col-12">
                <div  id="backErr" class="alert-danger"></div>
 
                <!-- tên sản phẩm -->
                <div class="form-group">
-                  <label for="name"><strong>Tên danh mục:</strong></label>
+                  <label for="name"><strong>Tên hãng:</strong></label>
                   <input type="text" class="form-control" name="name" id="name">
                   <div class="alert-danger" id="nameErr"></div>
                </div>
@@ -43,7 +44,7 @@ require_once '../include/navbar.php';
              <!-- ảnh đại diện -->
              <div class="form-row">
                 <div class="form-group col-6">
-                   <label for="image"><strong>Logo danh mục:</strong></label>
+                   <label for="image"><strong>Logo hãng:</strong></label>
                    <input type="file" name="image" id="image">
 
                    <div class="previewLogo"></div>
@@ -68,7 +69,7 @@ require_once '../include/navbar.php';
                <label for="active" class="custom-control-label">Trạng thái</label>
             </div>
 
-            <button class="btn_add_cat btn btn-block btn-success"><strong>THÊM</strong></button>
+            <button class="btn_add_bra btn btn-block btn-success"><strong>THÊM</strong></button>
               
          </div>
       </div>
@@ -85,9 +86,10 @@ require_once '../include/navbar.php';
 </html>
 <script>
    $(function() {
-   	$(document).on('submit', "#category_add_form", function(e) {
+   	$(document).on('submit', "#brand_add_form", function(e) {
    		e.preventDefault();
-         addCategory();
+         addBrand();
+
       });
    });
 </script>

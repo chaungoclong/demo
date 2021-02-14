@@ -4,134 +4,132 @@ require_once '../../common.php';
 
 // THÊM DANH MỤC
 if (!empty($_POST['action']) && $_POST['action'] == "add") {
-
-	$status = 5;
-	$upImageError = "";
-
-	//lấy dữ liệu gửi lên từ ajax
-	$name   = data_input(input_post("name"));
-	$active = data_input(input_post("active"));
-	$active = $active ? 1 : 0;
-
-	// đường dẫn đến thư mục lưu ảnh
-	$folder = "../../image/";
-
-	//  danh sách đuôi file hợp lệ
+	$name      = $active = $file = $fileName =  "";
+	$status    = "fail";
+	$folder    = "../../image/";
 	$extension = ['jpg', 'jpeg', 'png'];
+	$error     = ['name'=>'', 'file'=>''];
 
-	// lấy ảnh
-	$imageFile = !empty($_FILES['image']) ? $_FILES['image'] : null;
-
-	//validate
-	if($name === false || $imageFile == null) {
-		$status = 1;
-	} elseif(categoryExist($name)) {
-		$status = 3;
+	// tên
+	if(empty($_POST['name'])) {
+		$error['name'] = "tên không được để trống";
 	} else {
+		$name = data_input($_POST['name']);
 
-		// thêm sản phẩm vào bảng sản phẩm
-		$imageName = up_file($imageFile, $folder, $extension);
-		if(!$imageName) {
-			$upImageError = "Tải ảnh đại diện không thành công";
+		if(!check_word($name)) {
+			$error['name'] = "Tên sai định dạng";
+		} 
+		if(categoryExist($name)) {
+			$error['name'] = "Danh mục đã tồn tại";
 		}
+	}
 
+	// trạng thái
+	$active = !empty($_POST['active']) ? 1 : 0;
+
+	// file
+	if(empty($_FILES['image'])) {
+		$error['file'] = "không được để trống";
+	} else {
+		$file = $_FILES['image'];
+		$fileName = up_file($file, $folder, $extension);
+
+		if(!$fileName) {
+			$error['file'] = "file không hợp lệ";
+		}
+	}
+
+	if(!$error['name'] && !$error['file']) {
 		$addCategorySQL = "  
 		INSERT INTO db_category(cat_name, cat_logo, cat_active)
 		VALUES(?, ?, ?)
 		";
 
-		$param = [$name, $imageName, $active];
-
+		$param = [$name, $fileName, $active];
 		$runAddCategory = db_run($addCategorySQL, $param, "ssi");
 
-		$status = $runAddCategory ? 5 : 6;
-
+		$status = !$runAddCategory ? "fail" : "success";
 	}
-	
-	// biến lưu kết quả trả về
-	$res = [
-		"status"     => $status,
-		"imageErr"   => $upImageError
-	];
 
-	echo json_encode($res);
+	$output = ['error'=>$error, 'status'=>$status];
+	echo json_encode($output);
 }
 
 
 // SỬA DANH MỤC
 if (!empty($_POST['action']) && $_POST['action'] == "edit") {
-
-	$status       = 5;
-	$upImageError = "";
-
-	//lấy dữ liệu gửi lên từ ajax
-	$categoryID = data_input(input_post("catID"));
-	$oldImage   = data_input(input_post("oldImage"));
-	$name       = data_input(input_post("name"));
-	$active     = data_input(input_post("active"));
-	$active     = $active ? 1 : 0;
-
-	// đường dẫn đến thư mục lưu ảnh
-	$folder = "../../image/";
-
-	//  danh sách đuôi file hợp lệ
+	$catID = $oldImage = $name = $active = $file = $fileName = '';
+	$error = ['name'=>'', 'file'=>''];
+	$folder    = "../../image/";
 	$extension = ['jpg', 'jpeg', 'png'];
+	$status = false;
 
-	// lấy ảnh
-	$imageFile = !empty($_FILES['image']) ? $_FILES['image'] : null;
-	
+	// mã danh mục
+	$catID = data_input(int($_POST['catID']));
 
-	//validate
-	if($name === false) {
-		$status = 1;
+	// ảnh cũ
+	$oldImage = data_input($_POST['oldImage']);
+
+	// tên
+	if(empty($_POST['name'])) {
+		$error['name'] = "tên không được để trống";
 	} else {
+		$name = data_input($_POST['name']);
+
+		if(!check_word($name)) {
+			$error['name'] = "Tên sai định dạng";
+		} 
 
 		// kiểm tra tên danh mục có trùng với các danh mục khác
 		$nameIsExistSQL = "SELECT cat_id FROM db_category WHERE cat_name = ? AND cat_id != ? LIMIT 1";
-		$runCheckName = s_cell($nameIsExistSQL, [$name, $categoryID], "si");
+		$runCheckName = s_cell($nameIsExistSQL, [$name, $catID], "si");
 
 		if($runCheckName) {
+			$error['name'] = "Danh mục đã tồn tại";
+		} 
+	}
 
-			// tên danh mục đã tồn tại
-			$status = 3;
-		} else {
-			
-			// thêm sản phẩm vào bảng sản phẩm
-			$imageName = "";
-			if($imageFile != null) {
-				$imageName = up_file($imageFile, $folder, $extension);
-			} else {
-				$imageName = $oldImage;
-			}
+	// file
+	if(!empty($_FILES['image'])) {
+		$file = $_FILES['image'];
+		$fileName = up_file($file, $folder, $extension);
 
-			$updateCategorySQL = "  
+		if(!$fileName) {
+			$error['file'] = "file không hợp lệ";
+		}
+	} else {
+		$fileName = $oldImage;
+	}
+
+	// trạng thái
+	$active = !empty($_POST['active']) ? 1 : 0;
+	
+	if(!$error['name'] && !$error['file']) {
+		$updateCategorySQL = "  
 			UPDATE db_category
 			SET 
-				cat_name   = ?,
-				cat_logo   = ?,
-				cat_active = ?
+			cat_name   = ?,
+			cat_logo   = ?,
+			cat_active = ?
 			WHERE
-				cat_id = ?
-			";
+			cat_id = ?
+		";
 
-			$param = [$name, $imageName, $active, $categoryID];
+		$param             = [$name, $fileName, $active, $catID];
+		$runUpdateCategory = db_run($updateCategorySQL, $param, "ssii");
+		$status            = $runUpdateCategory ? "success" : "fail";
 
-			$runUpdateCategory = db_run($updateCategorySQL, $param, "ssii");
-
-			$status = $runUpdateCategory ? 5 : 6;
+		// ẩn hiện các sản phẩm của danh mục này nếu cập nhật danh mục thành công
+		if($status == "success") {
+			$turnOffSQL = "UPDATE db_product SET pro_active = ? WHERE cat_id = ?";
+			$runTurnOff = db_run($turnOffSQL, [$active, $catID], 'ii');
 		}
-		
 	}
 	
 	// biến lưu kết quả trả về
-	$res = [
-		"status"     => $status,
-		"imageErr"   => $upImageError
-	];
-
-	echo json_encode($res);
+	$output = ["status" => $status, "error" => $error];
+	echo json_encode($output);
 }
-
 
 // THAY ĐỔI TRẠNG THÁI
 if (!empty($_POST['action']) && $_POST['action'] == "switch_active") {
@@ -156,7 +154,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "switch_active") {
 
 
 
-// xóa sản phẩm
+// xóa danh mục
 if (!empty($_POST['action']) && $_POST['action'] == "delete") {
 	$status = "success";
 	$catID = input_post("catID");

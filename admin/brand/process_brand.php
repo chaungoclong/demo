@@ -2,168 +2,151 @@
 require_once '../../common.php';
 
 
-// THÊM DANH MỤC
+// THÊM hãng
 if (!empty($_POST['action']) && $_POST['action'] == "add") {
+	$status       = "fail";
+	$name         = $active = $file = $fileName = "";
+	$folder       = "../../image/";
+	$extension    = ['jpg', 'jpeg', 'png'];
+	$error['name' =>'', 'file'=>''];
 
-	$status = 5;
-	$upImageError = "";
-
-	//lấy dữ liệu gửi lên từ ajax
-	$name   = data_input(input_post("name"));
-	$active = data_input(input_post("active"));
-	$active = $active ? 1 : 0;
-
-	// đường dẫn đến thư mục lưu ảnh
-	$folder = "../../image/";
-
-	//  danh sách đuôi file hợp lệ
-	$extension = ['jpg', 'jpeg', 'png'];
-
-	// lấy ảnh
-	$imageFile = !empty($_FILES['image']) ? $_FILES['image'] : null;
-
-	//validate
-	if($name === false || $imageFile == null) {
-		$status = 1;
-	} elseif(brandExist($name)) {
-		$status = 3;
+	// tên
+	if(empty($_POST['name'])) {
+		$error['name'] = "Tên hãng không được để trống";
 	} else {
+		$name = data_input($_POST['name']);
 
-		// thêm sản phẩm vào bảng sản phẩm
-		$imageName = up_file($imageFile, $folder, $extension);
-		if(!$imageName) {
-			$upImageError = "Tải ảnh đại diện không thành công";
+		if(!check_word($name)) {
+			$error['name'] = "Tên sai định dạng";
 		}
-
-		$addBrandSQL = "  
-		INSERT INTO db_brand(bra_name, bra_logo, bra_active)
-		VALUES(?, ?, ?)
-		";
-
-		$param = [$name, $imageName, $active];
-
-		$runAddBrand = db_run($addBrandSQL, $param, "ssi");
-
-		$status = $runAddBrand ? 5 : 6;
-
+		if(brandExist($name)) {
+			$error['name'] = "Hãng đã tồn tại";
+		}
 	}
-	
-	// biến lưu kết quả trả về
-	$res = [
-		"status"     => $status,
-		"imageErr"   => $upImageError
-	];
 
-	echo json_encode($res);
+	// file
+	if(empty($_FILES['image'])) {
+		$error['file'] = "Ảnh không được để trống";
+	} else {
+		$file     = $_FILES['image'];
+		$fileName = up_file($file, $folder, $extension);
+
+		if(!$fileName) {
+			$error['file'] = "File không hợp lệ";
+		}
+	}
+
+	// trạng thái
+	$active = !empty($_POST['active']) ? 1 : 0;
+
+	if(!$error['name'] && !$error['file']) {
+		$addBrandSQL = "INSERT INTO db_brand(bra_name, bra_logo, bra_active) VALUES(?, ?, ?)";
+		$param       = [$name, $fileName, $active];
+		$runAddBrand = db_run($addBrandSQL, $param, "ssi");
+		
+		$status      = $runAddBrand ? "success" : "fail";
+	}
+
+	$output = ['status' => $status, 'error' => $error];
+	echo json_encode($output);
 }
 
 
-// SỬA DANH MỤC
+// SỬA hãng
 if (!empty($_POST['action']) && $_POST['action'] == "edit") {
+	$braID     = $oldImage = $name = $active = $file = $fileName = '';
+	$error     = ['name'=>'', 'file'=>''];
+	$folder    = "../../image/";
+	$extension = ['jpg', 'jpeg', 'png'];
+	$status    = false;
 
-	$status       = 5;
-	$upImageError = "";
-	
-	//lấy dữ liệu gửi lên từ ajax
-	$brandID      = data_input(input_post("braID"));
-	$oldImage     = data_input(input_post("oldImage"));
-	$name         = data_input(input_post("name"));
-	$active       = data_input(input_post("active"));
-	$active       = $active ? 1 : 0;
-	
-	// đường dẫn đến thư mục lưu ảnh
-	$folder       = "../../image/";
-	
-	//  danh sách đuôi file hợp lệ
-	$extension    = ['jpg', 'jpeg', 'png'];
-	
-	// lấy ảnh
-	$imageFile    = !empty($_FILES['image']) ? $_FILES['image'] : null;
+	// mã hãng
+	$braID = data_input(int($_POST['braID']));
 
-	//validate
-	if($name === false) {
-		$status = 1;
+	// ảnh cũ
+	$oldImage = data_input($_POST['oldImage']);
+
+	// tên
+	if(empty($_POST['name'])) {
+		$error['name'] = "tên không được để trống";
 	} else {
+		$name = data_input($_POST['name']);
 
-		// kiểm tra tên danh mục có trùng với các danh mục khác
+		if(!check_word($name)) {
+			$error['name'] = "Tên sai định dạng";
+		} 
+
+		// kiểm tra tên hãng có trùng với các hãng khác
 		$nameIsExistSQL = "SELECT bra_id FROM db_brand WHERE bra_name = ? AND bra_id != ? LIMIT 1";
-		$runCheckName = s_cell($nameIsExistSQL, [$name, $brandID], "si");
+		$runCheckName = s_cell($nameIsExistSQL, [$name, $braID], "si");
 
 		if($runCheckName) {
+			$error['name'] = "hãng đã tồn tại";
+		} 
+	}
 
-			// tên danh mục đã tồn tại
-			$status = 3;
-		} else {
-			
-			// thêm sản phẩm vào bảng sản phẩm
-			$imageName = "";
-			if($imageFile != null) {
-				$imageName = up_file($imageFile, $folder, $extension);
-			} else {
-				$imageName = $oldImage;
-			}
+	// file
+	if(!empty($_FILES['image'])) {
+		$file = $_FILES['image'];
+		$fileName = up_file($file, $folder, $extension);
 
-			$updateBrandSQL = "  
+		if(!$fileName) {
+			$error['file'] = "file không hợp lệ";
+		}
+	} else {
+		$fileName = $oldImage;
+	}
+
+	// trạng thái
+	$active = !empty($_POST['active']) ? 1 : 0;
+	
+	if(!$error['name'] && !$error['file']) {
+		$updateBrandSQL = "  
 			UPDATE db_brand
 			SET 
-				bra_name   = ?,
-				bra_logo   = ?,
-				bra_active = ?
+			bra_name   = ?,
+			bra_logo   = ?,
+			bra_active = ?
 			WHERE
-				bra_id = ?
-			";
+			bra_id = ?
+		";
 
-			$param = [$name, $imageName, $active, $brandID];
+		$param          = [$name, $fileName, $active, $braID];
+		$runUpdateBrand = db_run($updateBrandSQL, $param, "ssii");
+		$status         = $runUpdateBrand ? "success" : "fail";
 
-			$runUpdateBrand = db_run($updateBrandSQL, $param, "ssii");
-
-			$status = $runUpdateBrand ? 5 : 6;
+		// ẩn hiện các sản phẩm của hãng này nếu cập nhật hãng thành công
+		if($status == "success") {
+			$switchSQL = "UPDATE db_product SET pro_active = ? WHERE bra_id = ?";
+			$runSwitch = db_run($switchSQL, [$active, $braID], 'ii');
 		}
-		
 	}
 	
 	// biến lưu kết quả trả về
-	$res = [
-		"status"     => $status,
-		"imageErr"   => $upImageError
-	];
-
-	echo json_encode($res);
+	$output = ["status" => $status, "error" => $error];
+	echo json_encode($output);
 }
 
 
 // THAY ĐỔI TRẠNG THÁI
 if (!empty($_POST['action']) && $_POST['action'] == "switch_active") {
-	$status = 5;
+	$ok                 = true;
+	$braID              = input_post("braID");
+	$newActive          = $_POST['active'];
+	$switchActiveSQL    = "UPDATE db_brand SET bra_active = ? WHERE bra_id = ?";
+	$runSwitchActiveSQL = db_run($switchActiveSQL, [$newActive, $braID], 'ii');
 
-		// mã danh mục
-	$braID = data_input(input_post("braID"));
-
-		// trạng thái muốn cập nhật
-	$newActive = $_POST['newActive'] ?? null;
-
-		// validate
-	if($braID === false || $newActive === null) {
-		$status = 1;
+	if($runSwitchActiveSQL) {
+		// ẩn các sản phẩm của hãng này
+		$switchSQL    = "UPDATE db_product SET pro_active = ? WHERE bra_id = ?";
+		$runSwitchSQL = db_run($switchSQL, [$newActive, $braID], 'ii');
+		$ok = true;
 	} else {
-		$switchActiveSQL    = "UPDATE db_brand SET bra_active = ? WHERE bra_id = ?";
-		$runSwitchActiveSQL = db_run($switchActiveSQL, [$newActive, $braID], 'ii');
-		if($runSwitchActiveSQL) {
-
-			$turnOffSQL = "UPDATE db_product SET pro_active = ? WHERE bra_id = ?";
-			$runTurnOff = db_run($turnOffSQL, [$newActive, $braID], 'ii');
-			$status     = 5;
-		} else {
-			$status = 6;
-		}
+		$ok = false;
 	}
-
-	$res = [
-		"status" =>$status,
-		"id"     =>$braID
-	];
-
-	echo json_encode($res);
+	
+	$output = ["ok" => $ok];
+	echo json_encode($output);
 }
 
 
