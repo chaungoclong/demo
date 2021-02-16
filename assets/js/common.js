@@ -56,9 +56,9 @@ function showImg(input, storeImg, mode = 0, storeNameImg = "") {
             var name = input.files[i].name;
             var img = $('<img >');
             if (mode) {
-                img.attr('src', url).css("border-radius", "5px").addClass("w-25 img-thumbnail");
+                img.attr('src', url).css({borderRadius: "5px", width: "80px"});
             } else {
-                img.attr('src', url).addClass("w-100 h-100");
+                img.attr('src', url).css("width", "200px");
             }
             if (storeNameImg) {
                 $(storeNameImg).text(name);

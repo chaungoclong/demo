@@ -989,7 +989,6 @@ function validateProductAdd() {
     $('#priceErr').text("");
     $('#quantityErr').text("");
     $('#colorErr').text("");
-    $('#shortDescErr').text("");
     $('#descErr').text("");
     $('#detailErr').text("");
     $('#imageErr').text("");
@@ -1002,7 +1001,6 @@ function validateProductAdd() {
     let price = $('#price').val().trim();
     let quantity = $('#quantity').val().trim();
     let color = $('#color').val().trim();
-    let shortDesc = $('#short_desc').val().trim();
     let desc = $('#desc').val().trim();
     let detail = $('#detail').val().trim();
     let image = $('#image')[0].files[0];
@@ -1013,6 +1011,10 @@ function validateProductAdd() {
     if (name == "") {
         $('#name').addClass("error_field");
         $('#nameErr').text('không được để trống');
+        test = false;
+    } else if(!checkWord(name)) {
+        $('#name').addClass("error_field");
+        $('#nameErr').text('Tên sai định dạng');
         test = false;
     }
 
@@ -1035,7 +1037,7 @@ function validateProductAdd() {
         $('#price').addClass("error_field");
         $('#priceErr').text('không được để trống');
         test = false;
-    } else if (parseInt(price) < 0 || isNaN(parseInt(price))) {
+    } else if (parseInt(price) <= 0 || isNaN(parseInt(price))) {
         $('#price').addClass("error_field");
         $('#priceErr').text('giá không hợp lệ');
         test = false;
@@ -1046,7 +1048,7 @@ function validateProductAdd() {
         $('#quantity').addClass("error_field");
         $('#quantityErr').text('không được để trống');
         test = false;
-    } else if (parseInt(quantity) < 0 || isNaN(parseInt(quantity))) {
+    } else if (parseInt(quantity) <= 0 || isNaN(parseInt(quantity))) {
         $('#quantity').addClass("error_field");
         $('#quantityErr').text('số lượng không hợp lệ');
         test = false;
@@ -1057,12 +1059,9 @@ function validateProductAdd() {
         $('#color').addClass("error_field");
         $('#colorErr').text('không được để trống');
         test = false;
-    }
-
-    // short desc
-    if (shortDesc == "") {
-        $('#shortDesc').addClass("error_field");
-        $('#shortDescErr').text('không được để trống');
+    } else if(!checkName(color)) {
+        $('#color').addClass("error_field");
+        $('#colorErr').text('Màu sắc không hợp lệ');
         test = false;
     }
 
@@ -1161,45 +1160,27 @@ function addProduct() {
 
         form_data.append("action", "add");
 
-        let sendAddProduct = sendAJax(
-            "process_product.php",
-            "post",
-            "json",
-            form_data,
-            1
-        );
+        let result = sendAJax("process_product.php", "post", "json", form_data, 1);
 
         // lấy kết quả trả về
-        let imageErr   = sendAddProduct.imageErr;
-        let libraryErr = sendAddProduct.libraryErr;
-        let status     = sendAddProduct.status;
-        let newPage    = sendAddProduct.newPage;
-        
-        // lỗi tải ảnh đại diện
-        if (imageErr != "") {
-            alert(imageErr);
-        }
+       let status = result.status;
+       let error = result.error;
+       let msg = "";
 
-        // lỗi tải ảnh chi tiết
-        if (libraryErr != "") {
-            alert(libraryErr);
-        }
+        if(status == "success") {
+            msg = "THÊM SẢN PHẨM THÀNH CÔNG";
+            if(error['library'].length) {
+                msg += "\nCHÚ Ý:\n" + error['library'].join(", ");
+            }
+            alert(msg);
+            window.location = "index.php";
+        } else {
+            alert("THÊM SẢN PHẨM KHÔNG THÀNH CÔNG");
 
-        // hiển thị trạng thái
-        switch (status) {
-            case 1:
-                alert("Thiếu dữ liệu");
-                break;
-            case 3:
-                alert("Sản phẩm đã tồn tại");
-                break;
-            case 5:
-                alert("Thêm sản phẩm thành công");
-                window.location = "index.php?page=" + newPage;
-                break;
-            case 6:
-                alert("Thêm sản phẩm thất bại , sản phẩm có thể đã tồn tại");
-                break;
+            if(error['name']) {
+                $('#name').addClass("error_field");
+            }
+            $('#nameErr').text(error['name']);
         }
     }
 }
@@ -1217,7 +1198,6 @@ function validateProductEdit() {
     $('#price').removeClass("error_field");
     $('#quantity').removeClass("error_field");
     $('#color').removeClass("error_field");
-    $('#short_desc').removeClass("error_field");
     $('#desc').removeClass("error_field");
     $('#detail').removeClass("error_field");
 
@@ -1241,7 +1221,6 @@ function validateProductEdit() {
     let price = $('#price').val().trim();
     let quantity = $('#quantity').val().trim();
     let color = $('#color').val().trim();
-    let shortDesc = $('#short_desc').val().trim();
     let desc = $('#desc').val().trim();
     let detail = $('#detail').val().trim();
     let image = $('#image')[0].files[0];
@@ -1252,6 +1231,10 @@ function validateProductEdit() {
     if (name == "") {
         $('#name').addClass("error_field");
         $('#nameErr').text('không được để trống');
+        test = false;
+    } else if(!checkWord(name)) {
+        $('#name').addClass("error_field");
+        $('#nameErr').text('Sai định dạng');
         test = false;
     }
 
@@ -1274,7 +1257,7 @@ function validateProductEdit() {
         $('#price').addClass("error_field");
         $('#priceErr').text('không được để trống');
         test = false;
-    } else if (parseInt(price) < 0 || isNaN(parseInt(price))) {
+    } else if (parseInt(price) <= 0 || isNaN(parseInt(price))) {
         $('#price').addClass("error_field");
         $('#priceErr').text('giá không hợp lệ');
         test = false;
@@ -1285,7 +1268,7 @@ function validateProductEdit() {
         $('#quantity').addClass("error_field");
         $('#quantityErr').text('không được để trống');
         test = false;
-    } else if (parseInt(quantity) < 0 || isNaN(parseInt(quantity))) {
+    } else if (parseInt(quantity) <= 0 || isNaN(parseInt(quantity))) {
         $('#quantity').addClass("error_field");
         $('#quantityErr').text('số lượng không hợp lệ');
         test = false;
@@ -1296,12 +1279,9 @@ function validateProductEdit() {
         $('#color').addClass("error_field");
         $('#colorErr').text('không được để trống');
         test = false;
-    }
-
-    // short desc
-    if (shortDesc == "") {
-        $('#shortDesc').addClass("error_field");
-        $('#shortDescErr').text('không được để trống');
+    } else if(!checkName(color)) {
+        $('#color').addClass("error_field");
+        $('#colorErr').text('Sai định dạng');
         test = false;
     }
 
@@ -1397,40 +1377,28 @@ function editProduct() {
 
         form_data.append("action", "edit");
 
-        let sendAddProduct = sendAJax(
-            "process_product.php",
-            "post",
-            "json",
-            form_data,
-            1
-        );
+        let result = sendAJax("process_product.php", "post", "json", form_data, 1);
 
         // lấy kết quả trả về
-        let libraryErr = sendAddProduct.libraryErr;
-        let status = sendAddProduct.status;
+        let error = result.error;
+        let status = result.status;
+        let msg = "";
 
-        // hiển thị trạng thái
-        switch (status) {
-            case 1:
-                alert("Thiếu dữ liệu");
-                break;
-            case 3:
-                alert("Sản phẩm đã tồn tại");
-                break;
-            case 5:
-                let notice = "Cập nhật sản phẩm thành công";
+        if(status == "success") {
+            msg = "CẬP NHẬT SẢN PHẨM THÀNH CÔNG";
 
-                if (libraryErr != "") {
-                    notice += "\nNOTICE:" + libraryErr;
-                }
-
-                alert(notice);
-
-                window.location = document.referrer;
-                break;
-            case 6:
-                alert("cập nhật sản phẩm thất bại , tên sản phẩm có thể đã tồn tại");
-                break;
+            if(error['library'].length) {
+                msg += "\n CHÚ Ý:n" + error['library'].join(", ");
+            }
+            alert(msg);
+            window.location = "index.php";
+        } else {
+            alert("CẬP NHẬT SẢN PHẨM THẤT BẠI");
+            
+            if(error['name']) {
+                $('#name').addClass('error_field');
+            }
+            $('#nameErr').text(error['name']);
         }
     }
 }

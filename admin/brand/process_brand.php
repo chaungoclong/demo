@@ -8,7 +8,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "add") {
 	$name         = $active = $file = $fileName = "";
 	$folder       = "../../image/";
 	$extension    = ['jpg', 'jpeg', 'png'];
-	$error['name' =>'', 'file'=>''];
+	$error = ['name' =>'', 'file'=>''];
 
 	// tên
 	if(empty($_POST['name'])) {
@@ -58,7 +58,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "edit") {
 	$error     = ['name'=>'', 'file'=>''];
 	$folder    = "../../image/";
 	$extension = ['jpg', 'jpeg', 'png'];
-	$status    = false;
+	$status    = "fail";
 
 	// mã hãng
 	$braID = data_input(int($_POST['braID']));

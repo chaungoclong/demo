@@ -13,13 +13,18 @@ require_once '../include/navbar.php';
 <!-- main content -row -->
 <div class="main_content bg-white row m-0 pt-4">
 	<div class="col-12">
-		<div>
-			<h5>DANH SÁCH SẢN PHẨM</h5>
-			<p class="mb-4">Dánh sách sản phẩm là nơi bạn kiểm tra và chỉnh sửa thông  tin sản phẩm</p>
-			<hr>
+		<!-- tiêu đề -->
+		<div class="d-flex justify-content-between align-items-center mb-2">
+			<h5>DANH SÁCH sản phẩm</h5>
+			<a class="btn_back btn btn-warning py-0 px-3" onclick="javascript:history.go(-1)">
+				<i class="fas fa-arrow-alt-circle-left"></i>
+			</a>
 		</div>
+		<hr>
 
+		<!-- nút thêm sản phẩm và thanh tìm kiếm -->
 		<div class="row m-0 mb-3">
+			<!-- nút thêm sản phẩm -->
 			<div class="col-12 p-0 d-flex justify-content-between align-items-center">
 				<a href="
 					<?= base_url('admin/product/add.php'); ?>
@@ -32,164 +37,77 @@ require_once '../include/navbar.php';
 					<i class="fas fa-plus"></i>
 				</a>
 
-				<div class="form-group m-0 p-0 d-flex align-items-center">
-					<form action="" class="form-inline" id="search_box">
-						<input 
-							type        ="text" 
-							name        ="q" 
-							id          ="search" 
-							class       ="form-control"
-							placeholder ="Search..." 
-							value       ="<?= $_GET['q'] ?? ""; ?>"
-							>
-						<button class="btn btn-outline-success">
-							<i class="fas fa-search"></i>
-						</button>
-					</form>
+				<!-- tìm kiếm -->
+				<div class="filter d-flex">
+					<!-- sắp xếp -->
+					<select id="sort" class="custom-select">
+						<option value="1">Tên: A - Z</option>
+						<option value="2">Tên: Z - A</option>
+						<option value="3" selected>Mới nhất</option>
+						<option value="4">Cũ nhất</option>
+						<option value="5">Giá: Tăng dần</option>
+						<option value="6">Giá: Giảm dần</option>
+						<option value="7">Số lượng: Tăng dần</option>
+						<option value="8">Số lượng: Giảm dần</option>
+					</select>
+
+					<!-- hãng -->
+					<select id="brand_opt" class="custom-select">
+						<?php $listBrand = db_fetch_table("db_brand", 0); ?>
+
+						<option value="all">Tất cả</option>
+						<?php foreach ($listBrand as $key => $brand): ?>
+							<option value="<?= $brand['bra_id'] ?>"> <?= $brand['bra_name']; ?> </option>
+						<?php endforeach ?>
+					</select>
+
+					<!-- danh mục -->
+					<select id="category_opt" class="custom-select">
+						<?php $listCategory = db_fetch_table("db_category", 0); ?>
+
+						<option value="all">Tất cả</option>
+						<?php foreach ($listCategory as $key => $category): ?>
+							<option value="<?= $category['cat_id'] ?>"> <?= $category['cat_name']; ?> </option>
+						<?php endforeach ?>
+					</select>
+
+					<!-- lọc trạng thái sản phẩm -->
+					<select id="filter_status" class='custom-select'>
+						<option value="all" selected>Tất cả</option>
+						<option value="on">Bật</option>
+						<option value="off">Tắt</option>
+					</select>
+
+					<!-- tìm kiếm tên , id sản phẩm -->
+					<input type="text" class="form-control" id="search" placeholder="search">
 				</div>
 			</div>
 		</div>
-		<!-- lấy danh sách nhân viên-->
-		<?php
 
-			$q = data_input(input_get('q'));
-			$key = "%" . $q . "%";
-
-			if($q != "") {
-				$searchSQL = "
-				SELECT db_product.*, db_brand.bra_name, db_category.cat_name FROM `db_product` 
-				JOIN db_category ON db_product.cat_id = db_category.cat_id
-				JOIN db_brand 	 ON db_product.bra_id = db_brand.bra_id
-				WHERE 
-					pro_name LIKE(?) 
-				";
-
-				$param = [$key];
-				$listProduct = db_get($searchSQL, 1, $param, "s");
-			} else {
-
-				$listProduct = getListProduct();
-			}
-			
-
-			// chia trang
-			$totalProduct = $listProduct->num_rows;
-			$productPerPage = 5;
-			$currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
-			$currentLink = create_link(base_url("admin/product/index.php"), ["page"=>'{page}', 'q'=>$q]);
-			$page = paginate($currentLink, $totalProduct, $currentPage, $productPerPage);
-
-			// danh sách nhân viên sau khi chia trang
-			if($q != "") {
-				$searchResultSQL = $searchSQL . " LIMIT ? OFFSET ?";
-				$param = [$key, $page['limit'], $page['offset']];
-
-				// danh sách người dùng sau khi tìm kiếm và chia trang chia trang
-				$listProductPaginate = db_get($searchResultSQL, 1, $param, "sii");
-			} else {
-
-				$listProductPaginate = getListProduct($page['limit'], $page['offset']);
-			}
-
-			
-			$totalProductPaginate = $listProductPaginate->num_rows;
-
-			// số thứ tự
-			$stt = 1 + (int)$page['offset'];
-		?>
-		<div class="content_table">
+		<!-- lấy danh sách sản phẩm-->
+		<div>
 			<table class="table table-hover table-bordered" style="font-size: 13px;">
-				<tr>
-					<th>STT</th>
-					<th>Mã</th>
-					<th>Tên</th>
-					<th>Ảnh</th>
-					<th>Hãng</th>
-					<th>Thể loại</th>
-					<th>Giá</th>
-					<th>Số lượng</th>
-					<th>Trạng thái</th>
-					<th>Sửa</th>
-					<th>Xóa</th>
-				</tr>
-				<!-- in các đơn hàng -->
-				<?php if ($totalProductPaginate > 0): ?>
-				<?php foreach ($listProductPaginate as $key => $product): ?>
-				<tr>
-					<!-- mã -->
-					<td><?= $stt++; ?></td>
+				<thead>
+					<tr>
+						<th>STT</th>
+						<th>Mã</th>
+						<th>Tên</th>
+						<th>Ảnh</th>
+						<th>Hãng</th>
+						<th>Thể loại</th>
+						<th>Giá</th>
+						<th>Số lượng</th>
+						<th>Trạng thái</th>
+						<th>Sửa</th>
+						<th>Xóa</th>
+					</tr>
+				</thead>
 
-					<!-- mã -->
-					<td><?= $product['pro_id']; ?></td>
-
-					<!-- tên sản phẩm -->
-					<td><?= $product['pro_name']; ?></td>
-
-					<!-- ảnh  -->
-					<td>
-						<img src="../../image/<?= $product['pro_img']; ?>" width="30px" height="30px">
-					</td>
-
-					<!-- hãng -->
-					<td><?= $product['bra_name']; ?></td>
-
-					<!-- thể loại -->
-					<td>
-						<?= $product['cat_name'] ?>
-					</td>
-
-					<!-- giá -->
-					<td><?= $product['pro_price']; ?></td>
-
-					<!-- số lượng -->
-					<td><?= $product['pro_qty']; ?></td>
-					
-
-					<!-- active -->
-					<td>
-						<div class="custom-control custom-switch">
-							<input 
-								type="checkbox" 
-								id="switch_active_<?= $product['pro_id']; ?>" 
-								data-pro-id="<?= $product['pro_id']; ?>"
-								class="btn_switch_active custom-control-input" 
-								value="<?= $product['pro_active']; ?>"
-								<?= $product['pro_active'] ? "checked" : ""; ?>
-							>
-							<label for="switch_active_<?= $product['pro_id']; ?>" class="custom-control-label"></label>
-						</div>
-					</td>
-
-					<!-- edit -->
-					<td>
-						<a
-							href="
-							<?= 
-								create_link(base_url('admin/product/update.php'), [
-									"proid"=>$product['pro_id']
-								]);
-							?>
-							"
-							class="btn_edit_pro btn btn-success"
-							data-pro-id="<?= $product['pro_id']; ?>">
-							<i class="fas fa-edit"></i>
-						</a>
-					</td>
-
-					<!-- remove -->
-					<td>
-						<a 
-							class="btn_remove_pro btn btn-danger"
-							data-pro-id="<?= $product['pro_id']; ?>">
-							<i class="fas fa-trash-alt"></i>
-						</a>
-					</td>
-				</tr>
-				
-				<?php endforeach ?>
-				<?php endif ?>
+				<tbody class="list_product">
+				</tbody>
+			
 			</table>
-			<?php echo $page['html']; ?>
+			<div class="page"></div>
 		</div>
 	</div>
 </div>
@@ -203,136 +121,159 @@ require_once '../include/navbar.php';
 
 <script>
 	$(function() {
+		// khôi phục trang trước(nếu quay lại từ trang update sau khi update)
+		// hoặc làm mới trang(lấy danh sách sản phẩm tại trang đầu tiên vơi các tùy chọn tìm kiếm mặc định)
+		fetchPageFirstTime();
 
-		// cập nhật nội dung thẻ search
-		let q = "<?= $_GET['q'] ?? ""; ?>";
-		$('#search').val(q);
-	
-		// Thay đổi trạng thái của sản phẩm
-		$(document).on('change', '.btn_switch_active', function() {
-
-			// id sản phẩm
-			let proID = $(this).data("pro-id");
-
-			// trạng thái hiện tại
-			let prevActive = $(this).val();
-			console.log(prevActive);
-
-			// trạng thái muốn thay đổi
-			let newActive = $(this).prop('checked');
-			newActive = newActive ? 1 : 0;
-			console.log(newActive);
-
-			// gửi yêu cầu thay đổi trạng thái
-			let sendSwitchActive = sendAJax(
-				"process_product.php",
-				"post",
-				"json",
-				{proID: proID, newActive: newActive, action: "switch_active"}
-			)
-			// alert(sendSwitchActive.status);
-
-			// nếu không thành công khôi phục về trạng thái trước đó
-			// if(sendSwitchActive.status == 1) {
-			// 	alert("THIẾU DỮ LIỆU");
-			// 	if(prevActive == 1) {
-			// 		$("#switch_active_" + customerID).prop("checked", true);
-			// 	} else {
-			// 		$("#switch_active_" + customerID).prop("checked", false);
-			// 	}
-			// }
-
-			// // nếu thành công thay đổi trang thái của nút trạng thái theo trạng thái được trả về
-			// if(sendSwitchActive.status == 5) {
-
-			// 	// mã khách hàng trả về
-			// 	let customerID = sendSwitchActive.customerID;
-
-			// 	// trạng thái trả về
-			// 	let resActive = sendSwitchActive.active;
-			// 	// alert(resActive);
-
-			// 	// thay đổi trạng thái
-			// 	if(resActive == 1) {
-			// 		$("#switch_active_" + customerID).prop("checked", true);
-			// 	} else {
-			// 		$("#switch_active_" + customerID).prop("checked", false);
-			// 	}
-			// }
-			
-
-			// làm mới trang
-			let q           = "<?= $_GET['q'] ?? ""; ?>";
-
-			let prevPage    = "<?= getCurrentURL(); ?>";
-			let currentPage = <?= $currentPage ?>;
-			let fetchPage = sendAJax(
-				"fetch_page.php",
-				"post",
-				"html",
-				{action: "fetch", prevPage: prevPage, q: q, currentPage: currentPage }
-			);
-
-			$('.content_table').html(fetchPage);
+		// lấy danh sách sản phẩm khi nhập tìm kiếm
+		$(document).on('input', '#search', function() {
+			fetchPage(1);
+		});
+		$(document).on('change', '#filter_status, #sort, #brand_opt, #category_opt', function() {
+			fetchPage(1);
 		});
 
-
-		// xóa sản phẩm
-		$(document).on('click', '.btn_remove_pro', function() {
-
-			let wantRemove = confirm("BẠN CÓ MUỐN XÓA SẢN PHẨM NÀY");
-
-			if(wantRemove) {
-
-				// THỰC HIỆN HÀNH ĐỘNG
-				let proID = $(this).data('pro-id');
-				let prevLink = "<?= getCurrentURL() ?>";
-				
-				let sendRemove = sendAJax(
-					"process_product.php",
-					"post",
-					"text",
-					{proID: proID, action: "remove"}
-				);
-
-				switch(sendRemove) {
-					case "1":
-						alert("THIẾU DỮ LIỆU");
-						break;
-
-					case "2":
-						alert("KHÔNG THỂ XÓA SẢN PHẨM ĐANG CÓ ĐƠN HÀNG");
-						break;
-
-					case "5":
-						alert("XÓA THÀNH CÔNG");
-						break;
-
-					case "6":
-						alert("ĐÃ XẢY RA LỖI");
-						break;
-				}
-
-				// LÀM MỚI TRANG
-				// trang trước(chuyển hướng đến sau khi cập nhật -dùng cho update)
-				let prevPage    = "<?= getCurrentURL(); ?>";
-				
-				// trang hiện tại(phân trang)
-				let currentPage = <?= $currentPage ?>;
-				
-				let q           = "<?= $_GET['q'] ?? ""; ?>";
-
-				// làm mới trang
-				let fetchPage = sendAJax(
-					"fetch_page.php",
-					"post",
-					"html",
-					{action: "fetch", prevPage: prevPage, q: q, currentPage: currentPage }
-				);
-
-				$('.content_table').html(fetchPage);
+		// lấy danh sách sản phẩm khi chuyển trang
+		$(document).on('click', '.page-item', function() {
+			let currentPage = parseInt($(this).data("page-number"));
+			if(isNaN(currentPage)) {
+				currentPage = 1;
 			}
+			fetchPage(currentPage);
+		});
 
+		// thay đổi trạng thái của 1 sản phẩm
+		$(document).on('change', '.btn_switch_active', function() {
+			changeStatus(this.id);
+		});
+
+		// xóa 1 sản phẩm
+		$(document).on('click', '.btn_delete_pro', function() {
+			deleteRow(this.id);
+		});
+
+		// lưu dữ liệu của trang index trước khi chuyển sang trang update(để quay lại đúng trang sau khi update)
+		$(document).on('click', '.btn_edit_pro', function() {
+			setPrevPageData();
 		});
 	});
+
+	// hàm lấy danh sách các mục
+	function fetchPage(currentPage = 1) {
+		let q = "%" + $('#search').val().trim() + "%";
+		let sort = $('#sort').val();
+		let status = $('#filter_status').val();
+		let brand = $('#brand_opt').val();
+		let category = $('#category_opt').val();
+		let action = "fetch";
+		let data = {
+			q : q, status: status, sort: sort, brand: brand, category: category, currentPage: currentPage, action: action
+		};
+		let result = sendAJax("fetch_page.php", "post", "json", data);
+		$('.list_product').html(result.products);
+		$('.page').html(result.pagination);
+	}
+
+	// hàm thay đổi trạng thái của sản phẩm
+	function changeStatus(btnID) {
+		let proID = $(`#${btnID}`).data('pro-id');
+		let status = $(`#${btnID}`).prop('checked');
+		let active = status ? 1 : 0;
+		let action = "switch_active";
+		let data = {proID: proID, active: active, action: action};
+		let result = sendAJax("process_product.php", "post", "json", data);
+		if(!result.ok) {
+			alert("có lỗi khi thay đổi trạng thái");
+		}
+		// cập nhật lại sau khi thay đổi
+		let currentPage = parseInt($('li.page-item.active').data('page-number'));
+		if(isNaN(currentPage)) {
+			currentPage = 1;
+		};
+		fetchPage(currentPage);
+	}
+
+	function deleteRow(btnID) {
+		let proID = $(`#${btnID}`).data('pro-id'); 
+		let action = "delete";
+		let data = {proID : proID, action: action};
+		let result = sendAJax("process_product.php", "post", "json", data);
+		console.log(result);
+		let status = result.status;
+		switch (status) {
+			case "success":
+				alert("XÓA THÀNH CÔNG");
+				break;
+			case "has_order":
+				alert("KHÔNG THỂ XÓA SẢN PHẨM ĐÃ CÓ ĐƠN HÀNG");
+				break;
+			case "error":
+				alert("ĐÃ CÓ LỖI XẢY RA, VUI LÒNG THỬ LẠI");
+				break;
+			default:
+				alert("ĐÃ CÓ LỖI XẢY RA, VUI LÒNG THỬ LẠI");
+				break;
+		}
+
+		// cập nhật danh sách sau khi xóa
+		let currentPage = parseInt($('li.page-item.active').data('page-number'));
+		if(isNaN(currentPage)) {
+			currentPage = 1;
+		};
+		fetchPage(currentPage);
+	}
+
+	/**
+	 * hàm tạo dữ liệu của trang trước (để khi quay lại trang đó thì khôi phục lại)
+	 */
+	function setPrevPageData() {
+		localStorage.setItem("search", $('#search').val());
+		localStorage.setItem("sort", $('#sort').val());
+		localStorage.setItem("brand", $('#brand_opt').val());
+		localStorage.setItem("category", $('#category_opt').val());
+		localStorage.setItem("status", $('#filter_status').val());
+		localStorage.setItem("oldPage", parseInt($('li.page-item.active').data('page-number')));
+	}
+
+	// hàm lấy trang lần đầu tiên (nếu quay về từ trang update thì khôi phục các thông tin về tùy chọn tìm kiếm, vị trí trang hiện tại)
+	// nếu lần đầu vào trang hoặc quay về từ trang khác khác trang update thì làm mới trang(lấy dữ liệu trang đầu tiên, các tùy chọn tìm kiếm mặc định)
+	function fetchPageFirstTime() {
+		let search  = localStorage.getItem("search");
+		if(search != null) {
+			$('#search').val(search);
+			localStorage.removeItem("search");
+		}
+
+		let sort    = localStorage.getItem("sort");
+		if(sort != null) {
+			$('#sort').val(sort);
+			localStorage.removeItem("sort");
+		}
+
+		let brand    = localStorage.getItem("brand");
+		if(brand != null) {
+			$('#brand_opt').val(brand);
+			localStorage.removeItem("brand");
+		}
+
+		let category    = localStorage.getItem("category");
+		if(category != null) {
+			$('#category_opt').val(category);
+			localStorage.removeItem("category");
+		}
+
+		let status  = localStorage.getItem("status");
+		if(status != null) {
+			$('#filter_status').val(status);
+			localStorage.removeItem("status");
+		}
+
+		let oldPage = localStorage.getItem("oldPage");
+		if(oldPage != null) {
+			fetchPage(oldPage);
+			localStorage.removeItem("oldPage");
+		} else {
+			fetchPage(1);
+		}
+	}
 </script>	

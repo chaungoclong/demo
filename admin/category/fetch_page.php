@@ -27,7 +27,7 @@
 		}
 
 		// sắp xếp
-		$sort = !empty($_POST['sort']) ? (int)$_POST['sort'] : 1;
+		$sort = !empty($_POST['sort']) ? (int)$_POST['sort'] : 3;
 		switch ($sort) {
 			case 1:
 				$getCategorySQL .= " ORDER BY cat_name ASC";

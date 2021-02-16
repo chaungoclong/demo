@@ -5,194 +5,267 @@ require_once '../../common.php';
  * trường ảnh mô tả không bắt buộc-> nếu sai hoặc thiếu vẫn tải sản phẩm lên mà không tải những file bị sai
  */
 if (!empty($_POST['action']) && $_POST['action'] == "add") {
-
-	$status         = 5;
-	$upImageError   = "";
-	$upLibraryError = ""; 
-	$limitImgLib    = 10;
-
-	//lấy dữ liệu gửi lên từ ajax
-	$name      = data_input(input_post("name"));
-	$brand     = data_input(input_post("brand"));
-	$category  = data_input(input_post("category"));
-	$price     = data_input(input_post("price"));
-	$quantity  = data_input(input_post("quantity"));
-	$color     = data_input(input_post("color"));
-	$shortDesc = input_post("shortDesc");
-	$desc      = input_post("desc");
-	$detail    = input_post("detail");
-	$active    = data_input(input_post("active"));
-	$active    = $active ? 1 : 0;
-
-	// đường dẫn đến thư mục lưu ảnh
+	$status = "fail";
+	$name = $brand = $category = $price = $quantity = $color = $desc = $detail = $active = $fileImg = $fileLib = $fileName 
+	= $listFileName = "";
 	$folder      = "../../image/";
-	
-	//  danh sách đuôi file hợp lệ
 	$extension   = ['jpg', 'jpeg', 'png'];
-	
-	// lấy ảnh
-	$imageFile   = !empty($_FILES['image']) ? $_FILES['image'] : null;
-	$libraryFile = !empty($_FILES['library']) ? $_FILES['library'] : null;
-	
+	$error = ['name'=>'', 'library'=>[]];
+	$ok = true;
 
-	//validate
-	if(
-		$name      === false ||
-		$brand     === false ||
-		$category  === false ||
-		$price     === false ||
-		$quantity  === false ||
-		$color     === false ||
-		$shortDesc === false ||
-		$desc      === false ||
-		$detail    === false ||
-		$imageFile === null
-	) {
-		$status = 1;
-	} elseif(productExist($name)) {
-		$status = 3;
+	// tên
+	if(empty($_POST['name'])) {
+		$error['name'] = "Tên không được để trống";
+		$ok = false;
 	} else {
+		$name = data_input($_POST['name']);
 
-		// thêm sản phẩm vào bảng sản phẩm
-		$imageName = up_file($imageFile, $folder, $extension);
-		if(!$imageName) {
-			$upImageError = "Tải ảnh đại diện không thành công";
-			$imageName    = "";
+		if(!check_word($name)) {
+			$error['name'] = "Tên sai định dạng";
+			$ok = false;
 		}
 
-		$addProductSQL = "  
-		INSERT INTO db_product
-		(cat_id, bra_id, pro_name, pro_img, pro_color, pro_price, pro_qty, pro_short_desc, pro_desc, pro_detail, pro_active)
-		VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-		";
-
-		$param = [
-			$category, $brand, $name, $imageName, $color, $price, $quantity, $shortDesc, $desc, $detail, $active
-		];
-
-		$runAddProduct = db_run($addProductSQL, $param, "iisssiisssi");
-
-		// tải sản phẩm thành công -> tải ảnh của sản phẩm
-		if($runAddProduct) {
-
-			// mã của sản phẩm vừa tải lên
-			$productID = $connect->insert_id;
-
-			// nếu tồn tại file ảnh -> tải lên
-			if($libraryFile != null) {
-
-				// số lượng ảnh tải lên
-				$imgQty = count($libraryFile['name']);
-
-				// thông báo lỗi nếu số lượng ảnh tải lên > số lượng ảnh cho phép
-				if($imgQty > $limitImgLib) {
-
-					$upLibraryError = "số lượng ảnh vượt quá giới hạn cho phép($limitImgLib ảnh)";
-				} else {
-
-					$upLibrary = multiUploadFile($libraryFile, $folder, $extension);
-					$listFileName = $upLibrary['result'];
-					
-					foreach ($listFileName as $key => $fileName) {
-						$addLibrarySQL = "INSERT INTO db_image(pro_id, img_url) VALUES(?, ?)";
-						$runAddLibrary = db_run($addLibrarySQL, [$productID, $fileName], "is");
-					}
-
-					// danh sách lỗi upfile
-					$upLibraryError = implode("<br>", $upLibrary['error']);
-				}
-				
-			}
-
-			$status = 5;
-
-		} else {
-			// tải sản phẩm thất bại
-			$status = 6; 
+		if(productExist($name)) {
+			$error['name'] = "sản phẩm đã tồn tại";
+			$ok = false;
 		}
 	}
 
-	// lấy số trang mới sau khi thêm -> đi đến đúng trang
-	$totalPro = countRow('db_product');
-	$newPage = ceil($totalPro / 5);
+	// danh mục
+	if(empty($_POST['category'])) {
+		$ok = false;
+	} else {
+		$category = $_POST['category'];
+	}
 
-	// biến lưu kết quả trả về
-	$res = [
-		"status"     => $status,
-		"libraryErr" => $upLibraryError,
-		"imageErr"   => $upImageError,
-		"newPage"    => $newPage
-	];
+	// hãng
+	if(empty($_POST['brand'])) {
+		$ok = false;
+	} else {
+		$brand = $_POST['brand'];
+	}
 
-	echo json_encode($res);
+	// giá
+	if(empty($_POST['price'])) {
+		$ok = false;
+	} else {
+		$price = data_input($_POST['price']);
+
+		if(float($price) === false || (float)$price <= 0) {
+			$ok = false;
+		}
+	}
+
+	// só lượng
+	if(empty($_POST['quantity'])) {
+		$ok = false;
+	} else {
+		$quantity = data_input($_POST['quantity']);
+
+		if(int($quantity) === false || (int)$price <= 0) {
+			$ok = false;
+		}
+	}
+
+	// màu sắc
+	if(empty($_POST['color'])) {
+		$ok = false;
+	} else {
+		$color = data_input($_POST['color']);
+
+		if(!check_name($color)) {
+			$ok = false;
+		}
+	}
+
+	// mô tả
+	if(empty($_POST['desc'])) {
+		$ok = false;
+	} else {
+		$desc = $_POST['desc'];
+	}
+
+	// Thông số
+	if(empty($_POST['detail'])) {
+		$ok = false;
+	} else {
+		$detail = $_POST['detail'];
+	}
+
+	// trạng thái
+	$active = !empty($_POST['active']) ? 1 : 0;
+
+	// ảnh đại diện
+	if(empty($_FILES['image'])) {
+		$ok = false;
+	} else {
+		$fileImg = $_FILES['image'];
+
+		$fileName = up_file($fileImg, $folder, $extension);
+		if(!$fileName) {
+			$ok = false;
+		}
+	}
+
+	if($ok) {
+		$addProductSQL ="INSERT INTO db_product
+		(cat_id, bra_id, pro_name, pro_img, pro_color, pro_price, pro_qty, pro_desc, pro_detail, pro_active)
+		VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		";
+		$param = [$category, $brand, $name, $fileName, $color, $price, $quantity, $desc, $detail, $active];
+		$runAddProduct = db_run($addProductSQL, $param, "iisssiissi");
+
+		if($runAddProduct) {
+			$proID = $connect->insert_id;
+			$limitImg = 10;
+			$status = "success";
+
+			if(!empty($_FILES['library'])) {
+				$fileLib          = $_FILES['library'];
+				$totalImgInsert   = count($fileLib['name']);
+
+				if($totalImgInsert > $limitImg) {
+					$error['library'][] = "Số lượng ảnh tải lên vượt quá giới hạn cho phép $totalImgInsert";
+				}
+
+				if(!$error['library']) {
+					$upLib            = multiUploadFile($fileLib, $folder, $extension);
+					$error['library'] = $upLib['error'];
+					$listFileName     = $upLib['result'];
+
+					if($listFileName) {
+						foreach ($listFileName as $key => $fileName) {
+							$addLibSQL = "INSERT INTO db_image(pro_id, img_url) VALUES(?, ?)";
+							$runAddLib = db_run($addLibSQL, [$proID, $fileName], "is");
+						}
+					}
+				}	
+			}
+		} else {
+			$status = "fail";
+		}
+	}
+
+	$output = ['status'=>$status, 'error'=>$error];
+	echo json_encode($output);
 }
 
 
 // SỬA SẢN PHẨM
 if (!empty($_POST['action']) && $_POST['action'] == "edit") {
+	$status = "fail";
+	$proID = $oldImage = $name = $brand = $category = $price = $quantity = $color = $desc = $detail = $active = $fileImg = $fileLib = $fileName 
+	= $listFileName = "";
+	$folder      = "../../image/";
+	$extension   = ['jpg', 'jpeg', 'png'];
+	$error = ['name'=>'', 'library'=>[]];
+	$ok = true;
 
-	$status         = 5;
-	$upLibraryError = ""; 
-	$limitImgLib    = 10;
+	// id
+	$proID = data_input($_POST['proID']);
 
-	//lấy dữ liệu gửi lên từ ajax
-	$productID = data_input(input_post("proID"));
-	$oldImage  = data_input(input_post("oldImage"));
-	$name      = data_input(input_post("name"));
-	$brand     = data_input(input_post("brand"));
-	$category  = data_input(input_post("category"));
-	$price     = data_input(input_post("price"));
-	$quantity  = data_input(input_post("quantity"));
-	$color     = data_input(input_post("color"));
-	$shortDesc = input_post("shortDesc");
-	$desc      = input_post("desc");
-	$detail    = input_post("detail");
-	$active    = data_input(input_post("active"));
-	$active    = $active ? 1 : 0;
+	// ảnh cũ
+	$oldImage  = data_input($_POST['oldImage']);
 
-	// đường dẫn đến thư mục lưu ảnh
-	$folder = "../../image/";
-
-	//  danh sách đuôi file hợp lệ
-	$extension = ['jpg', 'jpeg', 'png'];
-
-	// lấy ảnh
-	$imageFile = !empty($_FILES['image']) ? $_FILES['image'] : null;
-	$libraryFile = !empty($_FILES['library']) ? $_FILES['library'] : null;
-	
-
-	//validate
-	if(
-		$name      === false ||
-		$brand     === false ||
-		$category  === false ||
-		$price     === false ||
-		$quantity  === false ||
-		$color     === false ||
-		$shortDesc === false ||
-		$desc      === false ||
-		$detail    === false ||
-		$oldImage  === false
-	) {
-		$status = 1;
+	// tên
+	if(empty($_POST['name'])) {
+		$error['name'] = "Tên không được để trống";
+		$ok = false;
 	} else {
+		$name = data_input($_POST['name']);
 
-		// thêm sản phẩm vào bảng sản phẩm
+		if(!check_word($name)) {
+			$error['name'] = "Tên sai định dạng";
+			$ok = false;
+		}
+
 		$nameIsExistSQL = "SELECT pro_id FROM db_product WHERE pro_name = ? AND pro_id != ? LIMIT 1";
-		$runCheckName = s_cell($nameIsExistSQL, [$name, $productID], "si");
+		$runCheckName = s_cell($nameIsExistSQL, [$name, $proID], "si");
 
 		if($runCheckName) {
-			$status = 3;
-		} else {
+			$error['name'] = "Tên đã tồn tại";
+			$ok = false;
+		}
+	}
 
-			$imageName = "";
-			if($imageFile != null) {
-				$imageName = up_file($imageFile, $folder, $extension);
-			} else {
-				$imageName = $oldImage;
-			}
+	// danh mục
+	if(empty($_POST['category'])) {
+		$ok = false;
+	} else {
+		$category = $_POST['category'];
+	}
 
-			$updateProductSQL = "  
+	// hãng
+	if(empty($_POST['brand'])) {
+		$ok = false;
+	} else {
+		$brand = $_POST['brand'];
+	}
+
+	// giá
+	if(empty($_POST['price'])) {
+		$ok = false;
+	} else {
+		$price = data_input($_POST['price']);
+
+		if(float($price) === false || (float)$price <= 0) {
+			$ok = false;
+		}
+	}
+
+	// só lượng
+	if(empty($_POST['quantity'])) {
+		$ok = false;
+	} else {
+		$quantity = data_input($_POST['quantity']);
+
+		if(int($quantity) === false || (int)$price <= 0) {
+			$ok = false;
+		}
+	}
+
+	// màu sắc
+	if(empty($_POST['color'])) {
+		$ok = false;
+	} else {
+		$color = data_input($_POST['color']);
+
+		if(!check_name($color)) {
+			$ok = false;
+		}
+	}
+
+	// mô tả
+	if(empty($_POST['desc'])) {
+		$ok = false;
+	} else {
+		$desc = $_POST['desc'];
+	}
+
+	// Thông số
+	if(empty($_POST['detail'])) {
+		$ok = false;
+	} else {
+		$detail = $_POST['detail'];
+	}
+
+	// trạng thái
+	$active = !empty($_POST['active']) ? 1 : 0;
+
+	// ảnh đại diện
+	if(empty($_FILES['image'])) {
+		$fileName = $oldImage;
+	} else {
+		$fileImg = $_FILES['image'];
+
+		$fileName = up_file($fileImg, $folder, $extension);
+		if(!$fileName) {
+			$ok = false;
+		}
+	}
+
+	if($ok) {
+		$updateProductSQL = "  
 			UPDATE db_product
 			SET 
 			cat_id         = ?,
@@ -202,7 +275,6 @@ if (!empty($_POST['action']) && $_POST['action'] == "edit") {
 			pro_color      = ?,
 			pro_price      = ?,
 			pro_qty        = ?,
-			pro_short_desc = ?,
 			pro_desc       = ?,
 			pro_detail     = ?,
 			pro_active     = ?
@@ -211,141 +283,108 @@ if (!empty($_POST['action']) && $_POST['action'] == "edit") {
 			";
 
 			$param = [
-				$category, $brand, $name, $imageName, $color, $price, $quantity, $shortDesc, $desc, $detail, $active, $productID
+				$category, $brand, $name, $fileName, $color, $price, $quantity, $desc, $detail, $active, $proID
 			];
 
-			$runUpdateProduct = db_run($updateProductSQL, $param, "iisssiisssii");
+			$runUpdateProduct = db_run($updateProductSQL, $param, "iisssiissii");
 
-			// tải sản phẩm thành công -> tải ảnh của sản phẩm
-			if($runUpdateProduct) {
+		if($runUpdateProduct) {
+			$limitImg = 10;
+			$status = "success";
 
-				// nếu tồn tại file ảnh -> tải lên
-				if($libraryFile != null) {
+			if(!empty($_FILES['library'])) {
+				$fileLib          = $_FILES['library'];
+				$totalImgInsert   = count($fileLib['name']);
+				$totalCurrentImg  = count(getImageProduct($proID));
 
-					// kiểm tra số lượng
-					$imgQtyCurrent = count(getImageProduct($productID));
-					$imgQtyNew = count($libraryFile['name']);
-
-					if($imgQtyCurrent + $imgQtyNew > $limitImgLib) {
-						$upLibraryError = "số lượng ảnh vượt quá giới hạn cho phép($limitImgLib ảnh)";
-					} else {
-
-						$upLibrary = multiUploadFile($libraryFile, $folder, $extension);
-						$listFileName = $upLibrary['result'];
-
-						foreach ($listFileName as $key => $fileName) {
-							$addLibrarySQL = "INSERT INTO db_image(pro_id, img_url) VALUES(?, ?)";
-							$runAddLibrary = db_run($addLibrarySQL, [$productID, $fileName], "is");
-						}
-
-						// danh sách lỗi upfile
-						$upLibraryError = implode("<br>", $upLibrary['error']);
-					}
+				if($totalImgInsert > $limitImg) {
+					$error['library'][] = "Số lượng ảnh tải lên vượt quá giới hạn cho phép $totalImgInsert";
+				} elseif(($totalImgInsert < $limitImg) && ($totalImgInsert + $totalCurrentImg > $limitImg)) {
+					$error['library'][] = "Kho ảnh đã đầy";
 				}
 
-				$status = 5;
+				if(!$error['library']) {
+					$upLib            = multiUploadFile($fileLib, $folder, $extension);
+					$error['library'] = $upLib['error'];
+					$listFileName     = $upLib['result'];
 
-			} else {
-				// tải sản phẩm thất bại
-				$status = 6; 
+					if($listFileName) {
+						foreach ($listFileName as $key => $fileName) {
+							$addLibSQL = "INSERT INTO db_image(pro_id, img_url) VALUES(?, ?)";
+							$runAddLib = db_run($addLibSQL, [$proID, $fileName], "is");
+						}
+					}
+				}	
 			}
+		} else {
+			$status = "fail";
 		}
-		
 	}
-	
-	// biến lưu kết quả trả về
-	$res = [
-		"status"     => $status,
-		"libraryErr" => $upLibraryError,
-		"desc"=> $desc,
-		"shortdesc"=>$shortDesc
-	];
 
-	echo json_encode($res);
+	$output = ['status'=>$status, 'error'=>$error];
+	echo json_encode($output);
 }
 
 
 // THAY ĐỔI TRẠNG THÁI
 if (!empty($_POST['action']) && $_POST['action'] == "switch_active") {
-	$status = 5;
+	$ok                 = true;
+	$proID              = input_post("proID");
+	$newActive          = $_POST['active'];
+	$switchActiveSQL    = "UPDATE db_product SET pro_active = ? WHERE pro_id = ?";
+	$runSwitchActiveSQL = db_run($switchActiveSQL, [$newActive, $proID], 'ii');
 
-		// mã sản phẩm
-	$proID = data_input(input_post("proID"));
-
-		// trạng thái muốn cập nhật
-	$newActive = $_POST['newActive'] ?? null;
-
-		// validate
-	if($proID === false || $newActive === null) {
-		$status = 1;
-	} else {
-		$switchActiveSQL    = "UPDATE db_product SET pro_active = ? WHERE pro_id = ?";
-		$runSwitchActiveSQL = db_run($switchActiveSQL, [$newActive, $proID], 'ii');
-		if($runSwitchActiveSQL) {
-			$status = 5;
-		} else {
-			$status = 6;
-		}
-	}
-
-	$res = [
-		"status"   =>$status,
-		"active"   =>$newActive
-	];
-
-	echo json_encode($res);
+	$ok = $runSwitchActiveSQL ? true : false;
+	$output = ["ok" => $ok];
+	echo json_encode($output);
 }
 
 
 
 // xóa sản phẩm
-if (!empty($_POST['action']) && $_POST['action'] == "remove") {
-	$status = 5;
+if (!empty($_POST['action']) && $_POST['action'] == "delete") {
+	$status = "error";
 
 	// mã sản phẩm
-	$proID = data_input(input_post("proID"));
-
-	if($proID === false) {
-		$status = 1;
-	} else if(hasOrder($proID)) {
-		$status = 2;
+	$proID = input_post("proID");
+	if(hasOrder($proID)) {
+		$status = "has_order";
 	} else {
-		$removeProSQL = "DELETE FROM db_product WHERE pro_id = ?";
-		$runRemovePro = db_run($removeProSQL, [$proID], "i");
-		$status = ($runRemovePro) ? 5 : 6;
+		$deleteSQL = "DELETE FROM db_product WHERE pro_id = ?";
+		$runDelete = db_run($deleteSQL, [$proID], "i");
+		$status = $runDelete ? "success" : "error";
 	}
 
-	echo $status;
+	$output = ["status" => $status];
+	echo json_encode($output);
 }
 
 
 
 // xóa ảnh chi tiết
 if (!empty($_POST['action']) && $_POST['action'] == "remove_img_lib") {
-	$status = 5;
-	$html = "";
+	$status = "fail";
+	$result = $imgID = $proID =  "";
 
 	// id ảnh cần xóa
-	$imgID = data_input(input_post('imgID'));
-	$proID = data_input(input_post('proID'));
+	$imgID = input_post('imgID');
+
+	// id sản phẩm chứa ảnh cần xóa
+	$proID = input_post('proID');
 
 	// xóa
-	if($imgID) {
-		$removeSQL = "DELETE FROM db_image WHERE img_id = ?";
-		$runRemove = db_run($removeSQL, [$imgID], "i");
-		$status    = $runRemove ? 5 : 6;
-	} else {
-		$status = 1;
-	}
+	$removeSQL = "DELETE FROM db_image WHERE img_id = ?";
+	$runRemove = db_run($removeSQL, [$imgID], "i");
+	$status    = $runRemove ? "success" : "fail";
 
 	// danh sách ảnh sau khi xóa
 	$listLibrary = getImageProduct($proID);
 
 	// kết quả sau khi xóa
-	$html = '<div class="oldLibrary d-flex">';
+	$result = '<div class="oldLibrary d-flex">';
 	foreach ($listLibrary as $key => $img) {
-		$html .= ' 
-		<div class="img_lib_box text-center mr-2 bg-info" style="width: 150px !important;">
+		$result .= ' 
+		<div class="img_lib_box text-center mr-2 bg-info" style="width: 80px !important;">
 
 		<!-- ảnh -->
 		<img src="../../image/' . $img['img_url'] . '" alt="" width="100%">
@@ -363,9 +402,9 @@ if (!empty($_POST['action']) && $_POST['action'] == "remove_img_lib") {
 		</div>
 		';
 	}
-	$html .= "</div>";
+	$result .= "</div>";
 
-	$res = ["status"=>$status, "html"=>$html];
+	$output = ["status"=>$status, "result"=>$result];
 
-	echo json_encode($res);
+	echo json_encode($output);
 }

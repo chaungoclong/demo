@@ -1,99 +1,107 @@
 <?php 
-
-	/**
-	 * 	==============================TRANG LÀM MỚI====================================
-	 * 	Mô tả: làm mới nội dung bảng ở trang index sau khi có 1 hàng thay đổi(cập nhật, xóa)
-	 * 	Hoạt động:
-	 * 	 - nhận dữ liệu gửi sang từ ajax -> kiểm tra có action = "fetch"
-	 * 	 - kiểm tra có biến yêu cầu tìm kiếm:
-	 * 	 	+ rỗng => lấy hết danh sách kết quả có thể lấy
-	 * 	 	+ không rỗng => lấy hết danh sách kết quả theo yêu cầu
-	 * 	 - chia trang
-	 * 	 	+ xác định trang hiện tại thông qua biến $_POST['currentPage'](để khi làm mới vẫn giữ được đúng trang 	ban đầu)
-	 * 	 	+ tạo đường link của trang yêu cầu
-	 * 	 	+ phân trang bằng hàm 
-	 *   - lấy danh sách kết quả sau khi chia trang
-	 *   	+ có tìm kiếm : lấy danh sách kết quả thỏa mãn yêu cầu tìm kiếm sau khi phân trang
-	 *   	+ không có tìm kiếm: lấy danh sách kết quả sau khi phân trang
-	 * 
-	 */
-	
-
-
-
 	require_once '../../common.php';
-	if(isset($_POST['action']) && $_POST['action'] == "fetch") {
-		$html = '';
-
-		//============================ LẤY DANH SÁCH NGƯỜI DÙNG =========================
-		$q = data_input(input_post('q'));
-		$key = "%" . $q . "%";
-		
-		// nếu từ khóa tìm kiếm không rỗng -> lấy danh sách người dùng theo tìm kiếm
-		if($q != "") {
-			$searchSQL = "
+	if(!empty($_POST['action']) && $_POST['action'] == "fetch") {
+		$getProductSQL = "
 			SELECT db_product.*, db_brand.bra_name, db_category.cat_name FROM db_product 
 			JOIN db_category ON db_product.cat_id = db_category.cat_id
 			JOIN db_brand 	 ON db_product.bra_id = db_brand.bra_id
-			WHERE 
-				pro_name LIKE(?)
-			";
+			WHERE 1
+		";
+		$param  = [];
+		$format = "";
+		
+		// tìm kiếm theo tên, giá, mã, số lượng
+		$q = !empty($_POST['q']) ? $_POST['q'] : "%%";
+		$getProductSQL .= " AND CONCAT(db_product.pro_name, db_product.pro_price, db_product.pro_id, db_product.pro_qty) LIKE(?)";
+		$param[] = $q;
+		$format .= "s";
 
-			$param = [$key];
-			$listProduct = db_get($searchSQL, 1, $param, "s");
-		} else {
-
-			$listProduct = getListProduct();
+		// tìm kiếm theo trạng thái
+		$status = !empty($_POST['status']) ? $_POST['status'] : "all";
+		switch ($status) {
+			case 'all':
+				break;
+			case 'on':
+				$getProductSQL .= " AND db_product.pro_active = 1";
+				break;
+			case 'off':
+				$getProductSQL .= " AND db_product.pro_active = 0";
+				break;
+			default:
+				break;
 		}
+
+		// tìm kiếm theo hãng
+		$brand = !empty($_POST['brand']) ? $_POST['brand'] : "all";
+		if($brand != "all") {
+			$getProductSQL .= " AND db_brand.bra_id = ?";
+			$param[] = $brand;
+			$format .= "i";
+		}
+
+		// tìm kiếm theo danh mục
+		$category = !empty($_POST['category']) ? $_POST['category'] : "all";
+		if($category != "all") {
+			$getProductSQL .= " AND db_category.cat_id = ?";
+			$param[] = $category;
+			$format .= "i";
+		}
+
+		// sắp xếp
+		$sort = !empty($_POST['sort']) ? (int)$_POST['sort'] : 3;
+		switch ($sort) {
+			case 1:
+				$getProductSQL .= " ORDER BY db_product.pro_name ASC";
+				break;
+			case 2:
+				$getProductSQL .= " ORDER BY db_product.pro_name DESC";
+				break;
+			case 3:
+				$getProductSQL .= " ORDER BY db_product.pro_create_at DESC";
+				break;
+			case 4:
+				$getProductSQL .= " ORDER BY db_product.pro_create_at ASC";
+				break;
+			case 5:
+				$getProductSQL .= " ORDER BY db_product.pro_price ASC";
+				break;
+			case 6:
+				$getProductSQL .= " ORDER BY db_product.pro_price DESC";
+				break;
+			case 7:
+				$getProductSQL .= " ORDER BY db_product.pro_qty ASC";
+				break;
+			case 8:
+				$getProductSQL .= " ORDER BY db_product.pro_qty DESC";
+				break;
+			default:
+				$getProductSQL .= " ORDER BY db_product.pro_create_at DESC";
+				break;
+		}
+		// echo $getProductSQL;
+		// vd($param);
+		// echo $format;
+		$listProduct = db_get($getProductSQL, 0, $param, $format);
+		$totalProduct = count($listProduct);
 
 		// chia trang
-		$totalProduct = $listProduct->num_rows;
-		$productPerPage = 5;
-		$currentPage = isset($_POST['currentPage']) ? $_POST['currentPage'] : 1;
-		$currentLink = create_link(base_url("admin/product/index.php"), ["page"=>'{page}', 'q'=>$q]);
-		$page = paginate($currentLink, $totalProduct, $currentPage, $productPerPage);
+		$proPerPage = 5;
+		$totalPage = ceil($totalProduct / $proPerPage);
+		$currentPage = !empty($_POST['currentPage']) ? (int)$_POST['currentPage'] : 1;
+		$currentPage = $currentPage > $totalPage ? $totalPage : $currentPage;
+		$offset = ($currentPage - 1) * $proPerPage;
 
-		// danh sách sản phẩm sau khi chia trang
-		if($q != "") {
-			$searchResultSQL = $searchSQL . " LIMIT ? OFFSET ?";
-			$param = [$key, $page['limit'], $page['offset']];
-
-			// danh sách sản phẩm sau khi tìm kiếm và chia trang chia trang
-			$listProductPaginate = db_get($searchResultSQL, 1, $param, "sii");
-		} else {
-
-			$listProductPaginate = getListProduct($page['limit'], $page['offset']);
-		}
-
+		$getProductSQL .= " LIMIT ? OFFSET ?";
+		$param = [...$param, $proPerPage, $offset];
+		$format .= "ii";
+		$listProduct = db_get($getProductSQL, 0, $param, $format);
 		
-		$totalProductPaginate = $listProductPaginate->num_rows;
-
-		// số thứ tự
-		$stt = 1 + (int)$page['offset'];
-
-		$html .= ' 
-			<table class="table table-hover table-bordered" style="font-size: 13px;">
-				<tr>
-					<th>STT</th>
-					<th>Mã</th>
-					<th>Tên</th>
-					<th>Ảnh</th>
-					<th>Hãng</th>
-					<th>Thể loại</th>
-					<th>Giá</th>
-					<th>Số lượng</th>
-					<th>Trạng thái</th>
-					<th>Sửa</th>
-					<th>Xóa</th>
-				</tr>
-		';
-
-		// in các đơn hàng
-		
-		if ($totalProductPaginate > 0) {
-			foreach ($listProductPaginate as $key => $product) {
+		$products = "";
+		$stt = 1;
+		if ($totalProduct > 0) {
+			foreach ($listProduct as $key => $product) {
 				$checked = $product['pro_active'] ? "checked" : "";
-				$html .= '   
+				$products .= '   
 				<tr>
 					<!-- mã -->
 					<td>' . $stt++ . '</td>
@@ -155,10 +163,11 @@
 						</a>
 					</td>
 
-					<!-- remove -->
+					<!-- delete -->
 					<td>
 						<a 
-							class="btn_remove_pro btn btn-danger"
+							class="btn_delete_pro btn btn-danger"
+							id="btn_delete_' . $product['pro_id'] . '" 
 							data-pro-id="' . $product['pro_id'] . '">
 							<i class="fas fa-trash-alt"></i>
 						</a>
@@ -167,12 +176,9 @@
 				';
 			}
 		}
-		$html .= '   
-			</table>
-		';
 
-		$html .= $page['html'];
-
-		echo $html;
+		$pagination = paginateAjax($totalPage, $currentPage);
+		$output = ['products'=>$products, 'pagination'=>$pagination];
+		echo json_encode($output);
 				
 	}

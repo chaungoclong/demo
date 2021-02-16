@@ -62,7 +62,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "edit") {
 	$error = ['name'=>'', 'file'=>''];
 	$folder    = "../../image/";
 	$extension = ['jpg', 'jpeg', 'png'];
-	$status = false;
+	$status = "fail";
 
 	// mã danh mục
 	$catID = data_input(int($_POST['catID']));

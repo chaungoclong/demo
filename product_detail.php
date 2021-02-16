@@ -19,6 +19,11 @@ if(!$catStatus['cat_active'] || !$braStatus['bra_active']) {
 
 require_once 'include/header.php';
 require_once 'include/navbar.php';
+
+if(!$product['pro_active']) {
+	echo("<h1 class='text-center text-danger m-5'>KHÔNG TÌM THẤY SẢN PHẨM :((</h1>");
+	exit;
+}
 ?>
 
 <main>

@@ -123,18 +123,6 @@ $listCategory = db_fetch_table("db_category", 0);
                </div>
             </div>
 
-            <!-- mô tả ngắn -->
-            <div class="form-group">
-               <label for="short_desc"><strong>Mô tả ngắn:</strong></label>
-               <textarea name="shortDesc" id="short_desc"></textarea>
-               <script>
-                  CKEDITOR.replace( 'short_desc', {
-                     height: 100
-                  });
-               </script>
-               <div class="alert-danger" id="shortDescErr"></div>
-            </div>
-
             <!-- mô tả chi tiết -->
             <div class="form-group">
                <label for="desc"><strong>Mô tả chi tiết:</strong></label>
