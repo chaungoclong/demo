@@ -15,7 +15,7 @@ require_once '../include/navbar.php';
 	<div class="col-12">
 		<!-- tiêu đề -->
 		<div class="d-flex justify-content-between align-items-center mb-2">
-			<h5>DANH SÁCH sản phẩm</h5>
+			<h5>DANH SÁCH SẢN PHẨM</h5>
 			<a class="btn_back btn btn-warning py-0 px-3" onclick="javascript:history.go(-1)">
 				<i class="fas fa-arrow-alt-circle-left"></i>
 			</a>
@@ -86,7 +86,7 @@ require_once '../include/navbar.php';
 
 		<!-- lấy danh sách sản phẩm-->
 		<div>
-			<table class="table table-hover table-bordered" style="font-size: 13px;">
+			<table class="table table-hover table-bordered" style="font-size: 15px;">
 				<thead>
 					<tr>
 						<th>STT</th>
@@ -149,7 +149,9 @@ require_once '../include/navbar.php';
 
 		// xóa 1 sản phẩm
 		$(document).on('click', '.btn_delete_pro', function() {
-			deleteRow(this.id);
+			if(confirm("BẠN CÓ MUỐN XÓA SẢN PHẨM NÀY?")) {
+				deleteRow(this.id);
+			}
 		});
 
 		// lưu dữ liệu của trang index trước khi chuyển sang trang update(để quay lại đúng trang sau khi update)

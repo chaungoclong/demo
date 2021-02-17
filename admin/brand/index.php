@@ -60,8 +60,8 @@ require_once '../include/navbar.php';
 
 		<!-- danh sách hãng -->
 		<div>
-			<table class="table table-hover table-bordered" style="font-size: 13px;">
-				<thead>
+			<table class="table table-hover bg-white table-bordered shadow" style="font-size: 13px;">
+				<thead class="thead-dark">
 					<tr>
 						<th>STT</th>
 						<th>Mã</th>
@@ -73,7 +73,7 @@ require_once '../include/navbar.php';
 					</tr>
 				</thead>
 
-				<tbody class="list_brand">
+				<tbody class="list_brand thead-light">
 				</tbody>
 			
 			</table>

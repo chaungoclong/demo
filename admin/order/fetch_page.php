@@ -1,149 +1,123 @@
 <?php 
-
-	/**
-	 * 	==============================TRANG LÀM MỚI====================================
-	 * 	Mô tả: làm mới nội dung bảng ở trang index sau khi có 1 hàng thay đổi(cập nhật, xóa)
-	 * 	Hoạt động:
-	 * 	 - nhận dữ liệu gửi sang từ ajax -> kiểm tra có action = "fetch"
-	 * 	 - kiểm tra có biến yêu cầu tìm kiếm:
-	 * 	 	+ rỗng => lấy hết danh sách kết quả có thể lấy
-	 * 	 	+ không rỗng => lấy hết danh sách kết quả theo yêu cầu
-	 * 	 - chia trang
-	 * 	 	+ xác định trang hiện tại thông qua biến $_POST['currentPage'](để khi làm mới vẫn giữ được đúng trang 	ban đầu)
-	 * 	 	+ tạo đường link của trang yêu cầu
-	 * 	 	+ phân trang bằng hàm 
-	 *   - lấy danh sách kết quả sau khi chia trang
-	 *   	+ có tìm kiếm : lấy danh sách kết quả thỏa mãn yêu cầu tìm kiếm sau khi phân trang
-	 *   	+ không có tìm kiếm: lấy danh sách kết quả sau khi phân trang
-	 * 
-	 */
-	
-
-
-
 	require_once '../../common.php';
 	if(isset($_POST['action']) && $_POST['action'] == "fetch") {
-		$html = '';
+		$getOrderSQL = "
+		SELECT db_order.*, db_customer.cus_name, db_customer.cus_address, db_customer.cus_phone
+		FROM db_order JOIN db_customer
+		ON db_order.cus_id = db_customer.cus_id
+		WHERE 1";
+		$param = [];
+		$format = "";
 
-		$q = data_input(input_get('q'));
-			$key = "%" . $q . "%";
+		// tìm kiếm theo mã đơn hàng, thông tin người nhận, thông tin người đặt, ngày đặt
+		$q = !empty($_POST['q']) ? $_POST['q'] : "%%";
+		$getOrderSQL .= " AND CONCAT(
+		db_customer.cus_name, db_customer.cus_address, db_customer.cus_phone, 
+		db_order.receiver_name, db_order.receiver_add, db_order.receiver_phone, db_order.or_id, db_order.or_create_at
+		) LIKE(?)";
+		$param[] = $q;
+		$format .= "s";
 
-			if($q != "") {
-				$searchSQL = "
-				SELECT db_order.*, db_customer.cus_name, db_customer.cus_address, db_customer.cus_phone
-				FROM db_order JOIN db_customer
-				ON db_order.cus_id = db_customer.cus_id
-				WHERE 
-			 		db_order.receiver_name LIKE(?)
-				";
+		// tìm kiếm theo trạng thái
+		$status = !empty($_POST['status']) ? $_POST['status'] : "all";
+		switch ($status) {
+			case 'all':
+				break;
+			case 'pending':
+				$getOrderSQL .= " AND db_order.or_status = 0";
+				break;
+			case 'success':
+				$getOrderSQL .= " AND db_order.or_status = 1";
+				break;
+			case 'fail':
+				$getOrderSQL .= " AND db_order.or_status = 2";
+				break;
+			default:
+				break;
+		}
 
-				$param = [$key];
-				$listOrder = db_get($searchSQL, 1, $param, "s");
-			} else {
+		// sắp xếp
+		$sort = !empty($_POST['sort']) ? (int)$_POST['sort'] : 1;
+		switch ($sort) {
+			case 1:
+				$getOrderSQL .= " ORDER BY db_order.or_create_at DESC";
+				break;
+			case 2:
+				$getOrderSQL .= " ORDER BY db_order.or_create_at ASC";
+				break;
+			default:
+				$getOrderSQL .= " ORDER BY db_order.or_create_at DESC";
+				break;
+		}
 
-				$listOrder = getListOrder();
-			}
-			
+		$listOrder = db_get($getOrderSQL, 0, $param, $format);
+		$totalOrder = count($listOrder);
 
-			// chia trang
-			$totalOrder = $listOrder->num_rows;
-			$orderPerPage = 5;
-			$currentPage = isset($_POST['currentPage']) ? $_POST['currentPage'] : 1;
-			$currentLink = create_link(base_url("admin/order/index.php"), ["page"=>'{page}', 'q'=>$q]);
-			$page = paginate($currentLink, $totalOrder, $currentPage, $orderPerPage);
+		// chia trang
+		$orPerPage = 5;
+		$totalPage = ceil($totalOrder / $orPerPage);
+		$currentPage = !empty($_POST['currentPage']) ? (int)$_POST['currentPage'] : 1;
+		$currentPage = $currentPage > $totalPage ? $totalPage : $currentPage;
+		$offset = ($currentPage - 1) * $orPerPage;
 
-			// danh sách đơn hàng sau khi chia trang
-			if($q != "") {
-				$searchResultSQL = $searchSQL . " LIMIT ? OFFSET ?";
-				$param = [$key, $page['limit'], $page['offset']];
+		$getOrderSQL .= " LIMIT ? OFFSET ?";
+		$param = [...$param, $orPerPage, $offset];
+		$format .= "ii";
+		$listOrder = db_get($getOrderSQL, 0, $param, $format);
 
-				// danh sách  khi tìm kiếm đơn hàng sau chia chia trang
-				$listOrderPaginate = db_get($searchResultSQL, 1, $param, "sii");
-			} else {
-
-				$listOrderPaginate = getListOrder($page['limit'], $page['offset']);
-			}
-
-			
-			$totalOrderPaginate = $listOrderPaginate->num_rows;
-
-			// số thứ tự
-			$stt = 1 + (int)$page['offset'];
-
-		$html .= ' 
-			<table class="table table-hover table-bordered" style="font-size: 13px;">
-				<tr>
-					<th>STT</th>
-					<th>Mã</th>
-					<th>Ngày đặt</th>
-					<th>Trạng thái</th>
-					<th>Người đặt</th>
-					<th>Người nhận</th>
-					<th>Địa chỉ giao hàng</th>
-					<th>Xem</th>
-					<th>Hành động</th>
-				</tr>
-		';
-
+		$orders = "";
 		// in các đơn hàng
 		
-		if ($totalOrderPaginate > 0) {
-			foreach ($listOrderPaginate as $key => $order) {
-
+		if ($totalOrder > 0) {
+			foreach ($listOrder as $key => $order) {
 				$status = $order['or_status'];
-				$showStatus = "";
+				$showStatus = $btnOption = "";
+
+				// hiển thị trạng thái đơn hàng
 				switch ($status) {
 					case 0:
-						$showStatus = "đang chờ xác nhận";
+						$showStatus = "<span class='badge badge-pill badge-primary p-1'>đang chờ xác nhận</span>";
 						break;
 					case 1:
-						$showStatus = "đã xác nhận";
+						$showStatus = "<span class='badge badge-pill badge-success p-1'>đã xác nhận</span>";
 						break;
 					case 2:
-						$showStatus = "đang chờ hủy";
+						$showStatus = "<span class='badge badge-pill badge-danger p-1'>đã hủy</span>";
 						break;
-					case 3:
-						$showStatus = "đã hủy";
-						break;
-					
 					default:
-						echo "đang chờ xác nhận";
+						$showStatus = "<span class='badge badge-pill badge-secondary p-1'>không xác định</span>";
 						break;
 				}
 
-				$button = "";
+				// hiển thị nút duyệt, hủy
+				$btnOption = "";
 				if($order['or_status'] == 0) {
-					$button .= '  
+					$btnOption .= '  
 						<button
 						class="btn_confirm btn btn-primary"
 						id="btn_confirm_' . $order['or_id'] . '"
 						data-order-id="' . $order['or_id'] . '"
 						>
-						Xác nhận
+						 Duyệt
 						</button>
-					';
-				} else if($order['or_status'] == 2){
-					$button .= '  
+
 						<button
-						class="btn_cancel btn btn-primary"
+						class="btn_cancel btn btn-danger"
 						id="btn_cancel_' . $order['or_id'] . '"
 						data-order-id="' . $order['or_id'] . '"
 						>
-						Hủy
+						 Hủy
 						</button>
 					';
 				}
 
-				$html .= '   
+				$orders .= '   
 				<tr>
-					<!-- stt -->
-					<td>' . $stt++ . '</td>
-
 					<!-- mã -->
 					<td>' . $order['or_id'] . '</td>
 
 					<!-- ngày đặt -->
-					<td>' . strToTimeFormat($order['or_create_at'], "H:i:s d-m-Y") . '</td>
+					<td>' . strToTimeFormat($order['or_create_at'], "d-m-Y") . '</td>
 
 					<!-- trạng thái  -->
 					<td id="status_order_' . $order['or_id'] . '">	
@@ -152,17 +126,16 @@
 
 					<!-- người đặt -->
 					<td>
-						' . $order['cus_name'] . '
+						<p><strong class="mr-1">Tên:</strong>' . $order['cus_name'] . '</p>
+						<p><strong class="mr-1">Địa chỉ:</strong>' . $order['cus_address'] . '</p>
+						<p><strong class="mr-1">SĐT:</strong>' . $order['cus_phone'] . '</p>
 					</td>
 
 					<!-- người nhận -->
 					<td>
-						' . $order['receiver_name'] . '
-					</td>
-
-					<!-- địa chỉ giao hàng -->
-					<td>
-						' . $order['receiver_add'] . '
+						<p><strong class="mr-1">Tên:</strong>' . $order['receiver_name'] . '</p>
+						<p><strong class="mr-1">Địa chỉ:</strong>' . $order['receiver_add'] . '</p>
+						<p><strong class="mr-1">SĐT:</strong>' . $order['receiver_phone'] . '</p>
 					</td>
 
 					<!-- xem -->
@@ -175,13 +148,13 @@
 						" 
 						class="btn btn-success"
 						>
-							XEM
+							Xem
 						</a>
 					</td>
 
 					<!-- hành động -->
 					<td>
-						' . $button . '
+						' . $btnOption . '
 					</td>
 
 				</tr>
@@ -189,12 +162,11 @@
 				';
 			}
 		}
-		$html .= '   
-			</table>
-		';
+		
+		// nút phân trang
+		$pagination = paginateAjax($totalPage, $currentPage);
 
-		$html .= $page['html'];
-
-		echo $html;
-				
+		// trả về danh sách đơn hàng(html) và nút phâm trang(html)
+		$output = ['orders'=>$orders, 'pagination'=>$pagination];
+		echo json_encode($output);	
 	}

@@ -50,7 +50,7 @@
 		$totalBrand = count($listBrand);
 		
 		// chia trang
-		$braPerPage  = 2;
+		$braPerPage  = 5;
 		$totalPage   = ceil($totalBrand / $braPerPage);
 		$currentPage = !empty($_POST['currentPage']) ? (int)$_POST['currentPage'] : 1;
 		$currentPage = $currentPage > $totalPage ? $totalPage : $currentPage;

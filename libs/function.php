@@ -385,7 +385,7 @@ function read_date($time) {
 	}
 
 	function getOrderByID($orderID) {
-		$getOrderSQL = "SELECT db_order.*, db_customer.cus_name FROM db_order JOIN db_customer
+		$getOrderSQL = "SELECT db_order.*, db_customer.cus_name, db_customer.cus_phone, db_customer.cus_address FROM db_order JOIN db_customer
 		ON db_order.cus_id = db_customer.cus_id
 		WHERE db_order.or_id = ?
 		";
@@ -654,7 +654,7 @@ function read_date($time) {
 
 	function getListOrder($limit = 0, $offset = 0) {
 			$getSQL = "
-			SELECT db_order.*, db_customer.cus_name FROM db_order
+			SELECT db_order.*, db_customer.cus_name, db_customer.cus_address, db_customer.cus_phone FROM db_order
 			JOIN db_customer
 			ON db_order.cus_id = db_customer.cus_id
 			";

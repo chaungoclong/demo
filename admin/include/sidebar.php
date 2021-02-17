@@ -2,7 +2,7 @@
   <!-- wrapper -row -->
   <div class="wrapper_all bg-light">
     <!-- left-col -->
-    <div class="left_col shadow bg-light position-fixed">
+    <div class="left_col shadow bg-faded position-fixed">
       <h2 class="logo_sidebar bg-secondary mb-4">
       <a href="" class="navbar-brand">ADMIN</a>
       </h2>

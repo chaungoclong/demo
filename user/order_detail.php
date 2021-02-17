@@ -1,6 +1,9 @@
 <?php
 require_once '../common.php';
-!is_login() || is_admin() && redirect('login_form.php');
+
+if(!is_login() || is_admin()) {
+	redirect('login_form.php');
+}
 $user = getUserById($_SESSION['user_token']['id']);
 
 // add file
