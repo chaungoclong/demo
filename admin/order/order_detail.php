@@ -10,7 +10,13 @@ require_once '../include/sidebar.php';
 require_once '../include/navbar.php';
 
 $orderID = data_input(input_get('orid'));
-$order = getOrderByID($orderID)
+$order = getOrderByID($orderID);
+
+// kiểm tra đơn hàng có tồn tại
+if(!$order) {
+	echo "<h5 class='alert alert-danger text-center'>KHÔNG CÓ ĐƠN HÀNG NÀY</h5>";
+	exit();
+}
 ?>
 <!-- main content -row -->
 <div class="main_content bg-white row m-0 pt-4">
@@ -93,43 +99,50 @@ $order = getOrderByID($orderID)
 			$totalMoney = 0;
 			?>
 			<div>
-				<table class="table table-hover table-bordered shadow bg-white" style="font-size: 15px;">
+				<table class="table table-hover shadow bg-white" style="font-size: 15px;">
 					<thead class="thead-light">
 						<tr>
-							<th>ID SẢN PHẨM</th>
-							<th colspan="2">TÊN SẢN PHẨM</th>
-							<th width="15%">ĐƠN GIÁ</th>
-							<th width="10%">SỐ LƯỢNG</th>
-							<th width="15%">THÀNH TIỀN</th>
+							<th class="align-middle">ID SẢN PHẨM</th>
+							<th class="align-middle" colspan="2">TÊN SẢN PHẨM</th>
+							<th class="align-middle" width="15%">ĐƠN GIÁ</th>
+							<th class="align-middle" width="10%">SỐ LƯỢNG</th>
+							<th class="align-middle" width="15%">THÀNH TIỀN</th>
 						</tr>
 					</thead>
 
 					<tbody>
 						<?php foreach ($orderDetail as $key => $product): ?>
 							<tr>
-								<td><?= $product['pro_id']; ?></td>
-								<td width="10%">
+								<td class="align-middle"><?= $product['pro_id']; ?></td>
+
+								<td class="align-middle" width="10%">
 									<a href="<?= create_link(base_url('product_detail.php'), ["proid"=>$product['pro_id']]); ?>">
 										<img src="../../image/<?= $product['pro_img']; ?>" alt="" class="img-thumbnail">
 									</a>
 								</td>
-								<td>
+
+								<td class="align-middle">
 									<a href="<?= create_link(base_url('product_detail.php'), ["proid"=>$product['pro_id']]); ?>">
-										<p><?= $product['pro_name']; ?></p>
+										<span><?= $product['pro_name']; ?></span>
 									</a>
 
 								</td>
-								<td><?= number_format($product['price'], 0, ",", "."); ?> &#8363;</td>
-								<td><?= $product['amount']; ?></td>
-								<td>
+
+								<td class="align-middle"><?= number_format($product['price'], 0, ",", "."); ?> &#8363;</td>
+
+								<td class="align-middle"><?= $product['amount']; ?></td>
+
+								<td class="align-middle">
 									<?= number_format($product['price'] * $product['amount'], 0, ",", "."); ?> &#8363;
 								</td>
+
 							</tr>
 							<?php $totalMoney += $product['price'] * $product['amount']; ?>
 						<?php endforeach ?>
 						<tr>
-							<td colspan="5" align="right">TỔNG:</td>
-							<td class="text-danger"><?= number_format($totalMoney, 0, ",", "."); ?> &#8363;</td>
+							<td class="align-middle" colspan="5" align="right">TỔNG:</td>
+
+							<td class="text-danger align-middle"><?= number_format($totalMoney, 0, ",", "."); ?> &#8363;</td>
 						</tr>
 						<!-- in các đơn hàng -->
 					</tbody>

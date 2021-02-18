@@ -760,3 +760,15 @@ function read_date($time) {
 
 		return $pagination;
 	}
+
+	// hàm lấy tổng doanh thu của một đơn hàng
+	function getTotalMoneyAnOrder($orderID) {
+		$order = getOrderDetailByID($orderID);
+		$totalMoney = 0;
+
+		foreach ($order as $key => $each) {
+			$totalMoney += ((float)$each['price'] * (int)$each['amount']);
+		}
+
+		return $totalMoney;
+	}

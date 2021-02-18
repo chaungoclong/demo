@@ -22,103 +22,144 @@ require_once RF . '/user/include/navbar.php';
 
 			<!-- colum -->
 			<div class="col-9 bg-white py-3">
-				<div>
-					<h5>ĐƠN HÀNG</h5>
-					<p class="mb-4">Đơn hàng là nơi bạn kiểm tra đơn hàng</p>
-					<hr>
+				<!-- tiêu đề -->
+				<div class="d-flex justify-content-between align-items-center mb-2">
+					<h5>DANH SÁCH ĐƠN HÀNG</h5>
+					<a class="btn_back btn btn-warning py-1 px-2" onclick="javascript:history.go(-1)">
+						<i class="fas fa-chevron-circle-left"></i>
+					</a>
 				</div>
-				<!-- lấy đơn hàng -->
-				<?php 
-					$listOrder = getOrderByUser($user['cus_id']);
+				
+				<!-- nút thêm đơn hàng và thanh tìm kiếm -->
+				<div class="row m-0 mb-3">
+					<div class="col-12 p-2 d-flex justify-content-between align-items-center bg-light">
+						<!-- lọc-->
+						<div class="filter d-flex">
+							<!-- sắp xếp -->
+							<select id="sort" class="custom-select">
+								<option value="1" selected>Mới nhất</option>
+								<option value="2">Cũ nhất</option>
+							</select>
 
-					// chia trang
-					$totalOrder = $listOrder->num_rows;
-					$orderPerPage = 5;
-					$currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
-					$currentLink = create_link(base_url("user/purchase.php"), ["page"=>'{page}']);
-					$page = paginate($currentLink, $totalOrder, $currentPage, $orderPerPage);
+							<!-- tìm kiếm tên , id đơn hàng -->
+							<input type="text" class="form-control" id="search" placeholder="Search...">
+						</div>
 
-					//đơn hàng sau khi chia trang
-					$listOrderPaginate = getOrderByUser($user['cus_id'], $page['limit'], $page['offset']);
-					$totalOrderPaginate = $listOrderPaginate->num_rows;
+						<!-- số hàng hiển thị -->
+						<div>
+							<?php $option = [5, 10, 25, 50, 100]; ?>
+							<select class="custom-select" id="number_of_rows">
+								<?php foreach ($option as $key => $each): ?>
+									<option value="<?= $each; ?>"> <?= $each; ?> </option>
+								<?php endforeach ?>
+							</select>
+						</div>
+					</div>
+				</div>
 
-					// số thứ tự
-					$stt = 1 + (int)$page['offset'];
-				 ?>
-				<div>
-					<table class="table table-hover table-bordered" style="font-size: 13px;">
-						<tr>
-							<th>STT</th>
-							<th>Mã đơn hàng</th>
-							<th>Người đặt</th>
-							<th>Người nhận</th>
-							<th>Địa chỉ giao hàng</th>
-							<th>Ngày đặt</th>
-							<th>Trạng thái</th>
-							<th>Chi tiết</th>
-							<th>Hủy đơn</th>
-						</tr>
+				<ul class="nav nav-tabs px-2" role="tablist" id="list_name_tab">
+					<li class="nav-item">
+						<a class="nav-link active" data-toggle="tab" href="#all" data-status="all">TẤT CẢ</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" data-toggle="tab" href="#pending" data-status="pending">ĐANG CHỜ</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" data-toggle="tab" href="#success" data-status="success">ĐÃ XỬ LÝ</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" data-toggle="tab" href="#fail" data-status="fail">ĐÃ HỦY</a>
+					</li>
+				</ul>
 
-						<!-- in các đơn hàng -->
-						<?php if ($totalOrderPaginate > 0): ?>
-							<?php foreach ($listOrderPaginate as $key => $order): ?>
+				<!-- Tab panes -->
+				<div class="tab-content">
+					<div class="tab-pane p-2 active" id="all">
+						<table class="table table-hover table-bordered" style="font-size: 15px;">
+							<thead class="thead-light">
 								<tr>
-									<td><?= $stt++; ?></td>
-									<td><?= $order['or_id']; ?></td>
-									<td><?= $order['cus_name']; ?></td>
-									<td><?= $order['receiver_name']; ?></td>
-									<td><?= $order['receiver_add']; ?></td>
-									<td><?= strToTimeFormat($order['or_create_at'], "H:i:s d-m-Y"); ?></td>
-									<td id="status_order_<?= $order['or_id']; ?>">	
-										<?php
-											$status = $order['or_status'];
-											switch ($status) {
-												case '0':
-													echo "đang chờ xác nhận";
-													break;
-												case '1':
-													echo "đã xác nhận";
-													break;
-												case '2':
-													echo "đang chờ hủy";
-													break;
-												case '3':
-													echo "đã hủy";
-													break;
-												
-												default:
-													echo "đang chờ xác nhận";
-													break;
-											}
-										?>
-									</td>
-									<td>
-										<a href="<?= create_link(base_url("user/order_detail.php"), ["orid"=>$order['or_id']]); ?>"
-											class="btn btn-success">
-											XEM
-										</a>
-									</td>
-									<td>
-										<?php if ($order['or_status'] == 1 || $order['or_status'] == 3): ?>
-											<button class="btn btn-danger" disabled="">HỦY</button>
-										<?php else: ?>
-											<button class="btn_cancel btn btn-danger" data-order-id="<?= $order['or_id']; ?>" 
-												id="btn_cancel_<?= $order['or_id']; ?>">
-												HỦY
-											</button>
-										<?php endif ?>
-									</td>	
+									<th class="align-middle">ID</th>
+									<th class="align-middle">NGÀY ĐẶT</th>
+									<th class="align-middle">TỔNG TIỀN</th>
+									<th class="align-middle">TRẠNG THÁI</th>
+									<th class="align-middle">THÔNG TIN GIAO HÀNG</th>
+									<th class="align-middle">XEM</th>
+									<th class="align-middle">HỦY</th>
 								</tr>
-								
-							<?php endforeach ?>
-						<?php endif ?>
-					</table>
-					<?php echo $page['html']; ?>
+							</thead>
+
+							<tbody class="list_order">
+							</tbody>
+						</table>
+						<div class="page"></div>
+					</div>
+
+					<!-- ĐANG CHỜ -->
+					<div class="tab-pane p-2" id="pending">
+						<table class="table table-hover table-bordered" style="font-size: 15px;">
+							<thead class="thead-light">
+								<tr>
+									<th class="align-middle">ID</th>
+									<th class="align-middle">NGÀY ĐẶT</th>
+									<th class="align-middle">TỔNG TIỀN</th>
+									<th class="align-middle">TRẠNG THÁI</th>
+									<th class="align-middle">THÔNG TIN GIAO HÀNG</th>
+									<th class="align-middle">XEM</th>
+									<th class="align-middle">HỦY</th>
+								</tr>
+							</thead>
+
+							<tbody class="list_order">
+							</tbody>
+						</table>
+						<div class="page"></div>
+					</div>
+
+					<!-- ĐÃ XỬ LÝ -->
+					<div class="tab-pane p-2" id="success">
+						<table class="table table-hover table-bordered" style="font-size: 15px;">
+							<thead class="thead-light">
+								<tr>
+									<th class="align-middle">ID</th>
+									<th class="align-middle">NGÀY ĐẶT</th>
+									<th class="align-middle">TỔNG TIỀN</th>
+									<th class="align-middle">TRẠNG THÁI</th>
+									<th class="align-middle">THÔNG TIN GIAO HÀNG</th>
+									<th class="align-middle">XEM</th>
+									<th class="align-middle">HỦY</th>
+								</tr>
+							</thead>
+
+							<tbody class="list_order">
+							</tbody>
+						</table>
+						<div class="page"></div>
+					</div>
+
+					<!-- ĐÃ HỦY -->
+					<div class="tab-pane p-2" id="fail">
+						<table class="table table-hover table-bordered" style="font-size: 15px;">
+							<thead class="thead-light">
+								<tr>
+									<th class="align-middle">ID</th>
+									<th class="align-middle">NGÀY ĐẶT</th>
+									<th class="align-middle">TỔNG TIỀN</th>
+									<th class="align-middle">TRẠNG THÁI</th>
+									<th class="align-middle">THÔNG TIN GIAO HÀNG</th>
+									<th class="align-middle">XEM</th>
+									<th class="align-middle">HỦY</th>
+								</tr>
+							</thead>
+
+							<tbody class="list_order">
+							</tbody>
+						</table>
+						<div class="page"></div>
+					</div>
 				</div>
+
+				<!-- /column -->
 			</div>
-			
-			<!-- /column -->
-		</div>
 		<!-- /row -->
 	</div>
 </main>
@@ -127,26 +168,72 @@ require_once RF . '/user/include/footer.php';
 ?>
 <script>
 	$(function() {
+		fetchPage(1);
+
+		// lấy danh sách đơn hàng khi nhập tìm kiếm
+		$(document).on('input', '#search', function() {
+			fetchPage(1);
+		});
+
+		// lấy danh sách đơn hàng khi sắp xếp
+		$(document).on('change', '#sort', function() {
+			fetchPage(1);
+		});
+
+		// lấy danh sách đơn hàng khi thay đổi số hàng hiển thị
+		$(document).on('change', '#number_of_rows', function() {
+			fetchPage(1);
+		});
+
+		// lấy danh sách đơn hàng khi chuyển tab
+		$(document).on('click', '#list_name_tab .nav-item', function() {
+			fetchPage(1);
+		});
+
+		// lấy danh sách đơn hàng khi chuyển trang
+		$(document).on('click', '.page-item', function() {
+			let currentPage = parseInt($(this).data("page-number"));
+			if(isNaN(currentPage)) {
+				currentPage = 1;
+			}
+			fetchPage(currentPage);
+			$('html, body').scrollTop(0);
+		});
+
+		// hủy 1 đơn hàng
 		$(document).on('click', '.btn_cancel', function() {
-			let orderID = $(this).data("order-id");
-			console.log(orderID);
-			let sendCancel = sendAJax(
-				"process_cancel_order.php",
-				"post",
-				"json",
-				{orderID: orderID}
-			)
-
-			if(sendCancel.status == 1) {
-				alert("THIẾU DỮ LIỆU");
-				$("#btn_cancel_" + $orderID).prop("disabled", false);
-			}
-
-			if(sendCancel.status == 5) {
-				$orderID = sendCancel.orID;
-				$("#btn_cancel_" + $orderID).prop("disabled", true);
-				$("#status_order_" + $orderID).text("đang chờ hủy");
-			}
+			cancelOrder(this.id, "cancel");
 		});
 	});
+
+	// hàm lấy danh sách đơn hàng
+	function fetchPage(currentPage = 1) {
+		// console.log($('#number_of_rows').val());
+		let cusID = <?= $_SESSION['user_token']['id']; ?>;
+		let q = "%" + $('#search').val().trim() + "%";
+		let sort = $('#sort').val();
+		let status = $('#list_name_tab .nav-link.active').data('status');
+		let numRows = $('#number_of_rows').val();
+		let action = "fetch";
+		let data = {cusID: cusID, q : q, status: status, numRows: numRows, sort: sort, currentPage: currentPage, action: action};
+		let result = sendAJax("fetch_order.php", "post", "json", data);
+		$('.list_order').html(result.orders);
+		$('.page').html(result.pagination);
+	}
+
+	// hàm thay đổi trạng thái của đơn hàng
+	function cancelOrder(btnID, action) {
+		let orID = $(`#${btnID}`).data('order-id');
+		let data = {orID: orID, action: action};
+		let result = sendAJax("process_cancel_order.php", "post", "json", data);
+		if(!result.ok) {
+			alert("KHÔNG THỂ HỦY ĐƠN HÀNG");
+		}
+		// cập nhật lại sau khi thay đổi
+		let currentPage = parseInt($('li.page-item.active').data('page-number'));
+		if(isNaN(currentPage)) {
+			currentPage = 1;
+		};
+		fetchPage(currentPage);
+	}
 </script>	

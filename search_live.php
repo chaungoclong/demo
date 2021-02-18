@@ -10,7 +10,7 @@ foreach ($listResult as $key => $result): ?>
 	<li class="ajax_search_item list-group-item p-0">
 		<a href='<?= create_link(base_url("product_detail.php"), ["proid"=>$result["pro_id"]]); ?>' class="d-flex align-items-center">
 			<span class="item_result_img">
-				<img src="image/<?= $result['pro_img']; ?>" alt="" height="60px  " class="float-left mr-3">
+				<img src="<?= base_url('image/') . $result['pro_img']; ?>" alt="" height="60px  " class="float-left mr-3">
 			</span>
 			<span class="item_result_text">
 				<h5 class="text-uppercase"><?= $result['pro_name'] ?></h5>

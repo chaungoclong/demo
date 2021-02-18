@@ -23,7 +23,7 @@ require_once '../include/navbar.php';
 
 		<!-- nút thêm đơn hàng và thanh tìm kiếm -->
 		<div class="row m-0 mb-3">
-			<div class="col-12 p-0 d-flex justify-content-between align-items-center">
+			<div class="col-12 p-2 d-flex justify-content-between align-items-center bg-light">
 				<!-- lọc-->
 				<div class="filter d-flex">
 					<!-- sắp xếp -->
@@ -32,40 +32,125 @@ require_once '../include/navbar.php';
 						<option value="2">Cũ nhất</option>
 					</select>
 
-					<!-- lọc trạng thái đơn hàng -->
-					<select id="filter_status" class='custom-select'>
-						<option value="all" selected>Tất cả</option>
-						<option value="pending">Đang chờ xử lý</option>
-						<option value="success">Đã duyệt</option>
-						<option value="fail">Đã hủy</option>
-					</select>
-
 					<!-- tìm kiếm tên , id đơn hàng -->
-					<input type="text" class="form-control" id="search" placeholder="search">
+					<input type="text" class="form-control" id="search" placeholder="Search...">
+				</div>
+
+				<!-- số hàng hiển thị -->
+				<div>
+					<?php $option = [5, 10, 25, 50, 100]; ?>
+					<select class="custom-select" id="number_of_rows">
+						<?php foreach ($option as $key => $each): ?>
+							<option value="<?= $each; ?>"> <?= $each; ?> </option>
+						<?php endforeach ?>
+					</select>
 				</div>
 			</div>
 		</div>
 
-		<!-- danh sách đơn hàng-->
-		<div>
-			<table class="table table-hover table-bordered shadow" style="font-size: 13px;">
-				<thead class="thead-dark">
-					<tr>
-						<th>ID</th>
-						<th>NGÀY ĐẶT</th>
-						<th>TRẠNG THÁI</th>
-						<th>NGƯỜI ĐẶT</th>
-						<th>NGƯỜI NHẬN</th>
-						<th>XEM</th>
-						<th>TÙY CHỌN</th>
-					</tr>
-				</thead>
+		<ul class="nav nav-tabs px-2" role="tablist" id="list_name_tab">
+			<li class="nav-item">
+				<a class="nav-link active" data-toggle="tab" href="#all" data-status="all">TẤT CẢ</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" data-toggle="tab" href="#pending" data-status="pending">ĐANG CHỜ</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" data-toggle="tab" href="#success" data-status="success">ĐÃ XỬ LÝ</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" data-toggle="tab" href="#fail" data-status="fail">ĐÃ HỦY</a>
+			</li>
+		</ul>
 
-				<tbody class="list_order">
-				</tbody>
-			
-			</table>
-			<div class="page"></div>
+		<!-- Tab panes -->
+		<div class="tab-content">
+			<div class="tab-pane p-2 active" id="all">
+				<table class="table table-hover table-bordered" style="font-size: 15px;">
+					<thead class="thead-light">
+						<tr>
+							<th class="align-middle">ID</th>
+							<th class="align-middle">NGÀY ĐẶT</th>
+							<th class="align-middle">LỢI NHUẬN</th>
+							<th class="align-middle">TRẠNG THÁI</th>
+							<th class="align-middle">NGƯỜI ĐẶT</th>
+							<th class="align-middle">NGƯỜI NHẬN</th>
+							<th class="align-middle">XEM</th>
+							<th class="align-middle">TÙY CHỌN</th>
+						</tr>
+					</thead>
+
+					<tbody class="list_order">
+					</tbody>
+				</table>
+				<div class="page"></div>
+			</div>
+
+			<!-- ĐANG CHỜ -->
+			<div class="tab-pane p-2" id="pending">
+				<table class="table table-hover table-bordered" style="font-size: 15px;">
+					<thead class="thead-light">
+						<tr>
+							<th class="align-middle">ID</th>
+							<th class="align-middle">NGÀY ĐẶT</th>
+							<th class="align-middle">LỢI NHUẬN</th>
+							<th class="align-middle">TRẠNG THÁI</th>
+							<th class="align-middle">NGƯỜI ĐẶT</th>
+							<th class="align-middle">NGƯỜI NHẬN</th>
+							<th class="align-middle">XEM</th>
+							<th class="align-middle">TÙY CHỌN</th>
+						</tr>
+					</thead>
+
+					<tbody class="list_order">
+					</tbody>
+				</table>
+				<div class="page"></div>
+			</div>
+
+			<!-- ĐÃ XỬ LÝ -->
+			<div class="tab-pane p-2" id="success">
+				<table class="table table-hover table-bordered" style="font-size: 15px;">
+					<thead class="thead-light">
+						<tr>
+							<th class="align-middle">ID</th>
+							<th class="align-middle">NGÀY ĐẶT</th>
+							<th class="align-middle">LỢI NHUẬN</th>
+							<th class="align-middle">TRẠNG THÁI</th>
+							<th class="align-middle">NGƯỜI ĐẶT</th>
+							<th class="align-middle">NGƯỜI NHẬN</th>
+							<th class="align-middle">XEM</th>
+							<th class="align-middle">TÙY CHỌN</th>
+						</tr>
+					</thead>
+
+					<tbody class="list_order">
+					</tbody>
+				</table>
+				<div class="page"></div>
+			</div>
+
+			<!-- ĐÃ HỦY -->
+			<div class="tab-pane p-2" id="fail">
+				<table class="table table-hover table-bordered" style="font-size: 15px;">
+					<thead class="thead-light">
+						<tr>
+							<th class="align-middle">ID</th>
+							<th class="align-middle">NGÀY ĐẶT</th>
+							<th class="align-middle">LỢI NHUẬN</th>
+							<th class="align-middle">TRẠNG THÁI</th>
+							<th class="align-middle">NGƯỜI ĐẶT</th>
+							<th class="align-middle">NGƯỜI NHẬN</th>
+							<th class="align-middle">XEM</th>
+							<th class="align-middle">TÙY CHỌN</th>
+						</tr>
+					</thead>
+
+					<tbody class="list_order">
+					</tbody>
+				</table>
+				<div class="page"></div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -84,12 +169,19 @@ require_once '../include/navbar.php';
 		$(document).on('input', '#search', function() {
 			fetchPage(1);
 		});
-		$(document).on('change', '#filter_status', function() {
+
+		// lấy danh sách đơn hàng khi sắp xếp
+		$(document).on('change', '#sort', function() {
 			fetchPage(1);
 		});
 
-		// lấy danh sách đơn hàng khi nhập tìm kiếm
-		$(document).on('change', '#sort', function() {
+		// lấy danh sách đơn hàng khi thay đổi số hàng hiển thị
+		$(document).on('change', '#number_of_rows', function() {
+			fetchPage(1);
+		});
+
+		// lấy danh sách đơn hàng khi chuyển tab
+		$(document).on('click', '#list_name_tab .nav-item', function() {
 			fetchPage(1);
 		});
 
@@ -116,11 +208,13 @@ require_once '../include/navbar.php';
 
 	// hàm lấy danh sách đơn hàng
 	function fetchPage(currentPage = 1) {
+		// console.log($('#number_of_rows').val());
 		let q = "%" + $('#search').val().trim() + "%";
 		let sort = $('#sort').val();
-		let status = $('#filter_status').val();
+		let status = $('#list_name_tab .nav-link.active').data('status');
+		let numRows = $('#number_of_rows').val();
 		let action = "fetch";
-		let data = {q : q, status: status, sort: sort, currentPage: currentPage, action: action};
+		let data = {q : q, status: status, numRows: numRows, sort: sort, currentPage: currentPage, action: action};
 		let result = sendAJax("fetch_page.php", "post", "json", data);
 		$('.list_order').html(result.orders);
 		$('.page').html(result.pagination);

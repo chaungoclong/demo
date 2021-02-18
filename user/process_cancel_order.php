@@ -1,20 +1,31 @@
 <?php 
 	require_once '../common.php';
 
-	$status = 5;
+	// HỦY ĐƠN HÀNG
+	if (!empty($_POST['action']) && $_POST['action'] == "cancel") {
+		$ok = true;
+		$orderID = $_POST['orID'];
 
-	if($_SERVER['REQUEST_METHOD'] == "POST") {
-		$orderID = data_input(input_post("orderID"));
+		// lấy danh sách các sản phẩm của đơn hàng cần hủy(đơn hàng chi tiết)
+		$getListProSQL = "  
+		SELECT pro_id, amount FROM db_order_detail
+		WHERE or_id = ?
+		";
+		$listProduct = db_get($getListProSQL, 1, [$orderID], "i");
 
-		if($orderID === false) {
-			$status =  1;
-		} else {
-			$cancelOrderSQL = "UPDATE db_order SET or_status = 2 WHERE or_id = ?";
-			$runCancelOrder = db_run($cancelOrderSQL, [$orderID], "i");
-			$status = 5;
+		// tăng số lượng của các sản phẩm trong đơn hàng cần hủy 1 lượng = lượng đẫ đặt
+		foreach ($listProduct as $key => $product) {
+			$proID = $product['pro_id'];
+			$amount = $product['amount'];
+			$resetQtySQL = "UPDATE db_product SET pro_qty = pro_qty + ? WHERE pro_id = ?";
+			db_run($resetQtySQL, [$amount, $proID], "ii");
 		}
 
-		$res = ["status"=>$status, "orID"=>$orderID];
-		echo json_encode($res);
+		// hủy đơn: đặt trạng thái về đã hủy
+		$cancelSQL = "UPDATE db_order SET or_status = 2 WHERE or_id = ?";
+		$runCancel = db_run($cancelSQL, [$orderID], 'i');
+		$ok = $runCancel ? true : false;
+
+		$output = ['ok'=>$ok];
+		echo json_encode($output);
 	}
- ?>

@@ -14,6 +14,8 @@
 		var_dump($bool);
 		var_dump(check_word("Laptop Apple MacBook Air 2017 i5 1.8GHz/8GB/128GB (MQD32SA/A)"));
 		$arr = ['a'=>'', 'b'=>''];
+
+		echo getTotalMoneyAnOrder(98);
 		
  ?>
 

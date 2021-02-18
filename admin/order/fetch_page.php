@@ -54,7 +54,7 @@
 		$totalOrder = count($listOrder);
 
 		// chia trang
-		$orPerPage = 5;
+		$orPerPage = !empty($_POST['numRows']) ? (int)$_POST['numRows'] : 5;
 		$totalPage = ceil($totalOrder / $orPerPage);
 		$currentPage = !empty($_POST['currentPage']) ? (int)$_POST['currentPage'] : 1;
 		$currentPage = $currentPage > $totalPage ? $totalPage : $currentPage;
@@ -76,16 +76,16 @@
 				// hiển thị trạng thái đơn hàng
 				switch ($status) {
 					case 0:
-						$showStatus = "<span class='badge badge-pill badge-primary p-1'>đang chờ xác nhận</span>";
+						$showStatus = "<span class='badge badge-primary p-1' style='width:70px;'>chờ duyệt</span>";
 						break;
 					case 1:
-						$showStatus = "<span class='badge badge-pill badge-success p-1'>đã xác nhận</span>";
+						$showStatus = "<span class='badge badge-success p-1' style='width:70px;'>đã duyệt</span>";
 						break;
 					case 2:
-						$showStatus = "<span class='badge badge-pill badge-danger p-1'>đã hủy</span>";
+						$showStatus = "<span class='badge badge-danger p-1' style='width:70px;'>đã hủy</span>";
 						break;
 					default:
-						$showStatus = "<span class='badge badge-pill badge-secondary p-1'>không xác định</span>";
+						$showStatus = "<span class='badge badge-secondary p-1' style='width:70px;'>không xác định</span>";
 						break;
 				}
 
@@ -93,53 +93,56 @@
 				$btnOption = "";
 				if($order['or_status'] == 0) {
 					$btnOption .= '  
-						<button
-						class="btn_confirm btn btn-primary"
-						id="btn_confirm_' . $order['or_id'] . '"
-						data-order-id="' . $order['or_id'] . '"
-						>
-						 Duyệt
-						</button>
-
-						<button
-						class="btn_cancel btn btn-danger"
-						id="btn_cancel_' . $order['or_id'] . '"
-						data-order-id="' . $order['or_id'] . '"
-						>
-						 Hủy
-						</button>
+						<div class="btn-group" role="group">
+							<button
+							class="btn_confirm btn btn-primary"
+							id="btn_confirm_' . $order['or_id'] . '"
+							data-order-id="' . $order['or_id'] . '"
+							>
+							Duyệt
+							</button>
+							<button
+							class="btn_cancel btn btn-danger"
+							id="btn_cancel_' . $order['or_id'] . '"
+							data-order-id="' . $order['or_id'] . '"
+							>
+							Hủy
+							</button>
+						</div>
 					';
 				}
 
 				$orders .= '   
 				<tr>
 					<!-- mã -->
-					<td>' . $order['or_id'] . '</td>
+					<td class="align-middle">' . $order['or_id'] . '</td>
 
 					<!-- ngày đặt -->
-					<td>' . strToTimeFormat($order['or_create_at'], "d-m-Y") . '</td>
+					<td class="align-middle">' . strToTimeFormat($order['or_create_at'], "d-m-Y") . '</td>
+
+					<td class="align-middle text-info">' .number_format(getTotalMoneyAnOrder($order['or_id'])). ' &#8363;</td>
 
 					<!-- trạng thái  -->
-					<td id="status_order_' . $order['or_id'] . '">	
+					<td id="status_order_' . $order['or_id'] . '" class="align-middle">	
 						' . $showStatus . '
 					</td>
 
 					<!-- người đặt -->
-					<td>
+					<td class="align-middle">
 						<p><strong class="mr-1">Tên:</strong>' . $order['cus_name'] . '</p>
 						<p><strong class="mr-1">Địa chỉ:</strong>' . $order['cus_address'] . '</p>
 						<p><strong class="mr-1">SĐT:</strong>' . $order['cus_phone'] . '</p>
 					</td>
 
 					<!-- người nhận -->
-					<td>
+					<td class="align-middle">
 						<p><strong class="mr-1">Tên:</strong>' . $order['receiver_name'] . '</p>
 						<p><strong class="mr-1">Địa chỉ:</strong>' . $order['receiver_add'] . '</p>
 						<p><strong class="mr-1">SĐT:</strong>' . $order['receiver_phone'] . '</p>
 					</td>
 
 					<!-- xem -->
-					<td>
+					<td class="align-middle">
 						<a 
 						href="
 							' . 
@@ -153,7 +156,7 @@
 					</td>
 
 					<!-- hành động -->
-					<td>
+					<td class="align-middle">
 						' . $btnOption . '
 					</td>
 
