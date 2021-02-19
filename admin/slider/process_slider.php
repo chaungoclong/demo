@@ -4,44 +4,43 @@
 
 	// THÊM SLIDE
 	if(!empty($_POST['action']) && $_POST['action'] == "add") {
-
-		// số lượng slide giới hạn
-		$limitSlide  = 20;
-
-		// số lượng slide hiện tại
-		$currenQtySlide = (int)count(getListSlide()->fetch_all(MYSQLI_ASSOC));
-
-		// trạng thái xử lý
-		$status      = 5;
+		$limitSlide        = 20;
+		// $currenQtySlide = (int)count(getListSlide()->fetch_all(MYSQLI_ASSOC));
+		$currenQtySlide    = countRow("db_slider");
+		$status            = "fail";
+		$folder            = "../../image/";
+		$extension         = ['jpeg', 'jpg', 'png'];
+		$error             = ["category"=>"", "file"=>[]];
+		$catID             = $file = $listFileName = "";
+		$ok                = true;
 		
-		// thông báo lỗi khi up file
-		$errorUpFile = "";
-		
-		$catID       = data_input(input_post('cat'));
-		
-		$folder      = "../../image/";
-		
-		$extension   = ['jpeg', 'jpg', 'png'];
-		
-		$fileSlide   = !empty($_FILES['slide']) ? $_FILES['slide'] : null;
-
-		if($catID === false || $fileSlide == null) {
-			$status = 1;
-		} elseif((int)count($fileSlide['name']) + $currenQtySlide > $limitSlide) {
-
-			$errorUpFile = "số lượng ảnh vượt quá giới hạn cho phép($limitSlide ảnh)";
-			$status = 6;
+		// category ID
+		if(empty($_POST['cat'])) {
+			$error['category'] = "Danh mục không được để trống";
+			$ok = false;
 		} else {
+			$catID = data_input($_POST['cat']);
+		}
 
-			// tải tất cả ảnh slide vào thư mục chưa ảnh
-			$upSlideFile = multiUploadFile($fileSlide, $folder, $extension);
-
-			// lấy danh sách tên file trả về từ hàm up file
-			$listFileName = $upSlideFile['result'];
-
+		// file
+		if(empty($_FILES['slide'])) {
+			$error['file'][] = "Ảnh không được để trống";
+			$ok = false;
+		} else {
+			$file = $_FILES['slide'];
+			if(count($file['name']) + $currenQtySlide > $limitSlide) {
+				$error['file'][] = "Số lượng slide vượt quá giới hạn";
+				$ok = false;
+			} else {
+				$upFile = multiUploadFile($file, $folder, $extension);
+				$listFileName = $upFile['result'];
+				$error['file'] = $upFile['error'];
+			}
+		}
+		
+		if($ok) {
 			// tải tên file slide + vị trí slide + danh mục slide lên database
 			foreach ($listFileName as $key => $fileName) {
-				
 				// vị trí cuối cùng
 				$lastPos = lastPostion();
 
@@ -50,28 +49,20 @@
 
 				// up tên file + vị trí + danh mục lên database
 				$upSlideSQL = "INSERT INTO db_slider(cat_id, sld_image, sld_pos) VALUES(?, ?, ?)";
-				$runUp = db_run($upSlideSQL, [$catID, $fileName, $newPos], "isi");
-				
+				$runUp = db_run($upSlideSQL, [$catID, $fileName, $newPos], "isi");	
 			}
-
-			$errorUpFile = implode('<br>', $upSlideFile['error']);
-
-			$status = 5;
+			$status = "success";
 		}
 
-		$res = ['status'=>$status, 'error'=>$errorUpFile];
-
-		echo json_encode($res);
+		$output = ['status'=>$status, 'error'=>$error];
+		echo json_encode($output);
 	}
 
 	// ===================THAY ĐỔI VỊ TRÍ SLIDE===================================
-	if(!empty($_POST['action']) && $_POST['action'] == 'change_pos') {
-
-		$status = 5;
-
-		$sldID = data_input(input_post('sldID'));
-
-		$opt = data_input(input_post('opt'));
+	if(!empty($_POST['action']) && $_POST['action'] == 'move') {
+		$ok = true;
+		$sldID = input_post('sldID');
+		$opt = data_input(input_post('option'));
 		
 		/**
 		 * xử lý:
@@ -87,9 +78,8 @@
 		 * 
 		 */
 		if($opt == "up") {
-
 			// B1
-			$upSQL = "UPDATE db_slider SET sld_pos = sld_pos - 1 WHERE sld_id = ?";
+			$upSQL = "UPDATE db_slider SET sld_pos = sld_pos - 1 WHERE sld_id = ? AND sld_pos > 1";
 			$runUp1 = db_run($upSQL, [$sldID], "i");
 
 			//B2
@@ -101,15 +91,14 @@
 			";
 			$runUp2 = db_run($upSQL, [$sldID, $sldID], "ii");
 
-			$status = $runUp1 && $runUp2 ? 5 : 6;
-
+			$ok = $runUp1 && $runUp2 ? true : false;
 		}
 
 		if($opt == "down") {
-
+			$lastPos = lastPostion();
 			// B1
-			$downSQL = "UPDATE db_slider SET sld_pos = sld_pos + 1 WHERE sld_id = ?";
-			$runUp1 = db_run($downSQL, [$sldID], "i");
+			$downSQL = "UPDATE db_slider SET sld_pos = sld_pos + 1 WHERE sld_id = ? AND sld_pos < ?";
+			$runUp1 = db_run($downSQL, [$sldID, $lastPos], "ii");
 
 			//B2
 			$downSQL = "
@@ -120,55 +109,73 @@
 			";
 			$runUp2 = db_run($downSQL, [$sldID, $sldID], "ii");
 
-			$status = $runUp1 && $runUp2 ? 5 : 6;
+			$ok = $runUp1 && $runUp2 ? true : false;
 		}
 
-		echo $status;
-
+		$output = ['ok'=>$ok];
+		echo json_encode($output);
 	}
 
 
 	// ============== SỬA SLIDE ========================== //
 	if(!empty($_POST['action']) && $_POST['action'] == "edit") {
-
-		$status       = 5;
-		
+		$status       = "fail";
 		$folder       = '../../image/';
-		
 		$extension    = ['jpeg', 'jpg', 'png'];
-		
-		$sldID        = data_input(input_post('sldID'));
-		
-		$catID        = data_input(input_post('cat'));
-		
-		$oldSlide     = data_input(input_post('oldSlide'));
-		
-		$oldPos       = data_input(input_post('oldPos'));
-		
-		$newPos       = data_input(input_post('newPos'));
-		
-		$newSlideFile = !empty($_FILES['newSlide']) ? $_FILES['newSlide'] : null;
-		
+		$sldID = $catID = $oldSlide = $oldPos = $newPos = $file = $fileName = "";
+		$error = [];
+		$ok = true;
 
-
-		if(
-			$sldID    === false || 
-			$catID    === false || 
-			$oldSlide === false || 
-			$oldPos   === false || 
-			$newPos   === false
-		) {
-
-			// thiếu dữ liệu
-			$status = 1;
+		// slide ID
+		if(empty($_POST['sldID'])) {
+			$ok = false;
 		} else {
-			$fileName = "";
+			$sldID = data_input($_POST['sldID']);
+		}
+		
+		// category ID
+		if(empty($_POST['cat'])) {
+			$error[] = "Danh mục không được để trống";
+			$ok = false;
+		} else {
+			$catID = data_input($_POST['cat']);
+		}
 
-			if($newSlideFile != null) {
-				$fileName = up_file($newSlideFile, $folder, $extension);
-			} else {
-				$fileName = $oldSlide;
+		// oldSlide
+		if(empty($_POST['oldSlide'])) {
+			$ok = false;
+		} else {
+			$oldSlide = data_input($_POST['oldSlide']);
+		}
+
+		// oldPos
+		if(empty($_POST['oldPos'])) {
+			$ok = false;
+		} else {
+			$oldPos = data_input($_POST['oldPos']);
+		}
+
+		// newPos
+		if(empty($_POST['newPos'])) {
+			$ok = false;
+		} else {
+			$newPos = data_input($_POST['newPos']);
+		}
+		
+		// file ảnh
+		if(!empty($_FILES['newSlide'])) {
+			$file = $_FILES['newSlide'];
+			$fileName = up_file($file, $folder, $extension);
+
+			if(!$fileName) {
+				$error[] = "Tải ảnh không thành công";
+				$ok = false;
 			}
+		} else {
+			$fileName = $oldSlide;
+		}
+		
+		if($ok) {
 
 			/**
 			 * B1: cập nhật slide cần sửa
@@ -177,25 +184,21 @@
 			 */
 			$editSlideSQL = "
 			UPDATE db_slider SET 
-				cat_id    = ?,
-				sld_image = ?,
-				sld_pos   = ?
+			cat_id    = ?,
+			sld_image = ?,
+			sld_pos   = ?
 			WHERE 
-				sld_id = ?";
-
+			sld_id = ?";
 			$runEdit1     = db_run($editSlideSQL, [$catID, $fileName, $newPos, $sldID], 'isii');
-			
+
 			$editSlideSQL = "UPDATE db_slider SET sld_pos = ? WHERE sld_pos = ? AND sld_id != ?";
-			
 			$runEdit2     = db_run($editSlideSQL, [$oldPos, $newPos, $sldID], 'iii');
 			
-			$status       = $runEdit1 && $runEdit2 ? 5 : 6;
-
+			$status       = $runEdit1 && $runEdit2 ? "success" : "fail";
 		}
 
-		$res = ['status'=>$status];
-
-		echo json_encode($res);
+		$output = ['status'=>$status, 'error'=>$error];
+		echo json_encode($output);
 	}
 
 
@@ -204,27 +207,22 @@
 	 * B1: giảm giá trị vị trí của các slide có vị trí lớn hơn slide cần xóa
 	 * B2: xóa slide cần xóa
 	 */
-	if(!empty($_POST['action']) && $_POST['action'] == "remove") {
-
-		$status = 5;
-		
-		$sldID  = data_input(input_post('sldID'));
+	if(!empty($_POST['action']) && $_POST['action'] == "delete") {
+		$status = "error";
+		$sldID  = input_post('sldID');
 
 		// giảm vị trí của các slide có vị trí lớn hơn slide cần xóa
 		$setPosNextSlideSQL = "
 		UPDATE db_slider SET sld_pos = sld_pos - 1
-		WHERE sld_pos > (SELECT sld_pos FROM db_slider WHERE sld_id = ?)
+		WHERE sld_pos > (SELECT sld_pos FROM db_slider WHERE sld_id = ?) AND sld_id != ?
 		";
+		$runSet    = db_run($setPosNextSlideSQL, [$sldID, $sldID], "ii");
 		
-		$runSet    = db_run($setPosNextSlideSQL, [$sldID], "i");
-		
-
 		// xóa slide cần xóa
-		$removeSQL = "DELETE FROM db_slider WHERE sld_id = ?";
-		
-		$runRemove = db_run($removeSQL, [$sldID], 'i');
+		$deleteSQL = "DELETE FROM db_slider WHERE sld_id = ?";
+		$runDelete = db_run($deleteSQL, [$sldID], 'i');
+		$status = $runSet && $runDelete ? "success" : "error";
 
-		$status = $runSet && $runRemove ? 5 : 6;
-
-		echo $status;
+		$output = ['status'=>$status];
+		echo json_encode($output);
 	}

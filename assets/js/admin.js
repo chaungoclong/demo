@@ -1794,10 +1794,9 @@ function validateSlideAdd() {
         test = false;
     }
 
-
     // slide
     let errorSlide = "";
-    if (slide == undefined) {
+    if (slide == undefined || slide.length == 0) {
         $('#slide').addClass('error_field');
         $('#slideErr').text('Không được để trống');
         test = false;
@@ -1854,46 +1853,36 @@ function addSlide() {
         // thêm hành động
         form_data.append('action', "add");
 
-        let sendAddSlide = sendAJax(
-            "process_slider.php",
-            "post",
-            "json",
-            form_data,
-            1
-        );
+        let result = sendAJax( "process_slider.php", "post", "json", form_data, 1);
 
-        let status = sendAddSlide.status;
-        let upFileError = sendAddSlide.error;
-        var notice = "";
+        let status = result.status;
+        let error = result.error;
+        let msg = "";
 
-        switch (status) {
-            case 1:
-                alert("THIẾU DỮ LIỆU");
-                break;
+        if(status == "success") {
+            msg = "THÊM SLIDE THÀNH CÔNG";
+            if(error['file'].length) {
+                msg += "\nLƯU Ý:\n" + error['file'].join(", ");
+            }
+            alert(msg);
+            window.location = "index.php";
+        } else {
+            msg = "THÊM SLIDE THẤT BẠI";
 
-            case 5:
+            // lỗi danh mục
+            if(error['category'] != "") {
+                msg += "\n" + error['category'];
+                $('#cat').addClass('error_field');
+            }
+            $('#catErr').text(error['category']);
 
-                notice = "THÊM SLIDE THÀNH CÔNG";
-
-                if (upFileError != "") {
-                    notice += "\nNOTICE:" + upFileError;
-                }
-
-                alert(notice);
-                window.location = document.referrer;
-                break;
-
-            case 6:
-
-                notice = "THÊM SLIDE THẤT BẠI";
-
-                if (upFileError != "") {
-                    notice += "\nNOTICE:" + upFileError;
-                }
-
-                alert(notice);
-                break;
-
+            // lỗi file ảnh slide
+            if(error['file'].length) {
+                msg += "\n" + error['file'].join(", ");
+            }
+            $('#slideErr').text(error['file'].join(", "));
+           
+            alert(msg);
         }
     }
 }
@@ -1980,27 +1969,25 @@ function editSlide() {
         // thêm hành động
         form_data.append('action', "edit");
 
-        let sendEditSlide = sendAJax(
-            'process_slider.php',
-            'post',
-            'json',
-            form_data,
-            1
-        );
+        let result = sendAJax('process_slider.php', 'post', 'json', form_data, 1);
 
-        let status = sendEditSlide.status;
-        switch (status) {
-            case 1:
-                alert("THIẾU DỮ LIỆU");
-                break;
-
-            case 5:
-                alert("CẬP NHẬT SLIDE THÀNH CÔNG");
-                window.location = document.referrer;
-                break;
-            case 6:
-                alert("CẬP NHẬT HÃNG SLIDE THẤT BẠI");
-                break;
+        let status = result.status;
+        let error = result.error;
+        let msg = "";
+        
+        if(status == "success") {
+            msg = "CẬP NHẬT SLIDE THÀNH CÔNG";
+            if(error.length) {
+                msg += error.join("\n");
+            }
+            alert(msg);
+            window.location = "index.php";
+        } else {
+            msg = "CẬP NHẬT SLIDE THẤT BẠI";
+            if(error.length) {
+                msg += error.join("\n");
+            }
+            alert(msg);
         }
     }
 

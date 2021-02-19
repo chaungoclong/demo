@@ -28,10 +28,8 @@ require_once '../include/navbar.php';
 				<div class="filter d-flex">
 					<!-- sắp xếp -->
 					<select id="sort" class="custom-select">
-						<option value="1">Mới nhất</option>
+						<option value="1" selected>Mới nhất</option>
 						<option value="2">Cũ nhất</option>
-						<option value="3" selected>Vị trí: cao - thấp</option>
-						<option value="4">Vị trí: thấp - cao</option>
 					</select>
 
 					<!-- danh mục -->
@@ -49,10 +47,7 @@ require_once '../include/navbar.php';
 				</div>
 
 				<!-- số hàng hiển thị -->
-				<div class="d-flex justify-content-between">
-					<a class="btn btn-success mr-3 text-white" href="add.php" data-toggle="tooltip" title="Thêm slide mới">
-						<i class="fas fa-plus"></i>
-					</a>
+				<div>
 					<?php $option = [5, 10, 25, 50, 100]; ?>
 					<select class="custom-select" id="number_of_rows">
 						<?php foreach ($option as $key => $each): ?>
@@ -70,7 +65,6 @@ require_once '../include/navbar.php';
 					<tr>
 						<th class="align-middle">ID</th>
 						<th class="align-middle">DANH MỤC</th>
-						<th class="align-middle">VỊ TRÍ</th>
 						<th class="align-middle" width="45%">XEM TRƯỚC</th>
 						<th class="align-middle">DI CHUYỂN</th>
 						<th class="align-middle">SỬA</th>
@@ -115,11 +109,6 @@ require_once '../include/navbar.php';
 			fetchPage(1);
 		});
 
-		// lấy danh sách slide khi thay đổi số hàng hiển thị
-		$(document).on('change', '#number_of_rows', function() {
-			fetchPage(1);
-		});
-
 		// lấy danh sách slide khi chuyển trang
 		$(document).on('click', '.page-item', function() {
 			let currentPage = parseInt($(this).data("page-number"));
@@ -130,23 +119,13 @@ require_once '../include/navbar.php';
 		});
 
 		// xóa 1 slide
-		$(document).on('click', '.btn_delete_sld', function() {
+		$(document).on('click', '.btn_delete_cat', function() {
 			deleteRow(this.id);
 		});
 
 		// lưu dữ liệu của trang index trước khi chuyển sang trang update(để quay lại đúng trang sau khi update)
-		$(document).on('click', '.btn_edit_sld', function() {
+		$(document).on('click', '.btn_edit_cat', function() {
 			setPrevPageData();
-		});
-
-		// di chuyển 1 slide lên
-		$(document).on('click', '.btn_up', function() {
-			movePosition(this.id, "up");
-		});
-
-		// di chuyển 1 slide xuống
-		$(document).on('click', '.btn_down', function() {
-			movePosition(this.id, "down");
 		});
 	});
 
@@ -154,21 +133,22 @@ require_once '../include/navbar.php';
 	function fetchPage(currentPage = 1) {
 		let q = "%" + $('#search').val().trim() + "%";
 		let sort = $('#sort').val();
-		let category = $('#category_opt').val();
-		let numRows = $('#number_of_rows').val();
+		let status = $('#filter_status').val();
 		let action = "fetch";
-		let data = {q : q, category: category, sort: sort, numRows: numRows, currentPage: currentPage, action: action};
+		let data = {q : q, status: status, sort: sort, currentPage: currentPage, action: action};
 		let result = sendAJax("fetch_page.php", "post", "json", data);
 		$('.list_slide').html(result.slides);
 		$('.page').html(result.pagination);
 	}
 
 	// hàm thay đổi trạng thái của slide
-	function movePosition(btnID, option) {
-		let sldID = $(`#${btnID}`).data('sld-id');
-		let action = "move";
-		let data = {sldID: sldID, option: option, action: action};
-		let result = sendAJax("process_slider.php", "post", "json", data);
+	function changeStatus(btnID) {
+		let catID = $(`#${btnID}`).data('cat-id');
+		let status = $(`#${btnID}`).prop('checked');
+		let active = status ? 1 : 0;
+		let action = "switch_active";
+		let data = {catID: catID, active: active, action: action};
+		let result = sendAJax("process_slide.php", "post", "json", data);
 		if(!result.ok) {
 			alert("có lỗi khi thay đổi trạng thái");
 		}
@@ -181,15 +161,18 @@ require_once '../include/navbar.php';
 	}
 
 	function deleteRow(btnID) {
-		let sldID = $(`#${btnID}`).data('sld-id'); 
+		let catID = $(`#${btnID}`).data('cat-id'); 
 		let action = "delete";
-		let data = {sldID : sldID, action: action};
-		let result = sendAJax("process_slider.php", "post", "json", data);
+		let data = {catID : catID, action: action};
+		let result = sendAJax("process_slide.php", "post", "json", data);
 		console.log(result);
 		let status = result.status;
 		switch (status) {
 			case "success":
 				alert("XÓA THÀNH CÔNG");
+				break;
+			case "has_product":
+				alert("KHÔNG THỂ XÓA slide ĐÃ CÓ SẢN PHẨM");
 				break;
 			case "error":
 				alert("ĐÃ CÓ LỖI XẢY RA, VUI LÒNG THỬ LẠI");
@@ -213,9 +196,8 @@ require_once '../include/navbar.php';
 	function setPrevPageData() {
 		localStorage.setItem("search", $('#search').val());
 		localStorage.setItem("sort", $('#sort').val());
-		localStorage.setItem("category", $('#category_opt').val());
+		localStorage.setItem("status", $('#filter_status').val());
 		localStorage.setItem("oldPage", parseInt($('li.page-item.active').data('page-number')));
-		localStorage.setItem("numRows", $('#number_of_rows').val());
 	}
 
 	// hàm lấy trang lần đầu tiên (nếu quay về từ trang update thì khôi phục các thông tin về tùy chọn tìm kiếm, vị trí trang hiện tại)
@@ -233,16 +215,10 @@ require_once '../include/navbar.php';
 			localStorage.removeItem("sort");
 		}
 
-		let category  = localStorage.getItem("category");
-		if(category != null) {
-			$('#category_opt').val(category);
-			localStorage.removeItem("category");
-		}
-
-		let numRows  = localStorage.getItem("numRows");
-		if(numRows != null) {
-			$('#number_of_rows').val(numRows);
-			localStorage.removeItem("numRows");
+		let status  = localStorage.getItem("status");
+		if(status != null) {
+			$('#filter_status').val(status);
+			localStorage.removeItem("status");
 		}
 
 		let oldPage = localStorage.getItem("oldPage");

@@ -20,15 +20,11 @@ $listCategory = db_fetch_table('db_category', 0);
 
    <div class="col-12">
       <div class="row m-0">
-       <div class="col-12">
-         <!-- tiêu đề -->
-         <div class="d-flex justify-content-between align-items-center mb-2">
-          <h5>THÊM SLIDE</h5>
-          <a class="btn_back btn btn-warning py-1 px-2" onclick="javascript:history.go(-1)">
-            <i class="fas fa-chevron-circle-left"></i>
-          </a>
-        </div>
-      </div>
+         <div class="col-12">
+            <h5>THÊM SLIDE</h5>
+            <p class="mb-4">Thêm slide mới cho một danh mục</p>
+            <hr>
+         </div>
       </div>
    </div>
 
@@ -59,7 +55,7 @@ $listCategory = db_fetch_table('db_category', 0);
              <!-- ảnh đại diện -->
             <div class="form-group">
                <label for="slide"><strong>Ảnh slide:</strong></label>
-               <input type="file" name="slide[]" id="slide" multiple>
+               <input type="file" name="slide" id="slide" multiple>
 
                <div class="previewSlide"></div>
                <script>
@@ -70,7 +66,9 @@ $listCategory = db_fetch_table('db_category', 0);
                <div class="alert-danger" id="slideErr"></div>
             </div>
 
+
             <button class="btn_add_sld btn btn-block btn-success"><strong>THÊM</strong></button>
+              
          </div>
       </div>
    </div>
@@ -89,7 +87,7 @@ $listCategory = db_fetch_table('db_category', 0);
    	$(document).on('submit', "#slide_add_form", function(e) {
    		e.preventDefault();
         // validateSlideAdd();
-        addSlide();
+         addSlide();
 
       });
    });

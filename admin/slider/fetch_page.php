@@ -1,100 +1,74 @@
 <?php 
-
-	/**
-	 * 	==============================TRANG LÀM MỚI====================================
-	 * 	Mô tả: làm mới nội dung bảng ở trang index sau khi có 1 hàng thay đổi(cập nhật, xóa)
-	 * 	Hoạt động:
-	 * 	 - nhận dữ liệu gửi sang từ ajax -> kiểm tra có action = "fetch"
-	 * 	 - kiểm tra có biến yêu cầu tìm kiếm:
-	 * 	 	+ rỗng => lấy hết danh sách kết quả có thể lấy
-	 * 	 	+ không rỗng => lấy hết danh sách kết quả theo yêu cầu
-	 * 	 - chia trang
-	 * 	 	+ xác định trang hiện tại thông qua biến $_POST['currentPage'](để khi làm mới vẫn giữ được đúng trang 	ban đầu)
-	 * 	 	+ tạo đường link của trang yêu cầu
-	 * 	 	+ phân trang bằng hàm 
-	 *   - lấy danh sách kết quả sau khi chia trang
-	 *   	+ có tìm kiếm : lấy danh sách kết quả thỏa mãn yêu cầu tìm kiếm sau khi phân trang
-	 *   	+ không có tìm kiếm: lấy danh sách kết quả sau khi phân trang
-	 * 
-	 */
-	
-
-
-
 	require_once '../../common.php';
 	if(isset($_POST['action']) && $_POST['action'] == "fetch") {
-		$html = '';
+		$getSlideSQL = "
+		SELECT db_slider.*, db_category.cat_name FROM `db_slider` 
+		JOIN db_category ON db_slider.cat_id = db_category.cat_id
+		WHERE 1";
+		$param = [];
+		$format = "";
 
-		$q = data_input(input_get('q'));
-			$key = "%" . $q . "%";
+		// tìm kiếm theo id slide
+		$q = !empty($_POST['q']) ? $_POST['q'] : "%%";
+		$getSlideSQL .= " AND CONCAT(db_slider.sld_id, db_slider.sld_pos, db_category.cat_name) LIKE(?)";
+		$param[] = $q;
+		$format .= "s";
 
-			if($q != "") {
-				$searchSQL = "
-				SELECT db_slider.*, db_category.cat_name FROM `db_slider` 
-				JOIN db_category ON db_slider.cat_id = db_category.cat_id
-				WHERE 
-					db_category.cat_name LIKE(?) 
-				";
+		// tìm kiếm theo danh mục
+		$category = !empty($_POST['category']) ? $_POST['category'] : "all";
+		if($category != "all") {
+			$getSlideSQL .= " AND db_slider.cat_id = ?";
+			$param[] = $category;
+			$format .= "i";
+		}
 
-				$param = [$key];
-				$listSlide = db_get($searchSQL, 1, $param, "s");
-			} else {
-
-				$listSlide = getListSlide();
-			}
+		// sắp xếp
+		$sort = !empty($_POST['sort']) ? (int)$_POST['sort'] : 3;
+		switch ($sort) {
+			case 1:
+				$getSlideSQL .= " ORDER BY db_slider.sld_create_at DESC";
+				break;
+			case 2:
+				$getSlideSQL .= " ORDER BY db_slider.sld_create_at ASC";
+				break;
+			case 3:
+				$getSlideSQL .= " ORDER BY db_slider.sld_pos ASC";
+				break;
+			case 4:
+				$getSlideSQL .= " ORDER BY db_slider.sld_pos DESC";
+				break;
+			default:
+				$getSlideSQL .= " ORDER BY db_slider.sld_pos ASC";
+				break;
+		}
 			
+		$listSlide = db_get($getSlideSQL, 0, $param, $format);
+		$totalSlide = count($listSlide);
 
-			// chia trang
-			$totalSlide = $listSlide->num_rows;
-			$slidePerPage = 5;
-			$currentPage = isset($_POST['currentPage']) ? $_POST['currentPage'] : 1;
-			$currentLink = create_link(base_url("admin/slider/index.php"), ["page"=>'{page}', 'q'=>$q]);
-			$page = paginate($currentLink, $totalSlide, $currentPage, $slidePerPage);
+		// chia trang
+		$sldPerPage = !empty($_POST['numRows']) ? (int)$_POST['numRows'] : 5;
+		$totalPage = ceil($totalSlide / $sldPerPage);
+		$currentPage = !empty($_POST['currentPage']) ? (int)$_POST['currentPage'] : 1;
+		$currentPage = $currentPage > $totalPage ? $totalPage : $currentPage;
+		$offset = ($currentPage - 1) * $sldPerPage;
 
-			// danh sách slide sau khi chia trang
-			if($q != "") {
-				$searchResultSQL = $searchSQL . " LIMIT ? OFFSET ?";
-				$param = [$key, $page['limit'], $page['offset']];
+		$getSlideSQL .= " LIMIT ? OFFSET ?";
+		$param = [...$param, $sldPerPage, $offset];
+		$format .= "ii";
+		$listSlide = db_get($getSlideSQL, 0, $param, $format);
 
-				// danh sách người dùng sau khi tìm kiếm và chia trang chia trang
-				$listSlidePaginate = db_get($searchResultSQL, 1, $param, "sii");
-			} else {
-
-				$listSlidePaginate = getListSlide($page['limit'], $page['offset']);
-			}
-
-			
-			$totalSlidePaginate = $listSlidePaginate->num_rows;
-
-			// số thứ tự
-			$stt = 1 + (int)$page['offset'];
-
-		$html .= ' 
-			<table class="table table-hover table-bordered" style="font-size: 13px;">
-				<tr>
-					<th>STT</th>
-					<th>Mã</th>
-					<th>Thể loại</th>
-					<th width="45%">Preview</th>
-					<th>vị trí</th>
-					<th>Sửa</th>
-					<th>Xóa</th>
-				</tr>
-		';
-
-		// in các slide
-		
-		if ($totalSlidePaginate > 0) {
-			foreach ($listSlidePaginate as $key => $slide) {
-
+		$slides = '';
+		if ($totalSlide > 0) {
+			foreach ($listSlide as $key => $slide) {
 				$lastPos = lastPostion();
+				$btnMovePos = '';
 
-				$button = '';
-
-				if($slide['sld_pos'] != 1) {
-					$button .= '  
+				// di chuyển lên
+				if($slide['sld_pos'] > 1) {
+					$btnMovePos .= '  
 						<button 
-							class="btn_up_pos btn btn-primary" 
+							class="btn_up btn btn-primary" 
+							id="btn_up_' . $slide['sld_id'] . '"
 							style="width: 40px;"
 							data-sld-id="' . $slide['sld_id'] . '"
 						>
@@ -103,10 +77,12 @@
 					';
 				}
 
-				if($slide['sld_pos'] != $lastPos) {
-					$button .= '  
+				// di chuyển xuống
+				if($slide['sld_pos'] < $lastPos) {
+					$btnMovePos .= '  
 						<button 
-							class="btn_down_pos btn btn-danger" 
+							class="btn_down btn btn-danger" 
+							id="btn_down_' . $slide['sld_id'] . '"
 							style="width: 40px;"
 							data-sld-id="' . $slide['sld_id'] . '"
 						>
@@ -115,31 +91,31 @@
 					';
 				}
 
-				$html .= '   
+				$slides .= '   
 				<tr>
-					<!-- mã -->
-					<td>' . $stt++ . '</td>
+					<!-- ID -->
+					<td class="align-middle">' . $slide['sld_id'] . '</td>
 
-					<!-- mã -->
-					<td>' . $slide['sld_id'] . '</td>
+					<!-- danh mục-->
+					<td class="align-middle">' . $slide['cat_name'] . '</td>
 
-					<!-- thể loại-->
-					<td>' . $slide['cat_name'] . '</td>
+					<!-- vị trí-->
+					<td class="align-middle">' . $slide['sld_pos'] . '</td>
 
-					<!-- ảnh  -->
-					<td>
+					<!-- xem trước  -->
+					<td class="align-middle">
 						<img src="' . base_url("image/" . $slide["sld_image"]) . '" width="100%">
 					</td>
 
-					<!-- vị trí -->
-					<td>
-						<div class="text-center d-flex flex-column align-items-center" style="width: 100%; height: 100%;">
-							' . $button . '
+					<!-- di chuyển -->
+					<td class="align-middle">
+						<div class="btn-group-vertical">
+							' . $btnMovePos . '
 						</div>
 					</td>
 
-					<!-- edit -->
-					<td class="text-center">
+					<!-- sửa -->
+					<td class="align-middle">
 						<a
 							href="
 							' . 
@@ -149,15 +125,17 @@
 							. '
 							"
 							class="btn_edit_sld btn btn-success"
+							id="btn_delete_' . $slide["sld_id"] . '"
 							data-sld-id="' . $slide['sld_id'] . '">
 							<i class="fas fa-edit"></i>
 						</a>
 					</td>
 
-					<!-- remove -->
-					<td class="text-center">
+					<!-- xóa-->
+					<td class="align-middle">
 						<a 
-							class="btn_remove_sld btn btn-danger"
+							class="btn_delete_sld btn btn-danger"
+							id="btn_delete_' . $slide["sld_id"] . '"
 							data-sld-id="' . $slide['sld_id'] . '">
 							<i class="fas fa-trash-alt"></i>
 						</a>
@@ -166,12 +144,8 @@
 				';
 			}
 		}
-		$html .= '   
-			</table>
-		';
 
-		$html .= $page['html'];
-
-		echo $html;
-				
+		$pagination = paginateAjax($totalPage, $currentPage);
+		$output = ['slides'=>$slides, 'pagination'=>$pagination];
+		echo json_encode($output);			
 	}

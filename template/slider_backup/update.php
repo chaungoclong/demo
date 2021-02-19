@@ -10,14 +10,9 @@ require_once '../include/sidebar.php';
 require_once '../include/navbar.php';
 
 $sldID = data_input(input_get('sldid'));
-if(int($sldID) === false) {
-  die("<h1 class='text-center mt-5 text-danger'>KHÔNG TÌM THẤY TRANG</h1>");
-}
+
 // slide cần sửa
 $slide = getSlideByID($sldID);
-if(!$slide) {
-  die("<h1 class='text-center mt-5 text-danger'>KHÔNG TÌM THẤY SLIDE</h1>");
-}
 
 // danh sách các thể loại
 $listCategory = db_fetch_table('db_category', 0);
@@ -30,19 +25,17 @@ $listCategory = db_fetch_table('db_category', 0);
    <div class="col-12">
       <div class="row m-0">
          <div class="col-12">
-            <!-- tiêu đề -->
-           <div class="d-flex justify-content-between align-items-center mb-2">
-            <h5>SỬA SLIDE</h5>
-            <a class="btn_back btn btn-warning py-1 px-2" onclick="javascript:history.go(-1)">
-              <i class="fas fa-chevron-circle-left"></i>
-            </a>
-          </div>
+            <h5>THÊM SLIDE</h5>
+            <p class="mb-4">Thêm slide mới cho một danh mục</p>
+            <hr>
          </div>
       </div>
    </div>
 
    <div class="col-12 mb-5">
       <form action="  " method="POST" id="slide_edit_form" enctype="multipart/form-data">
+         <!-- previous link -->
+         <input type="hidden" name="prevLink" value="<?= $prevLink; ?>">
 
          <!-- id slide -->
          <input type="hidden" name="sldID" id="sldID" value="<?= $slide['sld_id']; ?>">
@@ -74,7 +67,7 @@ $listCategory = db_fetch_table('db_category', 0);
              <!-- ảnh đại diện -->
             <div class="form-group">
                <label for="slide"><strong>Ảnh slide:</strong></label>
-               <input type="file" name="slide[]" id="slide">
+               <input type="file" name="slide" id="slide" multiple>
 
                <!-- old Slide -->
                <input type="hidden" name="oldSlide" value="<?= $slide['sld_image']; ?>">
