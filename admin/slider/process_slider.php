@@ -11,7 +11,7 @@
 		$folder            = "../../image/";
 		$extension         = ['jpeg', 'jpg', 'png'];
 		$error             = ["category"=>"", "file"=>[]];
-		$catID             = $file = $listFileName = "";
+		$catID             = $link = $file = $listFileName = "";
 		$ok                = true;
 		
 		// category ID
@@ -20,6 +20,17 @@
 			$ok = false;
 		} else {
 			$catID = data_input($_POST['cat']);
+		}
+
+		// link
+		if(empty($_POST['link'])) {
+			$error['link'] = "Link không được để trống";
+			$ok = false;
+		} else {
+			$link = url($_POST['link']);
+			if(!$link) {
+				$error['link'] = "Link sai định dạng";
+			}
 		}
 
 		// file
@@ -48,8 +59,8 @@
 				$newPos = (int)$lastPos + 1;
 
 				// up tên file + vị trí + danh mục lên database
-				$upSlideSQL = "INSERT INTO db_slider(cat_id, sld_image, sld_pos) VALUES(?, ?, ?)";
-				$runUp = db_run($upSlideSQL, [$catID, $fileName, $newPos], "isi");	
+				$upSlideSQL = "INSERT INTO db_slider(cat_id, sld_image, sld_pos, sld_link) VALUES(?, ?, ?, ?)";
+				$runUp = db_run($upSlideSQL, [$catID, $fileName, $newPos, $link], "isis");	
 			}
 			$status = "success";
 		}
@@ -122,7 +133,7 @@
 		$status       = "fail";
 		$folder       = '../../image/';
 		$extension    = ['jpeg', 'jpg', 'png'];
-		$sldID = $catID = $oldSlide = $oldPos = $newPos = $file = $fileName = "";
+		$sldID = $catID = $link = $oldSlide = $oldPos = $newPos = $file = $fileName = "";
 		$error = [];
 		$ok = true;
 
@@ -139,6 +150,17 @@
 			$ok = false;
 		} else {
 			$catID = data_input($_POST['cat']);
+		}
+
+		// link
+		if(empty($_POST['link'])) {
+			$error['link'] = "Link không được để trống";
+			$ok = false;
+		} else {
+			$link = url($_POST['link']);
+			if(!$link) {
+				$error['link'] = "Link sai định dạng";
+			}
 		}
 
 		// oldSlide
@@ -186,10 +208,11 @@
 			UPDATE db_slider SET 
 			cat_id    = ?,
 			sld_image = ?,
-			sld_pos   = ?
+			sld_pos   = ?,
+			sld_link  = ?
 			WHERE 
 			sld_id = ?";
-			$runEdit1     = db_run($editSlideSQL, [$catID, $fileName, $newPos, $sldID], 'isii');
+			$runEdit1     = db_run($editSlideSQL, [$catID, $fileName, $newPos, $link, $sldID], 'isisi');
 
 			$editSlideSQL = "UPDATE db_slider SET sld_pos = ? WHERE sld_pos = ? AND sld_id != ?";
 			$runEdit2     = db_run($editSlideSQL, [$oldPos, $newPos, $sldID], 'iii');

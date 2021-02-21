@@ -10,7 +10,7 @@
 
 		// tìm kiếm theo id slide
 		$q = !empty($_POST['q']) ? $_POST['q'] : "%%";
-		$getSlideSQL .= " AND CONCAT(db_slider.sld_id, db_slider.sld_pos, db_category.cat_name) LIKE(?)";
+		$getSlideSQL .= " AND CONCAT(db_slider.sld_id, db_slider.sld_pos, db_slider.sld_link, db_category.cat_name) LIKE(?)";
 		$param[] = $q;
 		$format .= "s";
 
@@ -101,6 +101,11 @@
 
 					<!-- vị trí-->
 					<td class="align-middle">' . $slide['sld_pos'] . '</td>
+
+					<!-- link-->
+					<td class="align-middle">
+						<a href="' . $slide['sld_link'] . '">'. $slide['sld_link'] .'</a>
+					</td>
 
 					<!-- xem trước  -->
 					<td class="align-middle">

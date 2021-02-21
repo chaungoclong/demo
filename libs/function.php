@@ -233,8 +233,9 @@ function read_date($time) {
 		return preg_match($pattern, $string);
 	}
 
-	function is_email($string) {
-		return filter_var(data_input($string), FILTER_VALIDATE_EMAIL);
+	function email($email) {
+		$email = filter_var($email, FILTER_SANITIZE_EMAIL);
+		return filter_var($email, FILTER_VALIDATE_EMAIL);
 	}
 
 	// hàm kiểm tra số nguyên
@@ -252,7 +253,11 @@ function read_date($time) {
 		return filter_var(data_input($value), FILTER_VALIDATE_BOOLEAN);
 	}
 
-
+	// hàm kiểm tr URL
+	function url($url) {
+		$url = filter_var($url, FILTER_SANITIZE_URL);
+		return filter_var($url, FILTER_VALIDATE_URL);
+	}
 	// hàm kiểm tra ngày tháng
 	function check_date($string) {
 		$pattern = '/^[12]\d{3}-(0[1-9]|1[12])-(0[1-9]|[12]\d|3[01])$/';
@@ -285,6 +290,14 @@ function read_date($time) {
 	function check_phone($string) {
 		$pattern = '/^(84|0[3|5|7|8|9])+([0-9]{8})$/';
 		return preg_match($pattern, $string);
+	}
+
+	function phone($phone) {
+		$pattern = '/^(84|0[3|5|7|8|9])+([0-9]{8})$/';
+		if(preg_match($pattern, $phone)) {
+			return $phone;
+		}
+		return false;
 	}
 
 	// hàm kiểm tra email đã tồn tại
@@ -688,6 +701,7 @@ function read_date($time) {
 	}
 
 	function getStar($proID) {
+		$star = 0;
 		$getStarSQL = "
 		SELECT SUM(r_star) as total_star, COUNT(*) as time_rate FROM db_rate
 		WHERE pro_id = ? 
@@ -697,8 +711,6 @@ function read_date($time) {
 		$timeRate = (int)$result['time_rate'];
 		if($timeRate) {
 			$star = round($totalStar / $timeRate, 1);
-		} else {
-			$star = 0;
 		}
 		return ['totalStar'=>$totalStar, 'timeRate'=>$timeRate, 'star'=>$star];
 	}

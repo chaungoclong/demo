@@ -14,7 +14,7 @@
     <form action="" name="registration" id="form">
 
         <label for="firstname">First Name</label>
-        <input type="text" name="firstname" id="firstname" placeholder="John" />
+        <input type="text" name="firstname" id="firstname" placeholder="John"required />
         <br><br>
 
         <label for="lastname">Last Name</label>

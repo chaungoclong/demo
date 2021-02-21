@@ -4,6 +4,7 @@
 
 		$param = [];
 		$format = "";
+		$pagination = "";
 		$proID = input_post('proID');
 		$fetchRateSQL = " 
 			SELECT db_customer.cus_name, db_customer.cus_avatar, db_rate.r_content, db_rate.r_star, db_rate.r_create_at

@@ -71,6 +71,13 @@ $listCategory = db_fetch_table('db_category', 0);
                   <div class="alert-danger" id="catErr"></div>
                </div>
 
+               <!-- đường link đi đến khi nhấn vào slide -->
+               <div class="form-group">
+                <label for="link"><strong>Đi đến:</strong></label>
+                <input type="text" class="form-control" placeholder="link..." name="link" id="link" value="<?= $slide['sld_link']; ?>">
+                <div class="alert-danger" id="linkErr"></div>
+              </div>
+
              <!-- ảnh đại diện -->
             <div class="form-group">
                <label for="slide"><strong>Ảnh slide:</strong></label>
@@ -110,7 +117,7 @@ $listCategory = db_fetch_table('db_category', 0);
             </div>
 
 
-            <button class="btn_add_sld btn btn-block btn-success"><strong>THÊM</strong></button>
+            <button class="btn_add_sld btn btn-block btn-success"><strong>LƯU</strong></button>
               
          </div>
       </div>

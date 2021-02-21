@@ -1,6 +1,6 @@
 <main>
   <!-- wrapper -row -->
-  <div class="wrapper_all bg-light">
+  <div class="wrapper_all bg-white">
     <!-- left-col -->
     <div class="left_col shadow bg-faded position-fixed">
       <h2 class="logo_sidebar bg-secondary mb-4">
@@ -147,7 +147,7 @@
         <li class="nav-item mb-4 dropdown">
           <a href="<?= base_url('admin/customer/'); ?>">
             <i class="fas fa-users mr-1"></i>
-            <strong>người dùng</strong>
+            <strong>Khách hàng</strong>
           </a>
         </li>
         <?php endif ?>

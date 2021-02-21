@@ -575,6 +575,7 @@ if(!$product['pro_active']) {
 	      	rateInfo += `<strong style='font-size: 18px;' class='text-danger'> ( ${star['timeRate']} đánh giá ) </strong>`;
 
 	        $('.qtyRate').text(star['timeRate']);
+	        console.log(star);
 	        if(star['timeRate'] > 0) {
 	        	$('.rateInfo').html(rateInfo);
 	        }

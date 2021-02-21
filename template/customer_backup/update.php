@@ -31,8 +31,8 @@ $customer = get_user_by_id($customerID);
 					<div class="form-group mb-3">
 						<div class="input-group">
 							<div class="input-group-prepend">
-								<label for="name" class="input-group-text" style="min-width: 120px;">
-									<i class="fas fa-user fa-lg mr-2"></i>Họ tên
+								<label for="name" class="input-group-text">
+									<i class="fas fa-user fa-lg"></i>
 								</label>
 							</div>
 							<input type="text" id="name" name="name" class="form-control" placeholder="name" value="<?= $customer['cus_name']; ?>">
@@ -46,8 +46,8 @@ $customer = get_user_by_id($customerID);
 					<div class="form-group mb-3">
 						<div class="input-group">
 							<div class="input-group-prepend">
-								<label for="dob" class="input-group-text" style="min-width: 120px;">
-									<i class="fas fa-calendar fa-lg mr-2"></i>Ngày sinh
+								<label for="dob" class="input-group-text">
+									<i class="fas fa-calendar fa-lg"></i>
 								</label>
 							</div>
 							<input type="text" id="dob" name="dob" class="form-control" placeholder="dd-mm-yyyy" autocomplete="off"

@@ -24,6 +24,24 @@
   <script src="dist/carousel/dist/owl.carousel.min.js"></script>
 </head>
 <body>
+  <!-- xác thực -->
+  <?php 
+    if (is_login() && !is_admin()) {
+      $authID = $_SESSION['user_token']['id'];
+      $authInfo = getUserById($authID);
+      if($authInfo['cus_active'] == 0) {
+        $goToAfterAuth = base_url("index.php");
+        set_logout();
+        die('
+          <div class="ml-5 mt-5">
+            <h1 class="text-danger">TÀI KHOẢN CỦA BẠN BỊ KHÓA</h1>
+            <a class="btn btn-primary" href="' . $goToAfterAuth . '">TRANG CHỦ</a>
+          </div>
+        ');
+      }
+    }
+  ?>
+  
   <!-- header -->
   <header id="header" class="">
     <!--header top -->

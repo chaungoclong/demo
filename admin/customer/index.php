@@ -8,162 +8,87 @@ if(!is_login() || !is_admin()) {
 
 require_once '../include/sidebar.php';
 require_once '../include/navbar.php';
-
 ?>
 <!-- main content -row -->
 <div class="main_content bg-white row m-0 pt-4">
 	<div class="col-12">
-		<div>
-			<h5>KHÁCH HÀNG</h5>
-			<p class="mb-4">Khách hàng là nơi bạn kiểm tra và chỉnh sửa thông tin khách hàng</p>
-			<hr>
+		<!-- tiêu đề -->
+		<div class="d-flex justify-content-between align-items-center mb-2">
+			<h5>DANH SÁCH KHÁCH HÀNG</h5>
+			<a class="btn_back btn btn-warning py-1 px-2" onclick="javascript:history.go(-1)">
+				<i class="fas fa-chevron-circle-left"></i>
+			</a>
 		</div>
-		<div class="row m-0 mb-3">
-			<div class="col-12 p-0 d-flex justify-content-end align-items-center">
 
-				<!-- ===================== search  ====================== -->
-				<div class="form-group m-0 p-0 d-flex align-items-center">
-					<form action="" class="form-inline" id="search_box">
-						<input 
-							type        ="text" 
-							name        ="q" 
-							id          ="search" 
-							class       ="form-control"
-							placeholder ="Search..." 
-							value       ="<?= $_GET['q'] ?? ""; ?>"
-							>
-						<button class="btn btn-outline-success">
-							<i class="fas fa-search"></i>
-						</button>
-					</form>
+		<!-- nút thêm khách hàngvà thanh tìm kiếm -->
+		<div class="row m-0 mb-3">
+			<!-- nút thêm khách hàng-->
+			<div class="col-12 p-0 d-flex justify-content-between align-items-center bg-light p-2">
+
+				<!-- tìm kiếm -->
+				<div class="filter d-flex">
+					<!-- sắp xếp -->
+					<select id="sort" class="custom-select">
+						<option value="1">Tên: A - Z</option>
+						<option value="2">Tên: Z - A</option>
+						<option value="3" selected>Mới nhất</option>
+						<option value="4">Cũ nhất</option>
+					</select>
+
+					<!-- giới tính -->
+					<select id="gender_opt" class="custom-select">
+						<option value="all" selected>Tất cả</option>
+						<option value="male">Nam</option>
+						<option value="female">Nữ</option>
+					</select>
+
+					<!-- lọc trạng thái khách hàng-->
+					<select id="filter_status" class='custom-select'>
+						<option value="all" selected>Tất cả</option>
+						<option value="on">Bật</option>
+						<option value="off">Tắt</option>
+					</select>
+
+					<!-- tìm kiếm tên , id khách, địa chỉ , ngày sinh... khách hàng-->
+					<input type="text" class="form-control" id="search" placeholder="search">
 				</div>
 
+				<!-- số hàng hiển thị -->
+				<div class="d-flex justify-content-between align-items-center">
+					<i class="far fa-file-excel fa-2x text-success mr-3" style="" onclick="window.location='export_file.php'"></i>
+
+					<?php $option = [5, 10, 25, 50, 100]; ?>
+					<select class="custom-select" id="number_of_rows">
+						<?php foreach ($option as $key => $each): ?>
+							<option value="<?= $each; ?>"> <?= $each; ?> </option>
+						<?php endforeach ?>
+					</select>
+				</div>
 			</div>
 		</div>
-		<!-- lấy khách hàng -->
-		<?php
-			$q = data_input(input_get('q'));
-			$key = "%" . $q . "%";
 
-			if($q != "") {
-				$searchSQL = "
-				SELECT * FROM db_customer WHERE 
-					cus_id LIKE(?) OR
-					cus_name LIKE(?) OR 
-					cus_address LIKE(?) OR
-					cus_phone LIKE(?) OR
-					cus_email LIKE(?) OR
-					cus_dob LIKE(?) OR
-					cus_phone LIKE(?)
-				";
+		<!-- danh sách khách hàng-->
+		<div>
+			<table class="table table-hover table-bordered" style="font-size: 15px;">
+				<thead class="thead-light">
+					<tr>
+						<th class="align-middle">ID</th>
+						<th class="align-middle">TÊN</th>
+						<th class="align-middle">NGÀY SINH</th>
+						<th class="align-middle">GIỚI TÍNH</th>
+						<th class="align-middle">EMAIL</th>
+						<th class="align-middle">ĐIỆN THOẠI</th>
+						<th class="align-middle">ĐỊA CHỈ</th>
+						<th class="align-middle">TRẠNG THÁI</th>
+						<th class="align-middle">HÀNH ĐỘNG</th>
+					</tr>
+				</thead>
 
-				$param = [$key, $key, $key, $key, $key, $key, $key];
-				$listCustomer = db_get($searchSQL, 1, $param, "sssssss");
-			} else {
-
-				$listCustomer = getListUser(0);
-			}
+				<tbody class="list_customer">
+				</tbody>
 			
-
-			// chia trang
-			$totalCustomer = $listCustomer->num_rows;
-			$customerPerPage = 5;
-			$currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
-			$currentLink = create_link(base_url("admin/customer/index.php"), ["page"=>'{page}', 'q'=>$q]);
-			$page = paginate($currentLink, $totalCustomer, $currentPage, $customerPerPage);
-
-			// danh sách nhân viên sau khi chia trang
-			if($q != "") {
-				$searchResultSQL = $searchSQL . " LIMIT ? OFFSET ?";
-				$param = [$key, $key, $key, $key, $key, $key, $key, $page['limit'], $page['offset']];
-
-				// danh sách người dùng sau khi tìm kiếm và chia trang chia trang
-				$listCustomerPaginate = db_get($searchResultSQL, 1, $param, "sssssssii");
-			} else {
-
-				$listCustomerPaginate = getListUser(0, $page['limit'], $page['offset']);
-			}
-
-			
-			$totalCustomerPaginate = $listCustomerPaginate->num_rows;
-
-			// số thứ tự
-			$stt = 1 + (int)$page['offset'];
-
-		?>
-		<div class="content_table">
-			<table class="table table-hover table-bordered" style="font-size: 13px;">
-				<tr>
-					<th>STT</th>
-					<th>Mã</th>
-					<th>Tên</th>
-					<th>Ngày sinh</th>
-					<th>Giới tính</th>
-					<th>Email</th>
-					<th>Điện thoại</th>
-					<th>Ảnh</th>
-					<th>Địa chỉ</th>
-					<th>Trạng thái</th>
-					<th>Sửa</th>
-					<th>Xóa</th>
-				</tr>
-				<!-- in các đơn hàng -->
-				<?php if ($totalCustomerPaginate > 0): ?>
-				<?php foreach ($listCustomerPaginate as $key => $customer): ?>
-				<tr>
-					<td><?= $stt++; ?></td>
-					<td><?= $customer['cus_id']; ?></td>
-					<td><?= $customer['cus_name']; ?></td>
-					<td><?= $customer['cus_dob']; ?></td>
-					<td>
-						<?= $customer['cus_gender'] ? "Nam" : "Nữ"; ?>
-					</td>
-					<td><?= $customer['cus_email']; ?></td>
-					<td><?= $customer['cus_phone']; ?></td>
-					<td>
-						<img src="../../image/<?= $customer['cus_avatar']; ?>" width="30px" height="30px">
-					</td>
-					<td><?= $customer['cus_address']; ?></td>
-					<td>
-						<div class="custom-control custom-switch">
-							<input 
-								type="checkbox" 
-								id="switch_active_<?= $customer['cus_id']; ?>" 
-								data-customer-id="<?= $customer['cus_id']; ?>"
-								class="btn_switch_active custom-control-input" 
-								value="<?= $customer['cus_active']; ?>"
-								<?= $customer['cus_active'] ? "checked" : ""; ?>
-							>
-							<label for="switch_active_<?= $customer['cus_id']; ?>" class="custom-control-label"></label>
-						</div>
-					</td>
-					<td>
-						<a
-							href="
-							<?= 
-								create_link(base_url('admin/customer/update.php'), [
-									"cusid"=>$customer['cus_id']
-								]);
-							?>
-							"
-							class="btn_edit_customer btn btn-success"
-							data-customer-id="<?= $customer['cus_id']; ?>">
-							<i class="fas fa-edit"></i>
-						</a>
-					</td>
-					<td>
-						<a 
-							class="btn_remove_customer btn btn-danger"
-							data-customer-id="<?= $customer['cus_id']; ?>">
-							<i class="fas fa-trash-alt"></i>
-						</a>
-					</td>
-				</tr>
-				
-				<?php endforeach ?>
-				<?php endif ?>
 			</table>
-			<?php echo $page['html']; ?>
+			<div class="page"></div>
 		</div>
 	</div>
 </div>
@@ -177,116 +102,174 @@ require_once '../include/navbar.php';
 
 <script>
 	$(function() {
+		// khôi phục trang trước(nếu quay lại từ trang update sau khi update)
+		// hoặc làm mới trang(lấy danh sách khách hàngtại trang đầu tiên vơi các tùy chọn tìm kiếm mặc định)
+		fetchPageFirstTime();
 
-		// cập nhật nội dung thẻ search
-		let q = "<?= $_GET['q'] ?? ""; ?>";
-		$('#search').val(q);
-
-		// Thay đổi trạng thái của khách hàng
-		$(document).on('change', '.btn_switch_active', function() {
-
-			// id khách hàng
-			let customerID = $(this).data("customer-id");
-
-			// trạng thái hiện tại
-			let prevActive = $(this).val();
-			console.log(prevActive);
-
-			// trạng thái muốn thay đổi
-			let newActive = $(this).prop('checked');
-			newActive = newActive ? 1 : 0;
-			console.log(newActive);
-
-			// gửi yêu cầu thay đổi trạng thái
-			let sendSwitchActive = sendAJax(
-				"process_customer.php",
-				"post",
-				"json",
-				{customerID: customerID, newActive: newActive, action: "switch_active"}
-			)
-			// alert(sendSwitchActive.status);
-
-			// nếu không thành công khôi phục về trạng thái trước đó
-			// if(sendSwitchActive.status == 1) {
-			// 	alert("THIẾU DỮ LIỆU");
-			// 	if(prevActive == 1) {
-			// 		$("#switch_active_" + customerID).prop("checked", true);
-			// 	} else {
-			// 		$("#switch_active_" + customerID).prop("checked", false);
-			// 	}
-			// }
-
-			// // nếu thành công thay đổi trang thái của nút trạng thái theo trạng thái được trả về
-			// if(sendSwitchActive.status == 5) {
-
-			// 	// mã khách hàng trả về
-			// 	let customerID = sendSwitchActive.customerID;
-
-			// 	// trạng thái trả về
-			// 	let resActive = sendSwitchActive.active;
-			// 	// alert(resActive);
-
-			// 	// thay đổi trạng thái
-			// 	if(resActive == 1) {
-			// 		$("#switch_active_" + customerID).prop("checked", true);
-			// 	} else {
-			// 		$("#switch_active_" + customerID).prop("checked", false);
-			// 	}
-			// }
-			
-
-			// làm mới trang
-			let q           = "<?= $_GET['q'] ?? ""; ?>";
-			let prevPage    = "<?= getCurrentURL(); ?>";
-			let currentPage = <?= $currentPage ?>;
-			let fetchPage = sendAJax(
-				"fetch_page.php",
-				"post",
-				"html",
-				{action: "fetch", prevPage: prevPage, q: q, currentPage: currentPage }
-			);
-
-			$('.content_table').html(fetchPage);
+		// lấy danh sách khách hàng khi nhập tìm kiếm
+		$(document).on('input', '#search', function() {
+			fetchPage(1);
 		});
 
+		// lấy danh sách khách hàng khi lọc theo trạng thái
+		$(document).on('change', '#filter_status', function() {
+			fetchPage(1);
+		});
 
-		// xóa người dùng
-		$(document).on('click', '.btn_remove_customer', function() {
+		// lấy danh sách khách hàng khi lọc theo giới tính
+		$(document).on('change', '#gender_opt', function() {
+			fetchPage(1);
+		});
 
-			let wantRemove = confirm("BẠN CÓ MUỐN XÓA NGƯỜI DÙNG NÀY? MỌI ĐƠN HÀNG LIÊN QUAN SẼ BỊ XÓA THEO");
+		// lấy danh sách khách hàng khi sắp xếp
+		$(document).on('change', '#sort', function() {
+			fetchPage(1);
+		});
 
-			if(wantRemove) {
-				// THỰC HIỆN HÀNH ĐỘNG
-				let customerID = $(this).data('customer-id');
-				let prevLink = "<?= getCurrentURL() ?>";
-				
-				let sendRemove = sendAJax(
-					"process_customer.php",
-					"post",
-					"text",
-					{customerID: customerID, action: "remove"}
-				);
+		// lấy danh sách khách hàng khi thay đổi số hàng hiển thị
+		$(document).on('change', '#number_of_rows', function() {
+			fetchPage(1);
+		});
 
-				// LÀM MỚI TRANG
-				// trang trước(chuyển hướng đến sau khi cập nhật -dùng cho update)
-				let prevPage    = "<?= getCurrentURL(); ?>";
-				
-				// trang hieenh tại(phân trang)
-				let currentPage = <?= $currentPage ?>;
-				
-				let q           = "<?= $_GET['q'] ?? ""; ?>";
-
-				// làm mới trang
-				let fetchPage = sendAJax(
-					"fetch_page.php",
-					"post",
-					"html",
-					{action: "fetch", prevPage: prevPage, q: q, currentPage: currentPage }
-				);
-
-				$('.content_table').html(fetchPage);
+		// lấy danh sách khách hàng khi chuyển trang
+		$(document).on('click', '.page-item', function() {
+			let currentPage = parseInt($(this).data("page-number"));
+			if(isNaN(currentPage)) {
+				currentPage = 1;
 			}
+			fetchPage(currentPage);
+		});
 
+		// thay đổi trạng thái của 1 danh mục
+		$(document).on('change', '.btn_switch_active', function() {
+			changeStatus(this.id);
+		});
+
+		// xóa 1 danh mục
+		$(document).on('click', '.btn_delete_cus', function() {
+			deleteRow(this.id);
+		});
+
+		// lưu dữ liệu của trang index trước khi chuyển sang trang update(để quay lại đúng trang sau khi update)
+		$(document).on('click', '.btn_edit_cus', function() {
+			setPrevPageData();
 		});
 	});
+
+	// hàm lấy danh sách các mục
+	function fetchPage(currentPage = 1) {
+		let q = "%" + $('#search').val().trim() + "%";
+		let sort = $('#sort').val();
+		let gender = $('#gender_opt').val();
+		let numRows = $('#number_of_rows').val();
+		let status = $('#filter_status').val();
+		let action = "fetch";
+		let data = {q : q, status: status, sort: sort, gender: gender, numRows: numRows, currentPage: currentPage, action: action};
+		let result = sendAJax("fetch_page.php", "post", "json", data);
+		$('.list_customer').html(result.customers);
+		$('.page').html(result.pagination);
+	}
+
+	// hàm thay đổi trạng thái của danh mục
+	function changeStatus(btnID) {
+		let cusID = $(`#${btnID}`).data('cus-id');
+		let status = $(`#${btnID}`).prop('checked');
+		let active = status ? 1 : 0;
+		let action = "switch_active";
+		let data = {cusID: cusID, active: active, action: action};
+		let result = sendAJax("process_customer.php", "post", "json", data);
+		if(!result.ok) {
+			alert("có lỗi khi thay đổi trạng thái");
+		}
+		// cập nhật lại sau khi thay đổi
+		let currentPage = parseInt($('li.page-item.active').data('page-number'));
+		if(isNaN(currentPage)) {
+			currentPage = 1;
+		};
+		fetchPage(currentPage);
+	}
+
+	function deleteRow(btnID) {
+		let cusID = $(`#${btnID}`).data('cus-id'); 
+		let action = "delete";
+		let data = {cusID : cusID, action: action};
+		let result = sendAJax("process_customer.php", "post", "json", data);
+		console.log(result);
+		let status = result.status;
+		switch (status) {
+			case "success":
+				alert("XÓA THÀNH CÔNG");
+				break;
+			case "has_order":
+				alert("KHÔNG THỂ XÓA KHÁCH HÀNG ĐÃ MUA HÀNG");
+				break;
+			case "error":
+				alert("ĐÃ CÓ LỖI XẢY RA, VUI LÒNG THỬ LẠI");
+				break;
+			default:
+				alert("ĐÃ CÓ LỖI XẢY RA, VUI LÒNG THỬ LẠI");
+				break;
+		}
+
+		// cập nhật danh sách sau khi xóa
+		let currentPage = parseInt($('li.page-item.active').data('page-number'));
+		if(isNaN(currentPage)) {
+			currentPage = 1;
+		};
+		fetchPage(currentPage);
+	}
+
+	/**
+	 * hàm tạo dữ liệu của trang trước (để khi quay lại trang đó thì khôi phục lại)
+	 */
+	function setPrevPageData() {
+		localStorage.setItem("search", $('#search').val());
+		localStorage.setItem("sort", $('#sort').val());
+		localStorage.setItem("gender", $('#gender_opt').val());
+		localStorage.setItem("numRows", $('#number_of_rows').val());
+		localStorage.setItem("status", $('#filter_status').val());
+		localStorage.setItem("oldPage", parseInt($('li.page-item.active').data('page-number')));
+	}
+
+	// hàm lấy trang lần đầu tiên (nếu quay về từ trang update thì khôi phục các thông tin về tùy chọn tìm kiếm, vị trí trang hiện tại)
+	// nếu lần đầu vào trang hoặc quay về từ trang khác khác trang update thì làm mới trang(lấy dữ liệu trang đầu tiên, các tùy chọn tìm kiếm mặc định)
+	function fetchPageFirstTime() {
+		let search  = localStorage.getItem("search");
+		if(search != null) {
+			$('#search').val(search);
+			localStorage.removeItem("search");
+		}
+
+		let sort    = localStorage.getItem("sort");
+		if(sort != null) {
+			$('#sort').val(sort);
+			localStorage.removeItem("sort");
+		}
+
+		let gender    = localStorage.getItem("gender");
+		if(gender != null) {
+			$('#gender_opt').val(gender);
+			localStorage.removeItem("gender");
+		}
+
+		let numRows    = localStorage.getItem("numRows");
+		if(numRows != null) {
+			$('#number_of_rows').val(numRows);
+			localStorage.removeItem("numRows");
+		}
+
+		let status  = localStorage.getItem("status");
+		if(status != null) {
+			$('#filter_status').val(status);
+			localStorage.removeItem("status");
+		}
+
+		let oldPage = localStorage.getItem("oldPage");
+		if(oldPage != null) {
+			fetchPage(oldPage);
+			localStorage.removeItem("oldPage");
+		} else {
+			fetchPage(1);
+		}
+	}
 </script>	

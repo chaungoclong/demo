@@ -510,50 +510,28 @@ function editCustomerInfo() {
         }
 
         data.append('action', "edit");
-        // biến gửi ajax
-        let sendUpdate = $.ajax({
-            url: "process_customer.php",
-            type: "POST",
-            data: data,
-            dataType: "json",
-            cache: false,
-            contentType: false,
-            processData: false,
-        });
 
-        sendUpdate.done(function(res) {
-            let status = res.status;
-            let data = res.info;
-            console.log(res);
-            console.log(status, data);
+        let result = sendAJax("process_customer.php", "post", "json", data, 1);
+        let status = result.status;
+        let error = result.error;
+        let msg = "";
 
-            switch (status) {
-                case 1:
-                    $('#backErr').text('Thiếu dữ liệu');
-                    break;
-                case 2:
-                    $('#backErr').text('Dữ liệu sai');
-                    break;
-                case 3:
-                    $('#backErr').text('Email đã tồn tại');
-                    break;
-                case 4:
-                    $('#backErr').text('Số điện thoại đã tồn tại');
-                    break;
-                case 5:
-                    // $('#backErr').text('Cập nhật thành công');
-                    // $('#name').text(data.name);
-                    alert('CẬP NHẬT THÀNH CÔNG');
-                    window.location = document.referrer;
-                    // $('[class*="acc_img"]').prop('src', "../image/" + data.avatar);
-                    // $('[class*="acc_name"]').text(data.name);
+        if(status == "success") {
+            msg += "CẬP NHẬT THÀNH CÔNG";
 
-                    break;
-                case 6:
-                    $('#backErr').text('Đã xảy ra lỗi. Vui lòng thử lại');
-                    break;
+            if(error.length) {
+                msg += "\n" + error.join("\n");
             }
-        });
+            alert(msg);
+            window.location = "index.php";
+        } else {
+            msg += "CẬP NHẬT THẤT BẠI";
+
+            if(error.length) {
+                msg += "\n" + error.join("\n");
+            }
+            alert(msg);
+        }
     }
 }
 
@@ -1768,24 +1746,23 @@ function editBrand() {
 
 // =========================SLIDER MODULE===========================
 function validateSlideAdd() {
-
     let test = true;
-
     let limitSlide = 20;
 
     // xóa class lỗi
     $('#cat').removeClass('error_field');
     $('#slide').removeClass('error_field');
+    $('#link').removeClass('error_field');
 
     // xóa thông báo lỗi
     $('#catErr').text('');
     $('#slideErr').text('');
+    $('#linkErr').text('');
 
     // lấy giá trị
     let category = $('#cat').val();
     let slide = $('#slide')[0].files;
-
-    // validate
+    let link = $('#link').val().trim();
 
     // category
     if (category == null) {
@@ -1823,6 +1800,17 @@ function validateSlideAdd() {
             test = false;
             $('#slideErr').text(errorSlide);
         }
+    }
+
+    // link
+    if(link == "") {
+        test = false;
+        $('#link').addClass('error_field');
+        $('#linkErr').text("không được bỏ trống");
+    } else if(!isURL(link)) {
+        test = false;
+        $('#link').addClass('error_field');
+        $('#linkErr').text("sai định dạng");
     }
 
     if (!test) {
@@ -1890,20 +1878,22 @@ function addSlide() {
 // UPDATE SLIDE
 
 function validateSlideEdit() {
-
     let test = true;
 
     // xóa class lỗi
     $('#cat').removeClass('error_field');
     $('#slide').removeClass('error_field');
+    $('#link').removeClass('error_field');
 
     // xóa thông báo lỗi
     $('#catErr').text('');
     $('#slideErr').text('');
+    $('#linkErr').text('');
 
     // lấy giá trị
     let category = $('#cat').val();
     let slide = $('#slide')[0].files;
+    let link = $('#link').val().trim();
 
     // validate
 
@@ -1936,6 +1926,16 @@ function validateSlideEdit() {
             test = false;
             $('#slideErr').text(errorSlide);
         }
+    }
+
+    if(link == "") {
+        test = false;
+        $('#link').addClass('error_field');
+        $('#linkErr').text("không được để trống");
+    } else if(!isURL(link)) {
+        test = false;
+        $('#link').addClass('error_field');
+        $('#linkErr').text("sai định dạng");
     }
 
     if (!test) {

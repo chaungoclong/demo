@@ -3,93 +3,137 @@ require_once '../../common.php';
 
 // THAY ĐỔI TRẠNG THÁI
 if (!empty($_POST['action']) && $_POST['action'] == "switch_active") {
-	$status = 5;
+	$ok = true;
+	$cusID = $_POST['cusID'];
+	$active = $_POST['active'];
+	$switchSQL = "UPDATE db_customer SET cus_active = ? WHERE cus_id = ?";
+	$runSwitch = db_run($switchSQL, [$active, $cusID], "ii");
+	$ok = $runSwitch ? true : false;
 
-		// mã khách hàng
-	$customerID = data_input(input_post("customerID"));
-
-		// trạng thái muốn cập nhật
-	$newActive = $_POST['newActive'] ?? null;
-
-		// validate
-	if($customerID === false || $newActive === null) {
-		$status = 1;
-	} else {
-		$switchActiveSQL = "UPDATE db_customer SET cus_active = ? WHERE cus_id = ?";
-		$runSwitchActiveSQL = db_run($switchActiveSQL, [$newActive, $customerID], 'ii');
-		if($runSwitchActiveSQL) {
-			$status = 5;
-		} else {
-			$status = 6;
-		}
-	}
-
-	$res = [
-		"status"=>$status,
-		"customerID"=>$customerID,
-		"active"=>$newActive
-	];
-
-	echo json_encode($res);
+	$output = ['ok'=>$ok];
+	echo json_encode($output);
 }
 
 
 // CHỈNH SỬA THÔNG TIN
 if (!empty($_POST['action']) && $_POST['action'] == "edit") {
-		// lấy dữ liệu gửi lên từ ajax
-	$cusID     = data_input(input_post("cusID"));
-	$address   = data_input(input_post("address"));
-	$name      = data_input(input_post("name"));
-	$dob       = formatDate(data_input(input_post("dob")));
-	$gender    = data_input(input_post("gender"));
-	$email     = data_input(input_post("email"));
-	$phone     = data_input(input_post("phone"));
-	$oldAvatar = data_input(input_post('oldAvatar'));
-	$active    = data_input(input_post("active"));
-	$active    = $active ? 1 : 0;
+	$status = "fail";
+	$cusID = $address = $name = $dob = $gender = $email = $phone = $oldAvatar = $active = $file = $fileName = "";
+	$folder = "../../image/";
+	$extension = ['png', 'jpeg', 'jpg'];
+	$error = [];
+	$ok = true;
 
-	
-	// echo $cusID.$address.$name.$dob.$gender.$email.$phone.$oldAvatar.$active;
-	// nếu không có file tải lên thì tên file = tên file avatar cũ
-	$imgFile = !empty($_FILES['avatar']) ? $_FILES['avatar'] : null;
-	if(!empty($imgFile)) {
-		$imgFileName = up_file($imgFile, "../../image/", ['png', 'jpeg', 'jpg', 'gif']);
+	// customer ID
+	if(empty($_POST['cusID'])) {
+		$ok = false;
 	} else {
-		$imgFileName = $oldAvatar;
+		$cusID = data_input($_POST['cusID']);
 	}
 
-	//validate
-	if($cusID === false || $name === false || $dob === false || $gender === false || 
-		$email === false || $phone === false || $oldAvatar === false || $address === false) {
-		$status = 1;
-	} else if(!check_name($name) || !check_date($dob) || !check_email($email)
-		|| !check_phone($phone)) {
-		$status = 2;
+	// address
+	if(empty($_POST['address'])) {
+		$ok = false;
+		$error[] = "ĐỊA CHỈ: không được để trống";
 	} else {
+		$address = data_input($_POST['address']);
+		if(!check_word($address)) {
+			$ok = false;
+			$error[] = "ĐỊA CHỈ: sai định dạng";
+		}
+	}
 
-		// kiểm tra email đã tồn tại
-		$checkEmail = s_row(
-			"SELECT * FROM db_customer WHERE cus_email = ? AND cus_id != ?",
-			[$email, $cusID], 
-			"si"
-		);
+	// tên
+	if(empty($_POST['name'])) {
+		$ok = false;
+		$error[] = "TÊN: không được để trống";
+	} else {
+		$name = data_input($_POST['name']);
+		if(!check_name($name)) {
+			$ok = false;
+			$error[] = "TÊN: sai định dạng";
+		}
+	}
 
-		// kiểm tra điện thoại đã tồn tại
-		$checkPhone = s_row(
-			"SELECT * FROM db_customer WHERE cus_phone = ? AND cus_id != ?",
-			[$phone, $cusID], 
-			"si"
-		);
+	// ngày sinh
+	if(empty($_POST['dob'])) {
+		$ok = false;
+		$error[] = "NGÀY SINH: không được để trống";
+	} else {
+		$dob = formatDate(data_input($_POST['dob']));
+	}
 
-		//nếu tồn tại email || số điện thoại -> bóa lỗi{3: email, 4: phone}
-		//ngược lại -> cập nhật
-		if($checkEmail) {
-			$status = 3;
-		} else if($checkPhone) {
-			$status = 4;
+	// giới tính
+	if(isset($_POST['gender'])) {
+		$gender = data_input($_POST['gender']);
+	} else {
+		$ok = false;
+		$error[] = "GIỚI TÍNH: không được để trống";
+	}
+
+	// email
+	if(empty($_POST['email'])) {
+		$ok = false;
+		$error[] = "EMAIL: không được để trống";
+	} else {
+		$email = email($_POST['email']);
+
+		if($email === false) {
+			$ok = false;
+			$error[] = "EMAIL: sai định dạng";
 		} else {
-			// SQL update info
-			$updateSQL = "UPDATE db_customer
+			$checkEmailSQL = "SELECT COUNT(*) FROM db_customer WHERE cus_email = ? AND cus_id != ?";
+			$runCheckEmail = s_cell($checkEmailSQL, [$email, $cusID], "si");
+
+			if($runCheckEmail > 0) {
+				$ok = false;
+				$error[] = "EMAIL: đã tồn tại";
+			}
+		}
+	}
+
+	// điện thoại
+	if(empty($_POST['phone'])) {
+		$ok = false;
+		$error[] = "PHONE: không được để trống";
+	} else {
+		$phone = phone($_POST['phone']);
+		if($phone === false) {
+			$ok = false;
+			$error[] = "PHONE: sai định dạng";
+		} else {
+			$checkPhoneSQL = "SELECT COUNT(*) FROM db_customer WHERE cus_phone = ? AND cus_id != ?";
+			$runCheckPhone = s_cell($checkPhoneSQL, [$phone, $cusID], "si");
+
+			if($runCheckPhone > 0) {
+				$ok = false;
+				$error[] = "PHONE: đã tồn tại";
+			}
+		}
+	}
+
+	// old avatar
+	if(!empty($_POST['oldAvatar'])) {
+		$oldAvatar = data_input($_POST['oldAvatar']);
+	}
+
+	// file
+	if(!empty($_FILES['avatar'])) {
+		$file = $_FILES['avatar'];
+		$fileName = up_file($file, $folder, $extension);
+
+		if(!$fileName) {
+			$ok = false;
+			$error[] = "ẢNH: tải lên không thành công";
+		}
+	} else {
+		$fileName = $oldAvatar;
+	}
+
+	$active = !empty($_POST['active']) ? 1 : 0;
+
+	if($ok) {
+		$updateSQL = "UPDATE db_customer
 			SET 
 			cus_name    = ?, 
 			cus_dob     = ?,
@@ -101,43 +145,34 @@ if (!empty($_POST['action']) && $_POST['action'] == "edit") {
 			cus_active  = ?
 			WHERE cus_id = ?
 			";
-
-			// dữ liệu 
-			$data      = [$name, $dob, $gender, $email, $phone, $imgFileName, $address, $active, $cusID];
-
-			// update
-			$runUpdate = db_run($updateSQL, $data, "ssissssii");
-
-			$status = $runUpdate ? 5 : 6;
-
-		}	
+			$param = [$name, $dob, $gender, $email, $phone, $fileName, $address, $active, $cusID];
+			$runUpdate = db_run($updateSQL, $param, "ssissssii");
+			$status = $runUpdate ? "success" : "fail";
 	}
 
-	//tập hợp dữ liệu trả về
-	$res = [
-		"status"   => $status
-	];
-
-	// trả về dữ liệu
-	echo json_encode($res);
+	$output = ['status'=>$status, 'error'=>$error];
+	echo json_encode($output);
 }
 
 
 // XÓA NGƯỜI DÙNG
-if (!empty($_POST['action']) && $_POST['action'] == "remove") {
-	$status = 5;
+if (!empty($_POST['action']) && $_POST['action'] == "delete") {
+	$status = "error";
+	$cusID = $_POST['cusID'];
 
-	// mã người dùng
-	$customerID = data_input(input_post("customerID"));
+	// has order
+	$checkHasOrderSQL = "SELECT COUNT(*) FROM db_order WHERE cus_id = ?";
+	$runCheck = s_cell($checkHasOrderSQL, [$cusID], "i");
 
-	if($customerID === false) {
-		$status = 1;
+	if($runCheck > 0) {
+		$status = "has_order";
 	} else {
-		$removeCustomerSQL = "DELETE FROM db_customer WHERE cus_id = ?";
-		$runRemoveCustomer = db_run($removeCustomerSQL, [$customerID], "i");
-		$status = ($runRemoveCustomer) ? 5 : 6;
+		$deleteSQL = "DELETE FROM db_customer WHERE cus_id = ?";
+		$runDelete = db_run($deleteSQL, [$cusID], "i");
+		$status = $runDelete ? "success" : "error";
 	}
 
-	echo $status;
+	$output = ['status'=>$status];
+	echo json_encode($output);
 }
 ?>

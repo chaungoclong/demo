@@ -36,7 +36,7 @@ if($listSlide) {
   <?php $index = 0; ?>
   <?php foreach ($listSlide as $key => $slide): ?>
     <div class="<?php echo ($index == 0) ? 'carousel-item active' : 'carousel-item'; ?>">
-      <a href='<?= create_link(base_url("product.php"), ["cat"=>$slide["cat_id"]]); ?>'>
+      <a href='<?= $slide['sld_link']; ?>'>
         <img src="<?= base_url("image/" . $slide["sld_image"]); ?>" alt="">
       </a>
     </div>

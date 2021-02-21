@@ -71,7 +71,8 @@ require_once '../include/navbar.php';
 						<th class="align-middle">ID</th>
 						<th class="align-middle">DANH MỤC</th>
 						<th class="align-middle">VỊ TRÍ</th>
-						<th class="align-middle" width="45%">XEM TRƯỚC</th>
+						<th class="align-middle">LINK</th>
+						<th class="align-middle" width="25%">XEM TRƯỚC</th>
 						<th class="align-middle">DI CHUYỂN</th>
 						<th class="align-middle">SỬA</th>
 						<th class="align-middle">XÓA</th>

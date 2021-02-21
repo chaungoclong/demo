@@ -1,118 +1,121 @@
 <?php 
 	require_once '../../common.php';
-	if(isset($_POST['action']) && $_POST['action'] == "fetch") {
+	if(!empty($_POST['action']) && $_POST['action'] == "fetch") {
+		$getCustomerSQL = "SELECT * FROM db_customer WHERE 1";
+		$param = [];
+		$format = "";
 
-		$html = '';
+		// tìm kiếm theo tên, mã khách hàng
+		$q = !empty($_POST['q']) ? $_POST['q'] : "%%";
+		$getCustomerSQL .= " AND CONCAT(cus_name, cus_id, cus_dob, cus_address, cus_email, cus_phone) LIKE(?)";
+		$param[] = $q;
+		$format .= "s";
 
-		//============================ LẤY DANH SÁCH KHÁCH HÀNG =========================
-		$q = data_input(input_post('q'));
-		$key = "%" . $q . "%";
-
-		// nếu từ khóa tìm kiếm không rỗng -> lấy danh sách khách hàng theo tìm kiếm
-		if($q != "") {
-			$searchSQL = "
-			SELECT * FROM db_customer WHERE 
-				cus_id LIKE(?) OR
-				cus_name LIKE(?) OR 
-				cus_address LIKE(?) OR
-				cus_phone LIKE(?) OR
-				cus_email LIKE(?) OR
-				cus_dob LIKE(?) OR
-				cus_phone LIKE(?)
-			";
-
-			$param = [$key, $key, $key, $key, $key, $key, $key];
-			$listCustomer = db_get($searchSQL, 1, $param, "sssssss");
-		} else {
-
-			// từ khóa tìm kiếm rỗng -> lấy hết danh sách khách hàng
-			$listCustomer = getListUser(0);
-		}
-		
-
-		// ============= CHIA TRANG ===================================================
-		
-		// tổng số khách hàng
-		$totalCustomer = $listCustomer->num_rows;
-
-		// số khách hàng trên một trang
-		$customerPerPage = 5;
-
-		// trang hiện tại
-		$currentPage = isset($_POST['currentPage']) ? $_POST['currentPage'] : 1;
-
-		// link trang hiện tại(URI)
-		$currentLink = create_link(base_url("admin/customer/index.php"), ["page"=>'{page}', 'q'=>$q]);
-
-		// kết quả phân trang
-		$page = paginate($currentLink, $totalCustomer, $currentPage, $customerPerPage);
-
-		//===================== DANH SÁCH KHÁCH HÀNG SAU KHI CHIA TRANG ============================
-		
-		if($q != "") {
-			$searchResultSQL = $searchSQL . " LIMIT ? OFFSET ?";
-			$param = [$key, $key, $key, $key, $key, $key, $key, $page['limit'], $page['offset']];
-
-			// danh sách khách hàng sau khi tìm kiếm và chia trang chia trang
-			$listCustomerPaginate = db_get($searchResultSQL, 1, $param, "sssssssii");
-		} else {
-
-			// danh sách khách hàng sau khi chia trang
-			$listCustomerPaginate = getListUser(0, $page['limit'], $page['offset']);
+		// tìm kiếm theo trạng thái
+		$status = !empty($_POST['status']) ? $_POST['status'] : "all";
+		switch ($status) {
+			case "all":
+				break;
+			case 'on':
+				$getCustomerSQL .= " AND cus_active = 1";
+				break;
+			case 'off':
+				$getCustomerSQL .= " AND cus_active = 0";
+				break;
+			default:
+				break;
 		}
 
-		// tổng số bản ghi sau khi phân trang
-		$totalCustomerPaginate = $listCustomerPaginate->num_rows;
+		// tìm kiếm theo giới tính
+		$gender = !empty($_POST['gender']) ? $_POST['gender'] : "all";
+		switch ($gender) {
+			case 'all':
+				break;
+			case 'male':
+				$getCustomerSQL .= " AND cus_gender = 1";
+				break;
+			case 'female':
+				$getCustomerSQL .= " AND cus_gender = 0";
+				break;
+			default:
+				break;
+		}
 
-		// số thứ tự
-		$stt = 1 + (int)$page['offset'];
+		// sắp xếp
+		$sort = !empty($_POST['sort']) ? (int)$_POST['sort'] : 3;
+		switch ($sort) {
+			case 1:
+				$getCustomerSQL .= " ORDER BY cus_name ASC";
+				break;
+			case 2:
+				$getCustomerSQL .= " ORDER BY cus_name DESC";
+				break;
+			case 3: 
+				$getCustomerSQL .= " ORDER BY cus_create_at DESC";
+				break;
+			case 4:
+				$getCustomerSQL .= " ORDER BY cus_create_at ASC";
+				break;
+			default:
+				$getCustomerSQL .= " ORDER BY cus_create_at ASC";
+				break;
+		}
 
-		$html .= ' 
-			<table class="table table-hover table-bordered" style="font-size: 13px;">
-				<tr>
-					<th>STT</th>
-					<th>Mã</th>
-					<th>Tên</th>
-					<th>Ngày sinh</th>
-					<th>Giới tính</th>
-					<th>Email</th>
-					<th>Điện thoại</th>
-					<th>Ảnh</th>
-					<th>Địa chỉ</th>
-					<th>Trạng thái</th>
-					<th>Sửa</th>
-					<th>Xóa</th>
-				</tr>
-		';
-
-		// in các đơn hàng
+		$listCustomer  = db_get($getCustomerSQL, 0, $param, $format);
+		$totalCustomer = count($listCustomer);
 		
-		if ($totalCustomerPaginate > 0) {
-			foreach ($listCustomerPaginate as $key => $customer) {
+		// chia trang
+		$cusPerPage  = !empty($_POST['numRows']) ? (int)$_POST['numRows'] : 5;
+		$totalPage   = ceil($totalCustomer / $cusPerPage);
+		$currentPage = !empty($_POST['currentPage']) ? (int)$_POST['currentPage'] : 1;
+		$currentPage = $currentPage > $totalPage ? $totalPage : $currentPage;
+		$offset      = ($currentPage - 1) * $cusPerPage;
+
+		$getCustomerSQL .= " LIMIT ? OFFSET ?";
+		$param          = [...$param, $cusPerPage, $offset];
+		$format         .= "ii";
+		$listCustomer   = db_get($getCustomerSQL, 0, $param, $format);
+		
+		$customers     = '';
+		$stt            = 1 + $offset;
+
+		if ($totalCustomer > 0) {
+			foreach ($listCustomer as $key => $customer) {
 				$checked = $customer['cus_active'] ? "checked" : "";
 				$gender = $customer['cus_gender'] ? "Nam" : "Nữ";
-
-				$html .= '   
+				$customers .= '   
 				<tr>
-					<td>' . $stt++ .'</td>
-					<td>' . $customer['cus_id'] . '</td>
-					<td>' . $customer['cus_name'] . '</td>
-					<td>' . $customer['cus_dob'] . '</td>
-					<td>
-						' . $gender . '
+					<!-- mã -->
+					<td class="align-middle">' . $customer['cus_id'] . '</td>
+
+					<!-- tên khách hàng -->
+					<td class="align-middle">
+						<img src="../../image/' . $customer['cus_avatar'] . '" width="50px" style="width: 50px; height: 50px;" class="card-img">
+						<h6 class="mt-2">' . $customer['cus_name'] . '</h6>
 					</td>
-					<td>' . $customer['cus_email'] . '</td>
-					<td>' . $customer['cus_phone'] . '</td>
-					<td>
-						<img src="../../image/' . $customer['cus_avatar'] . '" width="30px" height="30px">
-					</td>
-					<td>' . $customer['cus_address'] . '</td>
+
+					<!-- ngày sinh  -->
+					<td class="align-middle">' . strToTimeFormat($customer['cus_dob'], "d-m-Y") . '</td>
+
+					<!-- giới tính  -->
+					<td class="align-middle">' . $gender . '</td>
+
+					<!-- email  -->
+					<td class="align-middle">' . $customer['cus_email'] . '</td>
+
+					<!-- điện thoại  -->
+					<td class="align-middle">' . $customer['cus_phone'] . '</td>
+
+					<!-- giới tính  -->
+					<td class="align-middle">' . $customer['cus_address'] . '</td>
+
+					<!-- active -->
 					<td>
 						<div class="custom-control custom-switch">
 							<input 
 								type="checkbox" 
 								id="switch_active_' . $customer['cus_id'] . '" 
-								data-customer-id="' . $customer['cus_id'] . '"
+								data-cus-id="' . $customer['cus_id'] . '"
 								class="btn_switch_active custom-control-input" 
 								value="' . $customer['cus_active'] . '"
 								' . $checked . '
@@ -120,6 +123,8 @@
 							<label for="switch_active_' . $customer['cus_id'] . '" class="custom-control-label"></label>
 						</div>
 					</td>
+
+					<!-- edit -->
 					<td>
 						<a
 							href="
@@ -129,15 +134,15 @@
 								])
 							. '
 							"
-							class="btn_edit_customer btn btn-success"
-							data-customer-id="' . $customer['cus_id'] . '">
+							class="btn_edit_cus btn btn-success"
+							data-cus-id="' . $customer['cus_id'] . '">
 							<i class="fas fa-edit"></i>
 						</a>
-					</td>
-					<td>
+
 						<a 
-							class="btn_remove_customer btn btn-danger"
-							data-customer-id="' . $customer['cus_id'] . '">
+							class="btn_delete_cus btn btn-danger"
+							id="btn_delete_' . $customer['cus_id'] . '"
+							data-cus-id="' . $customer['cus_id'] . '">
 							<i class="fas fa-trash-alt"></i>
 						</a>
 					</td>
@@ -145,12 +150,8 @@
 				';
 			}
 		}
-		$html .= '   
-			</table>
-		';
 
-		$html .= $page['html'];
-
-		echo $html;
-				
+		$pagination = paginateAjax($totalPage, $currentPage);
+		$output = ['customers'=>$customers, 'pagination'=>$pagination];
+		echo json_encode($output);
 	}

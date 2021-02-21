@@ -40,7 +40,7 @@ $listCategory = db_fetch_table('db_category', 0);
             <div class="col-12">
                <div  id="backErr" class="alert-danger"></div>
 
-               <!-- tên sản phẩm -->
+               <!-- danh mục slide -->
                <div class="form-group">
                   <label for="cat"><strong>Danh mục:</strong></label>
 
@@ -56,6 +56,13 @@ $listCategory = db_fetch_table('db_category', 0);
                   <div class="alert-danger" id="catErr"></div>
                </div>
 
+               <!-- đường link đi đến khi nhấn vào slide -->
+               <div class="form-group">
+                <label for="link"><strong>Đi đến:</strong></label>
+                <input type="text" class="form-control" placeholder="link..." name="link" id="link">
+                <div class="alert-danger" id="linkErr"></div>
+              </div>
+
              <!-- ảnh đại diện -->
             <div class="form-group">
                <label for="slide"><strong>Ảnh slide:</strong></label>
@@ -64,7 +71,7 @@ $listCategory = db_fetch_table('db_category', 0);
                <div class="previewSlide"></div>
                <script>
                   $(document).on('change', '#slide', function() {
-                    showImg(this, ".previewSlide", 1);
+                    showImg(this, ".previewSlide");
                   });
                </script>
                <div class="alert-danger" id="slideErr"></div>
