@@ -36,7 +36,7 @@ function validateLogin() {
         $('#user').addClass("error_field");
         $('#userErr').text("Email / Phone is required");
         test = false;
-    } else if (!isPhone(user) && !isEmail(user)) {
+    } else if (!isPhone(user) && !isEmail(user) && !checkWord(user)) {
         $('#user').addClass("error_field");
         $('#userErr').text("Email / Phone is wrong");
         test = false;
@@ -680,49 +680,23 @@ function editUserInfo() {
 
         data.append('action', "edit");
         // biến gửi ajax
-        let sendUpdate = $.ajax({
-            url: "process_user.php",
-            type: "POST",
-            data: data,
-            dataType: "json",
-            cache: false,
-            contentType: false,
-            processData: false,
-        });
+        let result= sendAJax('process_user.php', 'post', 'json', data, 1);
 
-        sendUpdate.done(function(res) {
-            let status = res.status;
-            let data = res.info;
-            console.log(res);
-            console.log(status, data);
+        let status = result.status;
+        let error = result.error;
+        let msg = "";
 
-            switch (status) {
-                case 1:
-                    $('#backErr').text('Thiếu dữ liệu');
-                    break;
-                case 2:
-                    $('#backErr').text('Dữ liệu sai');
-                    break;
-                case 3:
-                    $('#backErr').text('Email đã tồn tại');
-                    break;
-                case 4:
-                    $('#backErr').text('Số điện thoại đã tồn tại');
-                    break;
-                case 5:
-                    // $('#backErr').text('Cập nhật thành công');
-                    // $('#name').text(data.name);
-                    alert('CẬP NHẬT THÀNH CÔNG');
-                    window.location = document.referrer;
-                    // $('[class*="acc_img"]').prop('src', "../image/" + data.avatar);
-                    // $('[class*="acc_name"]').text(data.name);
-
-                    break;
-                case 6:
-                    $('#backErr').text('Đã xảy ra lỗi. Vui lòng thử lại');
-                    break;
+        if(status == "success") {
+            msg = "CẬP NHẬT THÀNH CÔNG";
+            alert(msg);
+            window.location = "index.php";
+        } else {
+            msg = "CẬP NHẬT THẤT BẠI";
+            if(error.length) {
+                msg += "\n" + error.join("\n");
             }
-        });
+            alert(msg);
+        }
     }
 }
 
@@ -896,49 +870,26 @@ function addUser() {
 
         data.append('action', "add");
         // biến gửi ajax
-        let sendUpdate = $.ajax({
-            url: "process_user.php",
-            type: "POST",
-            data: data,
-            dataType: "json",
-            cache: false,
-            contentType: false,
-            processData: false,
-        });
+        let result = sendAJax('process_user.php', 'post', 'json', data, 1);
 
-        sendUpdate.done(function(res) {
-            let status = res.status;
-            let data = res.info;
-            console.log(res);
-            console.log(status, data);
+        let status = result.status;
+        let error = result.error;
+        let msg = "";
 
-            switch (status) {
-                case 1:
-                    $('#backErr').text('Thiếu dữ liệu');
-                    break;
-                case 2:
-                    $('#backErr').text('Dữ liệu sai');
-                    break;
-                case 3:
-                    $('#backErr').text('Email đã tồn tại');
-                    break;
-                case 4:
-                    $('#backErr').text('Số điện thoại đã tồn tại');
-                    break;
-                case 5:
-                    // $('#backErr').text('Cập nhật thành công');
-                    // $('#name').text(data.name);
-                    alert('THÊM THÀNH CÔNG');
-                    window.location = document.referrer;
-                    // $('[class*="acc_img"]').prop('src', "../image/" + data.avatar);
-                    // $('[class*="acc_name"]').text(data.name);
-
-                    break;
-                case 6:
-                    $('#backErr').text('Đã xảy ra lỗi. Vui lòng thử lại');
-                    break;
+        if(status == "success") {
+            msg = "THÊM THÀNH CÔNG";
+            if(error.length) {
+                msg += "\n" + error.join("\n");
             }
-        });
+            alert(msg);
+            window.location = "index.php";
+        } else {
+            msg = "THÊM THẤT BẠI";
+            if(error.length) {
+                msg += "\n" + error.join("\n");
+            }
+            alert(msg);
+        }
     }
 }
 

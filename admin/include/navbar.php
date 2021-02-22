@@ -3,14 +3,7 @@
   <!--navbar row -->
   <div class="navtop row m-0 bg-secondary">
     <!-- col -->
-    <div class="col-7 d-flex align-items-center">
-      <!-- search -->
-      <form action="" class="form-inline" id="form_search">
-        <input type="text" class="form-control" id="search_bar" name="q" placeholder="search...">
-        <button class="btn btn-success">
-        <i class="fas fa-search"></i>
-        </button>
-      </form>
+    <div class="col-7 d-flex align-items-center justify-content-end w-25">
     </div>
     <!-- /col -->
     <!-- col -->

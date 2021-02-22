@@ -4,13 +4,6 @@
    
    if(!is_login() || !is_admin()) {
    	redirect('admin/form_login.php');
-   } elseif ($_SESSION['user_token']['role'] > 1) {
-      die("
-        <div class='m-5 p-5'>
-           <h1 class='text-danger'>KHÔNG ĐỦ QUYỀN</h1>
-           <a class='btn btn-warning' onclick='javascript:history.go(-1)'>QUAY LẠI</a>
-        </div>
-      ");
    }
    
    require_once '../include/sidebar.php';
@@ -41,7 +34,7 @@
                         <i class="fas fa-user fa-lg"></i>
                         </label>
                      </div>
-                     <input type="text" id="uname" name="uname" class="form-control" placeholder="Username">
+                     <input type="text" id="uname" name="uname" class="form-control" placeholder="name">
                   </div>
                   <div id="unameErr" class="alert-danger">
                   </div>
@@ -54,7 +47,7 @@
                         <i class="fas fa-user fa-lg"></i>
                         </label>
                      </div>
-                     <input type="text" id="name" name="name" class="form-control" placeholder="Name">
+                     <input type="text" id="name" name="name" class="form-control" placeholder="name">
                   </div>
                   <div id="nameErr" class="alert-danger">
                   </div>

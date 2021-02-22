@@ -286,6 +286,14 @@ function read_date($time) {
 		return preg_match($pattern, $string);
 	}
 
+	function password($pwd) {
+		$pattern = '/^[a-zA-Z0-9+-\@\*\#]{8,32}$/';
+		if(preg_match($pattern, $pwd)) {
+			return $pwd;
+		}
+		return false;
+	}
+
 	// hàm kiểm tra số điện thoại
 	function check_phone($string) {
 		$pattern = '/^(84|0[3|5|7|8|9])+([0-9]{8})$/';

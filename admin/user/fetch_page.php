@@ -1,139 +1,156 @@
 <?php 
-
-	/**
-	 * 	==============================TRANG LÀM MỚI====================================
-	 * 	Mô tả: làm mới nội dung bảng ở trang index sau khi có 1 hàng thay đổi(cập nhật, xóa)
-	 * 	Hoạt động:
-	 * 	 - nhận dữ liệu gửi sang từ ajax -> kiểm tra có action = "fetch"
-	 * 	 - kiểm tra có biến yêu cầu tìm kiếm:
-	 * 	 	+ rỗng => lấy hết danh sách kết quả có thể lấy
-	 * 	 	+ không rỗng => lấy hết danh sách kết quả theo yêu cầu
-	 * 	 - chia trang
-	 * 	 	+ xác định trang hiện tại thông qua biến $_POST['currentPage'](để khi làm mới vẫn giữ được đúng trang 	ban đầu)
-	 * 	 	+ tạo đường link của trang yêu cầu
-	 * 	 	+ phân trang bằng hàm 
-	 *   - lấy danh sách kết quả sau khi chia trang
-	 *   	+ có tìm kiếm : lấy danh sách kết quả thỏa mãn yêu cầu tìm kiếm sau khi phân trang
-	 *   	+ không có tìm kiếm: lấy danh sách kết quả sau khi phân trang
-	 * 
-	 */
-	
-
-
-
 	require_once '../../common.php';
-	if(isset($_POST['action']) && $_POST['action'] == "fetch") {
-		$html = '';
+	if(!empty($_POST['action']) && $_POST['action'] == "fetch") {
+		$getUserSQL = "SELECT * FROM db_admin WHERE 1";
+		$param = [];
+		$format = "";
 
-		//============================ LẤY DANH SÁCH NGƯỜI DÙNG =========================
-		$q = data_input(input_post('q'));
-		$key = "%" . $q . "%";
+		// tìm kiếm theo tên, mã nhân viên
+		$q = !empty($_POST['q']) ? $_POST['q'] : "%%";
+		$getUserSQL .= " AND CONCAT(ad_name, ad_uname, ad_id, ad_dob, ad_email, ad_phone) LIKE(?)";
+		$param[] = $q;
+		$format .= "s";
 
-		// nếu từ khóa tìm kiếm không rỗng -> lấy danh sách người dùng theo tìm kiếm
-		if($q != "") {
-			$searchSQL = "
-			SELECT * FROM db_admin WHERE 
-			(
-				ad_id LIKE(?) OR
-				ad_name LIKE(?) OR 
-				ad_uname LIKE(?) OR
-				ad_phone LIKE(?) OR
-				ad_email LIKE(?) OR
-				ad_dob LIKE(?) OR
-				ad_phone LIKE(?)
-			)
-			AND ad_role > 1
-			";
-
-			$param = [$key, $key, $key, $key, $key, $key, $key];
-			$listUser = db_get($searchSQL, 1, $param, "sssssss");
-		} else {
-
-			// từ khóa tìm kiếm rỗng -> lấy hết danh sách người dùng
-			$listUser = getListUser(1);
-		}
-		
-
-		// ============= CHIA TRANG ===================================================
-		
-		// tổng số người dùng
-		$totalUser = $listUser->num_rows;
-
-		// số người trên một trang
-		$userPerPage = 5;
-
-		// trang hiện tại
-		$currentPage = isset($_POST['currentPage']) ? $_POST['currentPage'] : 1;
-
-		// link trang hiện tại(URI)
-		$currentLink = create_link(base_url("admin/user/index.php"), ["page"=>'{page}', 'q'=>$q]);
-
-		// kết quả phân trang
-		$page = paginate($currentLink, $totalUser, $currentPage, $userPerPage);
-
-		//===================== DANH SÁCH NGƯỜI DÙNG SAU KHI CHIA TRANG ============================
-		
-		if($q != "") {
-			$searchResultSQL = $searchSQL . " LIMIT ? OFFSET ?";
-			$param = [$key, $key, $key, $key, $key, $key, $key, $page['limit'], $page['offset']];
-
-			// danh sách người dùng sau khi tìm kiếm và chia trang chia trang
-			$listUserPaginate = db_get($searchResultSQL, 1, $param, "sssssssii");
-		} else {
-
-			// danh sách người dùng sau khi chia trang
-			$listUserPaginate = getListUser(1, $page['limit'], $page['offset']);
+		// tìm kiếm theo trạng thái
+		$status = !empty($_POST['status']) ? $_POST['status'] : "all";
+		switch ($status) {
+			case "all":
+				break;
+			case 'on':
+				$getUserSQL .= " AND ad_active = 1";
+				break;
+			case 'off':
+				$getUserSQL .= " AND ad_active = 0";
+				break;
+			default:
+				break;
 		}
 
-		// tổng số bản ghi sau khi phân trang
-		$totalUserPaginate = $listUserPaginate->num_rows;
+		// tìm kiếm theo quyền
+		$status = !empty($_POST['role']) ? $_POST['role'] : "all";
+		switch ($status) {
+			case "all":
+				break;
+			case 'sa':
+				$getUserSQL .= " AND ad_role = 1";
+				break;
+			case 'a':
+				$getUserSQL .= " AND ad_role = 2";
+				break;
+			default:
+				break;
+		}
 
-		// số thứ tự
-		$stt = 1 + (int)$page['offset'];
+		// tìm kiếm theo giới tính
+		$gender = !empty($_POST['gender']) ? $_POST['gender'] : "all";
+		switch ($gender) {
+			case 'all':
+				break;
+			case 'male':
+				$getUserSQL .= " AND ad_gender = 1";
+				break;
+			case 'female':
+				$getUserSQL .= " AND ad_gender = 0";
+				break;
+			default:
+				break;
+		}
 
-		$html .= ' 
-			<table class="table table-hover table-bordered" style="font-size: 13px;">
-				<tr>
-					<th>STT</th>
-					<th>Mã</th>
-					<th>Username</th>
-					<th>Tên</th>
-					<th>Ngày sinh</th>
-					<th>Giới tính</th>
-					<th>Email</th>
-					<th>Điện thoại</th>
-					<th>Ảnh</th>
-					<th>Trạng thái</th>
-					<th>Sửa</th>
-					<th>Xóa</th>
-				</tr>
-		';
+		// sắp xếp
+		$sort = !empty($_POST['sort']) ? (int)$_POST['sort'] : 3;
+		switch ($sort) {
+			case 1:
+				$getUserSQL .= " ORDER BY ad_uname ASC";
+				break;
+			case 2:
+				$getUserSQL .= " ORDER BY ad_uname DESC";
+				break;
+			case 3: 
+				$getUserSQL .= " ORDER BY ad_create_at DESC";
+				break;
+			case 4:
+				$getUserSQL .= " ORDER BY ad_create_at ASC";
+				break;
+			default:
+				$getUserSQL .= " ORDER BY ad_create_at ASC";
+				break;
+		}
 
-		// in các đơn hàng
+		$listUser  = db_get($getUserSQL, 0, $param, $format);
+		$totalUser = count($listUser);
 		
-		if ($totalUserPaginate > 0) {
-			foreach ($listUserPaginate as $key => $user) {
+		// chia trang
+		$userPerPage  = !empty($_POST['numRows']) ? (int)$_POST['numRows'] : 5;
+		$totalPage   = ceil($totalUser / $userPerPage);
+		$currentPage = !empty($_POST['currentPage']) ? (int)$_POST['currentPage'] : 1;
+		$currentPage = $currentPage > $totalPage ? $totalPage : $currentPage;
+		$offset      = ($currentPage - 1) * $userPerPage;
+
+		$getUserSQL .= " LIMIT ? OFFSET ?";
+		$param          = [...$param, $userPerPage, $offset];
+		$format         .= "ii";
+		$listUser   = db_get($getUserSQL, 0, $param, $format);
+		
+		$users     = '';
+		$stt            = 1 + $offset;
+
+		if ($totalUser > 0) {
+			foreach ($listUser as $key => $user) {
+				// quyền
+				$role = '';
+				$canNotEdit = "";
+				if($user['ad_role'] == 1) {
+					$role .= '  
+					<span class="badge badge-danger">SuperAdmin</span>
+					';
+					$canNotEdit = "disabled";
+				} else {
+					$role .= '  
+					<span class="badge badge-primary">Admin</span>
+					';
+				}
+
+
+				// trạng thái
 				$checked = $user['ad_active'] ? "checked" : "";
+
+				// giới tính
 				$gender = $user['ad_gender'] ? "Nam" : "Nữ";
 
-				$html .= '   
+				$users .= '   
 				<tr>
-					<td>' . $stt++ .'</td>
-					<td>' . $user['ad_id'] . '</td>
-					<td>' . $user['ad_uname'] . '</td>
-					<td>' . $user['ad_name'] . '</td>
-					<td>' . $user['ad_dob'] . '</td>
-					<td>
-						' . $gender . '
+					<!-- mã -->
+					<td class="align-middle">' . $user['ad_id'] . '</td>
+
+					<!-- username nhân viên -->
+					<td class="align-middle">
+						<img src="../../image/' . $user['ad_avatar'] . '" width="50px" style="width: 50px; height: 50px;" class="card-img">
+						<h6 class="mt-2">' . $user['ad_uname'] . '</h6>
 					</td>
-					<td>' . $user['ad_email'] . '</td>
-					<td>' . $user['ad_phone'] . '</td>
-					<td>
-						<img src="../../image/' . $user['ad_avatar'] . '" width="30px" height="30px">
-					</td>
-					<td>
+
+					<!-- tên -->
+					<td class="align-middle">' . $user['ad_name'] . '</td>
+
+					<!-- ngày sinh  -->
+					<td class="align-middle">' . strToTimeFormat($user['ad_dob'], "d-m-Y") . '</td>
+
+					<!-- giới tính  -->
+					<td class="align-middle">' . $gender . '</td>
+
+					<!-- email  -->
+					<td class="align-middle">' . $user['ad_email'] . '</td>
+
+					<!-- điện thoại  -->
+					<td class="align-middle">' . $user['ad_phone'] . '</td>
+
+					<!-- quyền  -->
+					<td class="align-middle">' . $role . '</td>
+
+					<!-- active -->
+					<td class="align-middle">
 						<div class="custom-control custom-switch">
 							<input 
+								'. $canNotEdit .'
 								type="checkbox" 
 								id="switch_active_' . $user['ad_id'] . '" 
 								data-user-id="' . $user['ad_id'] . '"
@@ -144,7 +161,9 @@
 							<label for="switch_active_' . $user['ad_id'] . '" class="custom-control-label"></label>
 						</div>
 					</td>
-					<td>
+
+					<!-- action -->
+					<td class="align-middle" width="115px">
 						<a
 							href="
 							' . 
@@ -153,14 +172,14 @@
 								])
 							. '
 							"
-							class="btn_edit_user btn btn-success"
+							class="btn_edit_user btn btn-success '. $canNotEdit .'"
 							data-user-id="' . $user['ad_id'] . '">
 							<i class="fas fa-edit"></i>
 						</a>
-					</td>
-					<td>
+
 						<a 
-							class="btn_remove_user btn btn-danger"
+							class="btn_delete_user btn btn-danger '. $canNotEdit .'"
+							id="btn_delete_' . $user['ad_id'] . '"
 							data-user-id="' . $user['ad_id'] . '">
 							<i class="fas fa-trash-alt"></i>
 						</a>
@@ -169,12 +188,8 @@
 				';
 			}
 		}
-		$html .= '   
-			</table>
-		';
 
-		$html .= $page['html'];
-
-		echo $html;
-				
+		$pagination = paginateAjax($totalPage, $currentPage);
+		$output = ['users'=>$users, 'pagination'=>$pagination];
+		echo json_encode($output);
 	}

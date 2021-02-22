@@ -81,6 +81,18 @@ require_once '../include/navbar.php';
 					<!-- tìm kiếm tên , id sản phẩm -->
 					<input type="text" class="form-control" id="search" placeholder="search">
 				</div>
+
+				<!-- số hàng hiển thị -->
+				<div class="d-flex justify-content-between align-items-center">
+					<i class="far fa-file-excel fa-2x text-success mr-3" style="" onclick="window.location='export_file.php'"></i>
+
+					<?php $option = [5, 10, 25, 50, 100]; ?>
+					<select class="custom-select" id="number_of_rows">
+						<?php foreach ($option as $key => $each): ?>
+							<option value="<?= $each; ?>"> <?= $each; ?> </option>
+						<?php endforeach ?>
+					</select>
+				</div>
 			</div>
 		</div>
 

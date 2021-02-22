@@ -1,166 +1,292 @@
 <?php 
 require_once '../../common.php';
 
-
+// THÊM NGƯỜI DÙNG
 if (!empty($_POST['action']) && $_POST['action'] == "add") {
+	$status = "fail";
+	$role = $uname = $name = $dob = $gender = $email = $phone = $pwd = $rePwd =  $active = $file = $fileName = "";
+	$folder = "../../image/";
+	$extension = ['png', 'jpeg', 'jpg'];
+	$error = [];
+	$ok = true;
 
-	// lấy dữ liệu gửi lên từ ajax
-	$uname     = data_input(input_post("uname"));
-	$name      = data_input(input_post("name"));
-	$dob       = formatDate(data_input(input_post("dob")));
-	$gender    = data_input(input_post("gender"));
-	$email     = data_input(input_post("email"));
-	$phone     = data_input(input_post("phone"));
-	$active    = data_input(input_post("active"));
-	$role      = data_input(input_post("role"));
-	$pwd       = data_input(input_post("pwdRegister"));
-	$rePwd     = data_input(input_post("rePwdRegister"));
-	$active    = $active ? 1 : 0;
-
-	// nếu không có file tải lên thì tên file = ""
-	$imgFile = !empty($_FILES['avatar']) ? $_FILES['avatar'] : null;
-	if(!empty($imgFile)) {
-		$imgFileName = up_file($imgFile, "../../image/", ['png', 'jpeg', 'jpg', 'gif']);
+	// uname
+	if(empty($_POST['uname'])) {
+		$ok = false;
+		$error[] = "USERNAME: không được để trống";
 	} else {
-		$imgFileName = "";
+		$uname = data_input($_POST['uname']);
+		if(!check_word($uname)) {
+			$ok = false;
+			$error[] = "USERNAME: sai định dạng";
+		} elseif(userExist('db_admin', 'ad_uname', $uname)) {
+			$ok = false;
+			$error[] = "USERNAME: username đã tồn tại";
+		}
 	}
 
-	//validate
-	if($uname === false || $name === false || $dob === false || $gender === false || 
-		$email === false || $phone === false || $role === false || $pwd === false || $rePwd === false) {
-
-		// thiếu dữ liệu
-		$status = 1;
-	} else if(!check_name($name) || !check_date($dob) || !check_email($email)
-		|| !check_phone($phone) || $pwd != $rePwd) {
-
-		// dữ liệu sai
-		$status = 2;
-	} else if(emailExist("db_admin", "ad_email", $email)) {
-
-		//email đẫ tồn tại
-		$status = 3; 
-	} else if(phoneExist("db_admin", "ad_phone", $phone)) {
-
-		// só điện thoại đã tồn tại
-		$status = 4 ;
+	// tên
+	if(empty($_POST['name'])) {
+		$ok = false;
+		$error[] = "TÊN: không được để trống";
 	} else {
-		// SQL update info
+		$name = data_input($_POST['name']);
+		if(!check_name($name)) {
+			$ok = false;
+			$error[] = "TÊN: sai định dạng";
+		}
+	}
+
+	// password
+	if(empty($_POST['pwdRegister'])) {
+		$ok = false;
+		$error[] = "PASSWORD: không được để trống";
+	} else {
+		$pwd = password($_POST['pwdRegister']);
+		if($pwd === false) {
+			$ok = false;
+			$error[] = "PASSWORD: sai định dạng";
+		}
+	}
+
+	// repassword
+	if(empty($_POST['rePwdRegister'])) {
+		$ok = false;
+		$error[] = "RE_PASSWORD: không được để trống";
+	} else {
+		$rePwd = password($_POST['rePwdRegister']);
+		if($rePwd === false) {
+			$ok = false;
+			$error[] = "RE_PASSWORD: sai định dạng";
+		} elseif($rePwd != $pwd) {
+			$ok = false;
+			$error[] = "RE_PASSWORD: không khớp";
+		}
+	}
+
+	// ngày sinh
+	if(empty($_POST['dob'])) {
+		$ok = false;
+		$error[] = "NGÀY SINH: không được để trống";
+	} else {
+		$dob = formatDate(data_input($_POST['dob']));
+	}
+
+	// giới tính
+	if(isset($_POST['gender'])) {
+		$gender = data_input($_POST['gender']);
+	} else {
+		$ok = false;
+		$error[] = "GIỚI TÍNH: không được để trống";
+	}
+
+	// email
+	if(empty($_POST['email'])) {
+		$ok = false;
+		$error[] = "EMAIL: không được để trống";
+	} else {
+		$email = email($_POST['email']);
+
+		if($email === false) {
+			$ok = false;
+			$error[] = "EMAIL: sai định dạng";
+		} else if(emailExist("db_admin", "ad_email", $email)) {
+			$ok = false;
+			$error[] = "EMAIL: đã tồn tại";
+		}
+	}
+
+	// điện thoại
+	if(empty($_POST['phone'])) {
+		$ok = false;
+		$error[] = "PHONE: không được để trống";
+	} else {
+		$phone = phone($_POST['phone']);
+		if($phone === false) {
+			$ok = false;
+			$error[] = "PHONE: sai định dạng";
+		} elseif(phoneExist("db_admin", "ad_phone", $phone)) {
+			$ok = false;
+			$error[] = "PHONE: đã tồn tại";	
+		}
+	}
+
+	// file
+	if(!empty($_FILES['avatar'])) {
+		$file = $_FILES['avatar'];
+		$fileName = up_file($file, $folder, $extension);
+
+		if(!$fileName) {
+			$ok = false;
+			$error[] = "ẢNH: tải lên không thành công";
+		}
+	}
+
+	// trạng thái
+	$active = !empty($_POST['active']) ? 1 : 0;
+
+	// quyền
+	$role = data_input($_POST['role']);
+
+	if($ok) {
 		$addSQL = "INSERT INTO db_admin(
 		ad_uname, ad_name, ad_dob, ad_gender, ad_email, ad_phone, ad_password, ad_avatar, ad_role, ad_active)
 		VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		";
-		
-		// dũ liệu 
-		$data   = [$uname, $name, $dob, $gender, $email, $phone, $pwd, $imgFileName, $role, $active];
-		
-		// add
-		$runAdd = db_run($addSQL, $data, "sssissssii");
-		
-		$status = $runAdd ? 5 : 6;
+		$param   = [$uname, $name, $dob, $gender, $email, $phone, $pwd, $fileName, $role, $active];
+		$runAdd = db_run($addSQL, $param, "sssissssii");
+		$status = $runAdd ? "success" : "fail";
 	}
 
-	//tập hợp dữ liệu trả về
-	$res = [
-		"status"   => $status
-	];
-
-	// trả về dữ liệu
-	echo json_encode($res);
+	$output = ['status'=>$status, 'error'=>$error];
+	echo json_encode($output);
 }
 
 
 // THAY ĐỔI TRẠNG THÁI
 if (!empty($_POST['action']) && $_POST['action'] == "switch_active") {
-	$status = 5;
+	$ok = true;
+	$userID = $_POST['userID'];
+	$role = s_cell("SELECT ad_role FROM db_admin WHERE ad_id = ?", [$userID], "i");
+	$active = $_POST['active'];
 
-		// mã nhân viên
-	$userID = data_input(input_post("userID"));
-
-		// trạng thái muốn cập nhật
-	$newActive = $_POST['newActive'] ?? null;
-
-		// validate
-	if($userID === false || $newActive === null) {
-		$status = 1;
+	// kiểm tra quyền
+	if($role == 1) {
+		$ok = false;
 	} else {
-		$switchActiveSQL = "UPDATE db_admin SET ad_active = ? WHERE ad_id = ?";
-		$runSwitchActiveSQL = db_run($switchActiveSQL, [$newActive, $userID], 'ii');
-		if($runSwitchActiveSQL) {
-			$status = 5;
-		} else {
-			$status = 6;
-		}
+		$switchSQL = "UPDATE db_admin SET ad_active = ? WHERE ad_id = ?";
+		$runSwitch = db_run($switchSQL, [$active, $userID], "ii");
+		$ok = $runSwitch ? true : false;
 	}
-
-	$res = [
-		"status"=>$status,
-		"userID"=>$userID,
-		"active"=>$newActive
-	];
-
-	echo json_encode($res);
+	
+	$output = ['ok'=>$ok];
+	echo json_encode($output);
 }
-
 
 
 // CHỈNH SỬA THÔNG TIN
 if (!empty($_POST['action']) && $_POST['action'] == "edit") {
+	$status = "fail";
+	$userID = $role = $uname = $name = $dob = $gender = $email = $phone = $oldAvatar = $active = $file = $fileName = "";
+	$folder = "../../image/";
+	$extension = ['png', 'jpeg', 'jpg'];
+	$error = [];
+	$ok = true;
 
-	// lấy dữ liệu gửi lên từ ajax
-	$userID    = data_input(input_post("userID"));
-	$uname     = data_input(input_post("uname"));
-	$name      = data_input(input_post("name"));
-	$dob       = formatDate(data_input(input_post("dob")));
-	$gender    = data_input(input_post("gender"));
-	$email     = data_input(input_post("email"));
-	$phone     = data_input(input_post("phone"));
-	$oldAvatar = data_input(input_post('oldAvatar'));
-	$active    = data_input(input_post("active"));
-	$role      = data_input(input_post("role"));
-	$active    = $active ? 1 : 0;
-
-
-	// nếu không có file tải lên thì tên file = tên file avatar cũ
-	$imgFile = !empty($_FILES['avatar']) ? $_FILES['avatar'] : null;
-	if(!empty($imgFile)) {
-		$imgFileName = up_file($imgFile, "../../image/", ['png', 'jpeg', 'jpg', 'gif']);
+	// user ID
+	if(empty($_POST['userID'])) {
+		$ok = false;
 	} else {
-		$imgFileName = $oldAvatar;
+		$userID = data_input($_POST['userID']);
 	}
 
-	//validate
-	if($userID === false || $uname === false || $name === false || $dob === false || $gender === false || 
-		$email === false || $phone === false || $oldAvatar === false || $role === false) {
-		$status = 1;
-	} else if(!check_name($name) || !check_name($name) || !check_date($dob) || !check_email($email)
-		|| !check_phone($phone)) {
-		$status = 2;
+	// uname
+	if(empty($_POST['uname'])) {
+		$ok = false;
+		$error[] = "USERNAME: không được để trống";
 	} else {
+		$uname = data_input($_POST['uname']);
+		if(!check_word($uname)) {
+			$ok = false;
+			$error[] = "USERNAME: sai định dạng";
+		}
+	}
 
-		// kiểm tra email đã tồn tại
-		$checkEmail = s_row(
-			"SELECT * FROM db_admin WHERE ad_email = ? AND ad_id != ?",
-			[$email, $userID], 
-			"si"
-		);
+	// tên
+	if(empty($_POST['name'])) {
+		$ok = false;
+		$error[] = "TÊN: không được để trống";
+	} else {
+		$name = data_input($_POST['name']);
+		if(!check_name($name)) {
+			$ok = false;
+			$error[] = "TÊN: sai định dạng";
+		}
+	}
 
-		// kiểm tra điện thoại đã tồn tại
-		$checkPhone = s_row(
-			"SELECT * FROM db_admin WHERE ad_phone = ? AND ad_id != ?",
-			[$phone, $userID], 
-			"si"
-		);
+	// ngày sinh
+	if(empty($_POST['dob'])) {
+		$ok = false;
+		$error[] = "NGÀY SINH: không được để trống";
+	} else {
+		$dob = formatDate(data_input($_POST['dob']));
+	}
 
-		//nếu tồn tại email || số điện thoại -> bóa lỗi{3: email, 4: phone}
-		//ngược lại -> cập nhật
-		if($checkEmail) {
-			$status = 3;
-		} else if($checkPhone) {
-			$status = 4;
+	// giới tính
+	if(isset($_POST['gender'])) {
+		$gender = data_input($_POST['gender']);
+	} else {
+		$ok = false;
+		$error[] = "GIỚI TÍNH: không được để trống";
+	}
+
+	// email
+	if(empty($_POST['email'])) {
+		$ok = false;
+		$error[] = "EMAIL: không được để trống";
+	} else {
+		$email = email($_POST['email']);
+
+		if($email === false) {
+			$ok = false;
+			$error[] = "EMAIL: sai định dạng";
 		} else {
-			// SQL update info
-			$updateSQL = "UPDATE db_admin
+			$checkEmailSQL = "SELECT COUNT(*) FROM db_admin WHERE ad_email = ? AND ad_id != ?";
+			$runCheckEmail = s_cell($checkEmailSQL, [$email, $userID], "si");
+
+			if($runCheckEmail > 0) {
+				$ok = false;
+				$error[] = "EMAIL: đã tồn tại";
+			}
+		}
+	}
+
+	// điện thoại
+	if(empty($_POST['phone'])) {
+		$ok = false;
+		$error[] = "PHONE: không được để trống";
+	} else {
+		$phone = phone($_POST['phone']);
+		if($phone === false) {
+			$ok = false;
+			$error[] = "PHONE: sai định dạng";
+		} else {
+			$checkPhoneSQL = "SELECT COUNT(*) FROM db_admin WHERE ad_phone = ? AND ad_id != ?";
+			$runCheckPhone = s_cell($checkPhoneSQL, [$phone, $userID], "si");
+
+			if($runCheckPhone > 0) {
+				$ok = false;
+				$error[] = "PHONE: đã tồn tại";
+			}
+		}
+	}
+
+	// old avatar
+	if(!empty($_POST['oldAvatar'])) {
+		$oldAvatar = data_input($_POST['oldAvatar']);
+	}
+
+	// file
+	if(!empty($_FILES['avatar'])) {
+		$file = $_FILES['avatar'];
+		$fileName = up_file($file, $folder, $extension);
+
+		if(!$fileName) {
+			$ok = false;
+			$error[] = "ẢNH: tải lên không thành công";
+		}
+	} else {
+		$fileName = $oldAvatar;
+	}
+
+	// trạng thái
+	$active = !empty($_POST['active']) ? 1 : 0;
+
+	// quyền
+	$role = data_input($_POST['role']);
+
+	if($ok) {
+		$updateSQL = "UPDATE db_admin
 			SET 
 			ad_uname  = ?,
 			ad_name   = ?, 
@@ -173,43 +299,31 @@ if (!empty($_POST['action']) && $_POST['action'] == "edit") {
 			ad_active = ?
 			WHERE ad_id = ?
 			";
-
-			// dũ liệu 
-			$data      = [$uname, $name, $dob, $gender, $email, $phone, $imgFileName, $role, $active, $userID];
-
-			// update
-			$runUpdate = db_run($updateSQL, $data, "sssisssiii");
-
-			$status = $runUpdate ? 5 : 6;
-
-		}	
+			$param = [$uname, $name, $dob, $gender, $email, $phone, $fileName, $role, $active, $userID];
+			$runUpdate = db_run($updateSQL, $param, "sssisssiii");
+			$status = $runUpdate ? "success" : "fail";
 	}
 
-	//tập hợp dữ liệu trả về
-	$res = [
-		"status"   => $status
-	];
-
-	// trả về dữ liệu
-	echo json_encode($res);
+	$output = ['status'=>$status, 'error'=>$error];
+	echo json_encode($output);
 }
 
 
-// XÓA NHÂN VIÊN
-if (!empty($_POST['action']) && $_POST['action'] == "remove") {
-	$status = 5;
+// XÓA NGƯỜI DÙNG
+if (!empty($_POST['action']) && $_POST['action'] == "delete") {
+	$status = "error";
+	$userID = $_POST['userID'];
+	$role = s_cell("SELECT ad_role FROM db_admin WHERE ad_id = ?", [$userID], "i");
 
-	// mã nhân viên
-	$userID = data_input(input_post("userID"));
-
-	if($userID === false) {
-		$status = 1;
+	if($role == 1) {
+		$status = "error";
 	} else {
-		$removeUserSQL = "DELETE FROM db_admin WHERE ad_id = ?";
-		$runRemoveUser = db_run($removeUserSQL, [$userID], "i");
-		$status = ($runRemoveUser) ? 5 : 6;
+		$deleteSQL = "DELETE FROM db_admin WHERE ad_id = ?";
+		$runDelete = db_run($deleteSQL, [$userID], "i");
+		$status = $runDelete ? "success" : "error";
 	}
 
-	echo $status;
+	$output = ['status'=>$status];
+	echo json_encode($output);
 }
 ?>

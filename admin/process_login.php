@@ -9,20 +9,20 @@ if($_SERVER['REQUEST_METHOD'] == "POST" && !empty($_POST)) {
 	//VALIDATE
 	if(empty($user) || empty($pwd)) {
 		echo 1;
-	} else if((!check_phone($user) 
-		&& !check_email($user)) || !check_password($pwd)) {
+	} else if((!check_phone($user) && !check_email($user) && !check_word($user)) 
+		|| !check_password($pwd)) {
 		echo 2;
 	} else {
 		//nếu không có lỗi đăng nhập
 		$loginSQL = "
 		SELECT * FROM db_admin
-		WHERE (ad_email = ? OR ad_phone = ?)
+		WHERE (ad_email = ? OR ad_phone = ? OR ad_uname = ?)
 		AND ad_password = ?
 		";
 
 		//lấy thông tin của người dùng có tài mật khẩu tương ứng
 		//thông tin không trống và active = 1 => đăng nhập thành công
-		$info = s_row($loginSQL, [$user, $user, $pwd], "sss");
+		$info = s_row($loginSQL, [$user, $user, $user, $pwd], "ssss");
 		if(!empty($info)) {
 			if($info['ad_active']) {
 				set_login($info['ad_id'], $info['ad_email'], $info['ad_role']);

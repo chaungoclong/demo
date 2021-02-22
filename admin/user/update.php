@@ -4,6 +4,13 @@
    
    if(!is_login() || !is_admin()) {
    	redirect('admin/form_login.php');
+   } elseif ($_SESSION['user_token']['role'] > 1) {
+      die("
+        <div class='m-5 p-5'>
+           <h1 class='text-danger'>KHÔNG ĐỦ QUYỀN</h1>
+           <a class='btn btn-warning' onclick='javascript:history.go(-1)'>QUAY LẠI</a>
+        </div>
+      ");
    }
    
    require_once '../include/sidebar.php';
@@ -22,7 +29,6 @@
          <div class="row m-0">
             <div class="col-12">
                <h5>THÔNG TIN NHÂN VIÊN</h5>
-               <p class="mb-4">Quản lý thông tin nhân viên</p>
                <hr>
             </div>
          </div>
