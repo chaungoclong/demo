@@ -1,7 +1,13 @@
 <?php 
 require_once 'common.php';
+if(!is_login() || is_admin()) {
+	redirect("login_form.php");
+} elseif(empty($_SESSION['cart'])) {
+	redirect("index.php");
+}
 require_once 'include/header.php';
 require_once 'include/navbar.php';
+
 ?>
 
 <main>

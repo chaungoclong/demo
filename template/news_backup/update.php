@@ -40,7 +40,7 @@ $news     = getNewsByID($newsID);
                <!-- tiêu đề bài viết -->
                <div class="form-group">
                   <label for="title"><strong>Tiêu đề bài viết:</strong></label>
-                  <textarea type="text" name="title" id="title">
+                  <textarea type="text" name="title" id="title" value="<?= $news['news_title']; ?>">
                     <?= $news['news_title']; ?>
                   </textarea>
                   <div class="alert-danger" id="titleErr"></div>
@@ -55,7 +55,7 @@ $news     = getNewsByID($newsID);
                <!-- mô tả -->
                <div class="form-group">
                   <label for="title"><strong>Mô tả:</strong></label>
-                  <textarea type="text" name="desc" id="desc">
+                  <textarea type="text" name="desc" id="desc" value="<?= $news['news_desc']; ?>">
                     <?= $news['news_desc']; ?>
                   </textarea>
                   <div class="alert-danger" id="descErr"></div>
@@ -89,7 +89,7 @@ $news     = getNewsByID($newsID);
                <!-- nội dung bài viết -->
               <div class="form-group">
                  <label for="content"><strong>Nội dung bài viết:</strong></label>
-                 <textarea name="content" id="content">
+                 <textarea name="content" id="content" value="<?= $news['news_content']; ?>">
                    <?= $news['news_content']; ?>
                  </textarea>
                  <script>

@@ -46,11 +46,11 @@ if(!$product['pro_active']) {
 	
 	<div style="padding-left: 85px; padding-right: 85px;" class="">
 		<section>
-			<div class="row p-0 m-0 bg-light">
+			<div class="row p-0 my-3 bg-faded">
 				<!-- product image wrapper -->
-				<div id="product_image" class="col-6 p-3">
+				<div id="product_image" class="col-6 p-3 bg-faded">
 					<!-- product image content -->
-					<div class="card text-center py-3 h-100">
+					<div class="card text-center py-3 h-100 border-0 shadow">
 						<div class="p-0 m-0">
 							<div id="carousel-list-img" class="card card-body border-0 carousel slide" data-ride="carousel" data-interval="false">
 								<!-- nội dung -->
@@ -92,8 +92,7 @@ if(!$product['pro_active']) {
 				</div>
 				<!-- /product image wrapper -->
 				<div class="col-6 p-3">
-					<div class="card h-100">
-						<div id="notice" class="card-header text-center"></div>
+					<div class="card h-100 shadow border-0">
 						<div class="card-body">
 							<!-- product name -->
 							<h2 style="color:blue;" class="card-title">
@@ -101,16 +100,12 @@ if(!$product['pro_active']) {
 									<?= ucwords(strtolower($product['pro_name'])); ?>
 								</strong>
 							</h2>
+
 							<div class="rateInfo">
-								<!-- <p>
-									<strong class="avgRate text-warning" style="font-size: 30px"></strong>
-								</p>
-								<span class="avgStar"></span>
-								<strong class="timeRate"></strong> -->
 							</div>
 							<hr>
 							<h3 class="card-text my-4" style="color:red;">
-								<strong>
+								<strong class="badge badge-danger text-white">
 									<?= !empty($product['pro_price']) ?
 									number_format($product['pro_price'], 0, ",", ".") : ""; ?>
 									&#8363;
@@ -119,22 +114,22 @@ if(!$product['pro_active']) {
 							<div class="table-responsive mb-3">
 								<table class="table table-sm table-borderless mb-0">
 									<tr>
-										<th class="pl-0 w-50" scope="row"><strong>Loại sản phẩm:</strong></th>
+										<th class="pl-0  text-uppercase" scope="row" width="30%"><strong>Loại sản phẩm:</strong></th>
 										<td><?= !empty($category) ? $category : ""; ?></td>
 									</tr>
 									<tr>
-										<th class="pl-0 w-50" scope="row"><strong>Hãng sản xuất:</strong></th>
+										<th class="pl-0  text-uppercase" scope="row" width="30%"><strong>Hãng sản xuất:</strong></th>
 										<td><?= !empty($brand) ? $brand : ""; ?></td>
 									</tr>
 									<tr>
-										<th class="pl-0 w-50" scope="row"><strong>Màu:</strong></th>
+										<th class="pl-0  text-uppercase" scope="row" width="30%"><strong>Màu:</strong></th>
 										<td>
 											<?= !empty($product['pro_color']) ?
 											$product['pro_color'] : ""; ?>
 										</td>
 									</tr>
 									<tr>
-										<th class="pl-0 w-25" scope="row"><strong>Tình trạng:</strong></th>
+										<th class="pl-0  text-uppercase" scope="row" width="30%"><strong>Tình trạng:</strong></th>
 										<td>
 											<?= $product['pro_qty'] ?
 											"còn hàng(" . $product['pro_qty'] . " sản phẩm)": "hết hàng"; ?>
@@ -143,14 +138,15 @@ if(!$product['pro_active']) {
 								</table>
 							</div>
 							<hr>
-							<div class="action border-1">
-								<div class="get_quantity d-flex mb-3">
-									<button class="minus btn"><i class="fas fa-minus"></i></button>
-									<input type="number" min="0" name="quantity" value="1" class="quantity text-center">
-									<button class="plus btn"><i class="fas fa-plus"></i></button>
+
+							<!-- các nút hành động -->
+							<div class="action d-flex align-items-center">
+								<div class="get_quantity d-flex mr-5 align-items-center">
+									<button class="minus text-white bg-danger mr-2"><i class="fas fa-minus"></i></button>
+									<input type="number" min="1" max="10" name="quantity" value="1" class="quantity text-center">
+									<button class="plus text-white bg-primary"><i class="fas fa-plus"></i></button>
 								</div>
-								<button class="btn_add_cart btn btn-primary"><strong>THÊM VÀO GIỎ</strong></button>
-								<button class="btn_wishlist btn btn-danger"><strong><i class="fas fa-heart"></i></strong></button>
+								<button class="btn_add_cart btn btn-block btn-success"><strong>THÊM VÀO GIỎ</strong></button>
 							</div>
 						</div>
 					</div>
@@ -159,21 +155,21 @@ if(!$product['pro_active']) {
 		</section>
 		
 		<!-- tab info -->
-		<section id="product_tab" class="border shadow p-3 my-5">
+		<section id="product_tab" class="border shadow p-3 my-5 bg-white">
 			<!-- tab index -->
-			<ul class="nav nav-justified nav-tabs">
+			<ul class="nav nav-justified nav-tabs bg-white">
 				<li class="nav-item">
-					<a href="#desc" class="nav-link active" data-toggle="tab">MÔ TẢ</a>
+					<a href="#desc" class="nav-link active bg-white" data-toggle="tab">MÔ TẢ</a>
 				</li>
 				<li class="nav-item">
-					<a href="#info" class="nav-link" data-toggle="tab">THÔNG SỐ KỸ THUẬT</a>
+					<a href="#info" class="nav-link bg-white" data-toggle="tab">THÔNG SỐ KỸ THUẬT</a>
 				</li>
 				<li class="nav-item">
-					<a href="#rate" class="nav-link" data-toggle="tab">ĐÁNH GIÁ (<span class="qtyRate"></span>)</a>
+					<a href="#rate" class="nav-link bg-white" data-toggle="tab">ĐÁNH GIÁ (<span class="qtyRate"></span>)</a>
 				</li>
 			</ul>
 			<!-- tab content -->
-			<div class="tab-content">
+			<div class="tab-content bg-white">
 				<div id="desc" class="active tab-pane p-3">
 					<h6><strong>MÔ TẢ</strong></h6>
 
@@ -282,6 +278,7 @@ if(!$product['pro_active']) {
 			cat_id = ? 
 			AND pro_id != ? 
 			AND pro_price BETWEEN ? - 2000000 AND ? + 2000000
+			AND pro_active = 1
 		";
 		$listRelatedPro = db_get(
 			$getRelatedProSQL,

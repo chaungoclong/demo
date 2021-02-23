@@ -1,116 +1,89 @@
 <?php 
-
-	/**
-	 * 	==============================TRANG LÀM MỚI====================================
-	 * 	Mô tả: làm mới nội dung bảng ở trang index sau khi có 1 hàng thay đổi(cập nhật, xóa)
-	 * 	Hoạt động:
-	 * 	 - nhận dữ liệu gửi sang từ ajax -> kiểm tra có action = "fetch"
-	 * 	 - kiểm tra có biến yêu cầu tìm kiếm:
-	 * 	 	+ rỗng => lấy hết danh sách kết quả có thể lấy
-	 * 	 	+ không rỗng => lấy hết danh sách kết quả theo yêu cầu
-	 * 	 - chia trang
-	 * 	 	+ xác định trang hiện tại thông qua biến $_POST['currentPage'](để khi làm mới vẫn giữ được đúng trang 	ban đầu)
-	 * 	 	+ tạo đường link của trang yêu cầu
-	 * 	 	+ phân trang bằng hàm 
-	 *   - lấy danh sách kết quả sau khi chia trang
-	 *   	+ có tìm kiếm : lấy danh sách kết quả thỏa mãn yêu cầu tìm kiếm sau khi phân trang
-	 *   	+ không có tìm kiếm: lấy danh sách kết quả sau khi phân trang
-	 * 
-	 */
-	
-
-
-
 	require_once '../../common.php';
-	if(isset($_POST['action']) && $_POST['action'] == "fetch") {
-		$html = '';
+	if(!empty($_POST['action']) && $_POST['action'] == "fetch") {
+		$getNewsSQL = "SELECT * FROM db_news WHERE 1";
+		$param = [];
+		$format = "";
 
-		$q = data_input(input_get('q'));
-			$key = "%" . $q . "%";
+		// tìm kiếm theo tên, mã danh mục
+		$q = !empty($_POST['q']) ? $_POST['q'] : "%%";
+		$getNewsSQL .= " AND CONCAT(news_title, news_desc, news_content, create_by) LIKE(?)";
+		$param[] = $q;
+		$format .= "s";
 
-			if($q != "") {
-				$searchSQL = "
-				SELECT * FROM db_news
-				WHERE 
-					news_title LIKE(?) OR
-					news_desc  LIKE(?)
-				";
+		// tìm kiếm theo trạng thái
+		$status = !empty($_POST['status']) ? $_POST['status'] : "all";
+		switch ($status) {
+			case "all":
+				break;
+			case 'on':
+				$getNewsSQL .= " AND news_active = 1";
+				break;
+			case 'off':
+				$getNewsSQL .= " AND news_active = 0";
+				break;
+			default:
+				break;
+		}
 
-				$param = [$key, $key];
-				$listNews = db_get($searchSQL, 1, $param, "ss");
-			} else {
-
-				$listNews = getListNews();
-			}
-			
-
-			// chia trang
-			$totalNews = $listNews->num_rows;
-			$newsPerPage = 5;
-			$currentPage = isset($_POST['currentPage']) ? $_POST['currentPage'] : 1;
-			$currentLink = create_link(base_url("admin/news/index.php"), ["page"=>'{page}', 'q'=>$q]);
-			$page = paginate($currentLink, $totalNews, $currentPage, $newsPerPage);
-
-			// danh sách tin tức sau khi chia trang
-			if($q != "") {
-				$searchResultSQL = $searchSQL . " LIMIT ? OFFSET ?";
-				$param = [$key, $key, $page['limit'], $page['offset']];
-
-				// danh sách người dùng sau khi tìm kiếm và chia trang chia trang
-				$listNewsPaginate = db_get($searchResultSQL, 1, $param, "ssii");
-			} else {
-
-				$listNewsPaginate = getListNews($page['limit'], $page['offset']);
-			}
-
-			
-			$totalNewsPaginate = $listNewsPaginate->num_rows;
-
-			// số thứ tự
-			$stt = 1 + (int)$page['offset'];
-
-		$html .= ' 
-			<table class="table table-hover table-bordered" style="font-size: 13px;">
-				<tr>
-					<th>STT</th>
-					<th>Ảnh</th>
-					<th>Tiêu đề</th>
-					<th>Mô tả</th>
-					<th>Tác giả</th>
-					<th>Trạng thái</th>
-					<th>Sửa</th>
-					<th>Xóa</th>
-				</tr>
-		';
-
-		// in các đơn hàng
+		// sắp xếp
+		$sort = !empty($_POST['sort']) ? (int)$_POST['sort'] : 3;
+		switch ($sort) {
+			case 1:
+				$getNewsSQL .= " ORDER BY news_title ASC";
+				break;
+			case 2:
+				$getNewsSQL .= " ORDER BY news_title DESC";
+				break;
+			case 3: 
+				$getNewsSQL .= " ORDER BY create_at DESC";
+				break;
+			case 4:
+				$getNewsSQL .= " ORDER BY create_at ASC";
+				break;
+			default:
+				$getNewsSQL .= " ORDER BY create_at ASC";
+				break;
+		}
 		
-		if ($totalNewsPaginate > 0) {
-			foreach ($listNewsPaginate as $key => $news) {
-				$checked = $news['news_active'] ? "checked" : "";
-				$html .= '   
-				<tr>
-					<!-- stt -->
-					<td>' . $stt++ . '</td>
+		$listNews  = db_get($getNewsSQL, 0, $param, $format);
+		$totalNews = count($listNews);
+		
+		// chia trang
+		$newsPerPage  = !empty($_POST['numRows']) ? (int)$_POST['numRows'] : 5;
+		$totalPage   = ceil($totalNews / $newsPerPage);
+		$currentPage = !empty($_POST['currentPage']) ? (int)$_POST['currentPage'] : 1;
+		$currentPage = $currentPage > $totalPage ? $totalPage : $currentPage;
+		$offset      = ($currentPage - 1) * $newsPerPage;
 
+		$getNewsSQL .= " LIMIT ? OFFSET ?";
+		$param          = [...$param, $newsPerPage, $offset];
+		$format         .= "ii";
+		$listNews   = db_get($getNewsSQL, 0, $param, $format);
+		
+		$list_news     = '';
+
+		if ($totalNews > 0) {
+			foreach ($listNews as $key => $news) {
+				$checked = $news['news_active'] ? "checked" : "";
+				$list_news .= '   
+				<tr>
 					<!-- ảnh  -->
-					<td>
-						<img src="../../image/' . $news['news_img'] . '" width="30px" height="30px">
+					<td class="align-middle">
+						<img src="../../image/' . $news['news_img'] . '" style="width:50px; height:50px" class="card-img">
 					</td>
 
 					<!-- tiêu đề -->
-					<td>' . $news['news_title'] . '</td>
+					<td class="align-middle">' . $news['news_title'] . '</td>
 
 					<!-- mô tả -->
-					<td>' . $news['news_desc'] . '</td>
+					<td class="align-middle">' . $news['news_desc'] . '</td>
 
 					<!-- tác giả -->
-					<td>
-						' . $news['create_by'] . '
-					</td>
-					
+					<td class="align-middle">' . $news['create_by'] . '</td>
+
 					<!-- active -->
-					<td>
+					<td class="align-middle">
 						<div class="custom-control custom-switch">
 							<input 
 								type="checkbox" 
@@ -124,8 +97,8 @@
 						</div>
 					</td>
 
-					<!-- edit -->
-					<td>
+					<!-- action -->
+					<td width="115px" class="align-middle">
 						<a
 							href="
 							' . 
@@ -135,15 +108,14 @@
 							. '
 							"
 							class="btn_edit_news btn btn-success"
+							id="btn_edit_' . $news['news_id'] . '"
 							data-news-id="' . $news['news_id'] . '">
 							<i class="fas fa-edit"></i>
 						</a>
-					</td>
 
-					<!-- remove -->
-					<td>
 						<a 
-							class="btn_remove_news btn btn-danger"
+							class="btn_delete_news btn btn-danger"
+							id="btn_delete_' . $news['news_id'] . '"
 							data-news-id="' . $news['news_id'] . '">
 							<i class="fas fa-trash-alt"></i>
 						</a>
@@ -152,12 +124,8 @@
 				';
 			}
 		}
-		$html .= '   
-			</table>
-		';
 
-		$html .= $page['html'];
-
-		echo $html;
-				
+		$pagination = paginateAjax($totalPage, $currentPage);
+		$output = ['list_news'=>$list_news, 'pagination'=>$pagination];
+		echo json_encode($output);
 	}

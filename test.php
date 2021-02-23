@@ -16,9 +16,7 @@
 		// $arr = ['a'=>'', 'b'=>''];
 
 		// echo getTotalMoneyAnOrder(98);
-		var_dump(data_input(password("039989855@#9")));
-		$arr[] = [2 > 1 ? 2 : 1];
-		vd($arr);
+		var_dump(word("châu ngọc long 2411"));
 		
  ?>
 

@@ -265,6 +265,7 @@ require_once 'include/navbar.php';
 			cat_id = ? 
 			AND pro_id != ? 
 			AND pro_price BETWEEN ? - 2000000 AND ? + 2000000
+			AND pro_active = 1
 		";
 		$listRelatedPro = db_get(
 			$getRelatedProSQL,
@@ -272,14 +273,11 @@ require_once 'include/navbar.php';
 			[$product['cat_id'], $product['pro_id'], $product['pro_price'], $product['pro_price']],
 			"iiii"
 		);
-		//vd($listRelatedPro);
 		?>
+
 		<section class="product py-5">
 			<h2 class="text-center mb-3">SẢN PHẨM LIÊN QUAN</h2>
 			<div class="list_product_body">
-				<!-- list products bar -->
-				<!-- <div class="product_bar bg-info px-2 py-2 d-flex justify-content-between"></div> -->
-				<!-- list products -->
 				<div class="owl-carousel owl-theme">
 					<?php if (!empty($listRelatedPro)): ?>
 						<?php foreach ($listRelatedPro as $key => $relatedPro): ?>

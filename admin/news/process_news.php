@@ -1,142 +1,162 @@
 <?php 
 require_once '../../common.php';
 
-/**
- * trường ảnh mô tả không bắt buộc-> nếu sai hoặc thiếu vẫn tải sản phẩm lên mà không tải những file bị sai
- */
+
 if (!empty($_POST['action']) && $_POST['action'] == "add") {
 
-	$status         = 5;
-	
-	//lấy dữ liệu gửi lên từ ajax
-	$title   = input_post("title");
-
-	$desc    = input_post("desc");
-
-	$content = input_post("content");
-
-	$auth    = data_input(input_post("auth"));
-
-	$active  = data_input(input_post("active"));
-
-	$active  = $active ? 1 : 0;
-
-
-	// đường dẫn đến thư mục lưu ảnh
+	$status = "fail";
+	$title = $desc = $content = $auth = $active = $file = $fileName = "";
 	$folder      = "../../image/";
-	
-	//  danh sách đuôi file hợp lệ
 	$extension   = ['jpg', 'jpeg', 'png'];
-	
-	// lấy ảnh
-	$imageFile   = !empty($_FILES['image']) ? $_FILES['image'] : null;
-	
+	$error = [];
+	$ok = true;
 
-	//validate
-	if(
-		$title     === false ||
-		$desc      === false ||
-		$content   === false ||
-		$auth      === false ||
-		$imageFile === null
-	) {
-		$status = 1;
+	// tiêu đề
+	if(empty($_POST['title'])) {
+		$ok= false;
+		$error[] = "TIÊU ĐỀ: không được để trống";
 	} else {
+		$title = $_POST['title'];
+	}
 
-		// thêm tin tức vào bảng tin tức
-		$imageName = up_file($imageFile, $folder, $extension);
-		if(!$imageName) {
-			$imageName    = "";
+	// mô tả
+	if(empty($_POST['desc'])) {
+		$ok= false;
+		$error[] = "MÔ TẢ: không được để trống";
+	} else {
+		$desc = $_POST['desc'];
+	}
+
+	// nội dung
+	if(empty($_POST['content'])) {
+		$ok= false;
+		$error[] = "NỘI DUNG: không được để trống";
+	} else {
+		$content = $_POST['content'];
+	}
+
+	// tác giả
+	if(empty($_POST['auth'])) {
+		$ok= false;
+		$error[] = "TÁC GIẢ: không được để trống";
+	} else {
+		$auth = name($_POST['auth']);
+
+		if($auth === false) {
+			$ok = false;
+			$error[] = "TÁC GIẢ: sai định dạng";
 		}
+	}
 
+	// ảnh
+	if(empty($_FILES['image'])) {
+		$ok = false;
+		$error[] = "ẢNH: không được để trống";
+	} else {
+		$file = $_FILES['image'];
+		$fileName = up_file($file, $folder, $extension);
+
+		if(!$fileName) {
+			$ok = false;
+			$error[] = "ẢNH: tải lêm không thành công";
+		}
+	}
+
+	// trạng thái
+	$active = !empty($_POST['active']) ? 1 : 0;
+
+	if($ok) {
 		$addNewsSQL = "  
 		INSERT INTO db_news
 		(news_img, news_title, news_desc, news_content, news_active, create_by)
 		VALUES(?, ?, ?, ?, ?, ?)
 		";
-
-		$param = [$imageName, $title, $desc, $content, $active, $auth];
-
+		$param = [$fileName, $title, $desc, $content, $active, $auth];
 		$runAddNews = db_run($addNewsSQL, $param, "ssssis");
 
-		if($runAddNews) {
-
-			$status = 5;
-
-		} else {
-			// tải sản phẩm thất bại
-			$status = 6; 
-		}
+		$status = $runAddNews ? "success" : 'fail';
 	}
-	
-	// biến lưu kết quả trả về
-	$res = [
-		"status"     => $status
-	];
 
-	echo json_encode($res);
+	$output = ['status'=>$status, 'error'=>$error];
+	echo json_encode($output);
 }
 
 
 // SỬA BÀI VIẾT
 if (!empty($_POST['action']) && $_POST['action'] == "edit") {
-
-	$status         = 5;
-
-	//lấy dữ liệu gửi lên từ ajax
-	
-	$newsID   = data_input(input_post('newsID'));
-
-	$title    = input_post("title");
-
-	$desc     = input_post("desc");
-
-	$content  = input_post("content");
-
-	$auth     = data_input(input_post("auth"));
-
-	$oldImage = data_input(input_post('oldImage'));
-
-	$active   = data_input(input_post("active"));
-
-	$active   = $active ? 1 : 0;
-
-
-	// đường dẫn đến thư mục lưu ảnh
+	$status = "fail";
+	$newsID = $title = $desc = $content = $auth = $active = $file = $fileName = $oldImage = "";
 	$folder      = "../../image/";
-	
-	//  danh sách đuôi file hợp lệ
 	$extension   = ['jpg', 'jpeg', 'png'];
-	
-	// lấy ảnh
-	$imageFile   = !empty($_FILES['image']) ? $_FILES['image'] : null;
-	
+	$error = [];
+	$ok = true;
 
-
-	//validate
-	if(
-		$newsID    === false ||
-		$oldImage  === false ||
-		$title     === false ||
-		$desc      === false ||
-		$content   === false ||
-		$auth      === false 
-	) {
-		$status = 1;
+	// id
+	if(empty($_POST['newsID'])) {
+		$ok = false;
 	} else {
+		$newsID = data_input($_POST['newsID']);
+	}
 
-		// tên file tải lên database
-		$fileName = "";
+	// tiêu đề
+	if(empty($_POST['title'])) {
+		$ok= false;
+		$error[] = "TIÊU ĐỀ: không được để trống";
+	} else {
+		$title = $_POST['title'];
+	}
 
-		if($imageFile != null) {
+	// mô tả
+	if(empty($_POST['desc'])) {
+		$ok= false;
+		$error[] = "MÔ TẢ: không được để trống";
+	} else {
+		$desc = $_POST['desc'];
+	}
 
-			$fileName     = up_file($imageFile, $folder, $extension);
-		} else {
+	// nội dung
+	if(empty($_POST['content'])) {
+		$ok= false;
+		$error[] = "NỘI DUNG: không được để trống";
+	} else {
+		$content = $_POST['content'];
+	}
 
-			$fileName     = $oldImage;
+	// tác giả
+	if(empty($_POST['auth'])) {
+		$ok= false;
+		$error[] = "TÁC GIẢ: không được để trống";
+	} else {
+		$auth = name($_POST['auth']);
+
+		if($auth === false) {
+			$ok = false;
+			$error[] = "TÁC GIẢ: sai định dạng";
 		}
+	}
 
-		
+	// ảnh cũ
+	if(!empty($_POST['oldImage'])) {
+		$oldImage = data_input($_POST['oldImage']);
+	}
+
+	// ảnh
+	if(!empty($_FILES['image'])) {
+		$file = $_FILES['image'];
+		$fileName = up_file($file, $folder, $extension);
+
+		if(!$fileName) {
+			$ok = false;
+			$error[] = "ẢNH: tải lêm không thành công";
+		}
+	} else {
+		$fileName = $oldImage;
+	}
+
+	// trạng thái
+	$active = !empty($_POST['active']) ? 1 : 0;
+
+	if($ok) {
 		$editNewsSQL = "
 		UPDATE db_news 
 		SET 
@@ -152,69 +172,38 @@ if (!empty($_POST['action']) && $_POST['action'] == "edit") {
 
 		$param = [$fileName, $title, $desc, $content, $active, $auth, $newsID];
 		$runEdit = db_run($editNewsSQL, $param, "ssssisi");
-
-		$status = $runEdit ? 5 : 6;
 		
+		$status = $runEdit ? "success" : 'fail';
 	}
-	
-	// biến lưu kết quả trả về
-	$res = [
-		"status"     => $status
-	];
 
-	echo json_encode($res);
+	$output = ['status'=>$status, 'error'=>$error];
+	echo json_encode($output);
 }
 
 
 // THAY ĐỔI TRẠNG THÁI
 if (!empty($_POST['action']) && $_POST['action'] == "switch_active") {
-	$status = 5;
-
-		// mã bài viết
-	$newsID = data_input(input_post("newsID"));
-
-		// trạng thái muốn cập nhật
-	$newActive = $_POST['newActive'] ?? null;
-
-		// validate
-	if($newsID === false || $newActive === null) {
-		$status = 1;
-	} else {
-
-		$switchActiveSQL    = "UPDATE db_news SET news_active = ? WHERE news_id = ?";
-
-		$runSwitchActiveSQL = db_run($switchActiveSQL, [$newActive, $newsID], 'ii');
-
-		if($runSwitchActiveSQL) {
-			$status = 5;
-		} else {
-			$status = 6;
-		}
-	}
-
-	$res = [
-		"status"   =>$status
-	];
-
-	echo json_encode($res);
+	$ok           = true;
+	$newsID       = data_input($_POST['newsID']);
+	$active       = data_input($_POST['active']);
+	$switchSQL    = "UPDATE db_news SET news_active = ? WHERE news_id = ?";
+	$runSwitchSQL = db_run($switchSQL, [$active, $newsID], 'ii');
+	$ok = $runSwitchSQL ? true : false;
+	
+	$output = ["ok" =>$ok];
+	echo json_encode($output);
 }
 
 
 
 // xóa bài viết
-if (!empty($_POST['action']) && $_POST['action'] == "remove") {
-	$status = 5;
-
-	// mã bài viết
-	$newsID = data_input(input_post("newsID"));
-
-	if($newsID === false) {
-		$status = 1;
-	} else {
-		$removeNewsSQL = "DELETE FROM db_news WHERE news_id = ?";
-		$runRemoveNews = db_run($removeNewsSQL, [$newsID], "i");
-		$status = ($runRemoveNews) ? 5 : 6;
-	}
-
-	echo $status;
+if (!empty($_POST['action']) && $_POST['action'] == "delete") {
+	$status       = 'error';
+	$newsID       = data_input($_POST['newsID']);
+	$deleteSQL    = "DELETE FROM db_news WHERE news_id = ?";
+	$runDeleteSQL = db_run($deleteSQL, [$newsID], 'i');
+	$status       = $runDeleteSQL ? 'success' : 'error';
+	
+	$output = ["status" =>$status];
+	echo json_encode($output);
 }

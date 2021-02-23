@@ -2044,30 +2044,25 @@ function addNews() {
         // thêm hành động
         form_data.append('action', "add");
 
-        let sendAddNews = sendAJax(
-            "process_news.php",
-            "post",
-            "json",
-            form_data,
-            1
-        );
+        let result = sendAJax( "process_news.php", "post", "json", form_data, 1 );
 
-        let status   = sendAddNews.status;
+        let status = result.status;
+        let error = result.error;
+        let msg = "";
 
-        switch (status) {
-            case 1:
-                alert("THIẾU DỮ LIỆU");
-                break;
-
-            case 5:
-                alert("THÊM TIN TỨC THÀNH CÔNG");
-                window.location = document.referrer;
-                break;
-
-            case 6:
-                alert("THÊM TIN TỨC THẤT BẠI");
-                break;
-
+        if(status == "success") {
+            msg = "THÊM THÀNH CÔNG";
+            if(error.length) {
+                msg += "\n" + error.join("\n");
+            }
+            alert(msg);
+            window.location = "index.php";
+        } else {
+            msg = "THÊM THẤT BẠI";
+            if(error.length) {
+                msg += "\n" + error.join("\n");
+            }
+            alert(msg);
         }
     }
 }
@@ -2177,28 +2172,25 @@ function editNews() {
         // thêm hành động
         form_data.append('action', "edit");
 
-        let sendEditNews = sendAJax(
-            'process_news.php',
-            'post',
-            'json',
-            form_data,
-            1
-        );
+        let result = sendAJax( "process_news.php", "post", "json", form_data, 1 );
 
-        let status   = sendEditNews.status;
+        let status = result.status;
+        let error = result.error;
+        let msg = "";
 
-        switch (status) {
-            case 1:
-                alert("THIẾU DỮ LIỆU");
-                break;
-
-            case 5:
-                alert("CẬP NHẬT BÀI VIẾT THÀNH CÔNG");
-                window.location = document.referrer;
-                break;
-            case 6:
-                alert("CẬP NHẬT BÀI VIẾT THẤT BẠI");
-                break;
+        if(status == "success") {
+            msg = "CẬP NHẬT THÀNH CÔNG";
+            if(error.length) {
+                msg += "\n" + error.join("\n");
+            }
+            alert(msg);
+            window.location = "index.php";
+        } else {
+            msg = "CẬP NHẬT THẤT BẠI";
+            if(error.length) {
+                msg += "\n" + error.join("\n");
+            }
+            alert(msg);
         }
     }
 }

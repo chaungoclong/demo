@@ -185,37 +185,44 @@
 		?>
 	</h5>
     <div class="list_news">
-      <div class="row m-0">
+      <div class="row">
         <?php foreach ($listResult as $key => $result): ?>
         <?php if ($result['news_active']): ?>
-          <div class="card col-4">
-            <a href='<?= create_link(base_url("news_detail.php"), ["newsid" => $result["news_id"]]); ?>'>
+          <div class="col-3">
+            <div class="card one_news">
+            <a href="news_detail.php?newsid=<?= $result['news_id']; ?>">
               <img src="image/<?= $result['news_img']; ?>" alt="" class="card-img-top">
             </a>
+
             <div class="card-body">
               <ul class="card-title nav">
                 <li class="nav-item mr-2">
                   <i class="fas fa-calendar-alt"></i>
-                  <?php
-                  $time = strtotime($result['create_at']);
-                  ?>
+                  <?php $time = strtotime($result['create_at']); ?>
                   <span><?= read_date($time); ?></span>
                 </li>
+
                 <li class="nav-item">
                   <i class="fas fa-user-edit"></i>
                   <span><?= $result['create_by']; ?></span>
                 </li>
               </ul>
-              <h5 class="card-title text-uppercase">
-                <a href='<?= create_link(base_url("news_detail.php"), ["newsid" => $result["news_id"]]); ?>'>
+
+              <!-- title -->
+              <div class="card-title news_title mb-1">
+                <a href='news_detail.php?newsid=<?= $result['news_id']; ?>'>
                   <?= $result['news_title']; ?>
                 </a>
-              </h5>
-              <p class="card-text">
+              </div>
+
+              <!-- desc -->
+              <div class="card-text news_desc mb-1">
                 <?= $result['news_desc']; ?>
-              </p>
-              <a href='<?= create_link(base_url("news_detail.php"), ["newsid" => $result["news_id"]]); ?>' class="btn btn-default btn-primary">Xem thêm<i class="fas fa-angle-double-right"></i></a>
+              </div>
+
+              <a href='news_detail.php?newsid=<?= $result['news_id']; ?>' class="badge badge-primary">Xem thêm<i class="fas fa-angle-double-right"></i></a>
             </div>
+          </div>
           </div>
         <?php endif ?>
       <?php endforeach ?>
@@ -223,6 +230,7 @@
     </div>
   </section>
 <?php endif ?>
+
 <!-- phân trang -->
 	<div class="mt-3">
 		<?php if ($totalPage): ?>

@@ -143,6 +143,8 @@
             </a>
           </div>
         </li>
+        <?php endif ?>
+
         <!-- người dùng -->
         <li class="nav-item mb-4 dropdown">
           <a href="<?= base_url('admin/customer/'); ?>">
@@ -150,8 +152,14 @@
             <strong>Khách hàng</strong>
           </a>
         </li>
-        <?php endif ?>
         
+        <!-- đánh giá -->
+        <li class="nav-item mb-4">
+          <a href="<?= base_url('admin/rate/'); ?>" class="">
+            <i class="far fa-comment-dots mr-1"></i>
+            <strong>Đánh giá</strong>
+          </a>
+        </li>
         <hr class="w-100">
         <!-- Đăng xuất -->
         <li class="nav-item mb-4">

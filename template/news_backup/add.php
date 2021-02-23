@@ -9,9 +9,6 @@ if(!is_login() || !is_admin()) {
 require_once '../include/sidebar.php';
 require_once '../include/navbar.php';
 
-$newsID   = data_input(input_get('newsid'));
-
-$news     = getNewsByID($newsID);
 ?>
 
 <!-- main content -row -->
@@ -20,18 +17,15 @@ $news     = getNewsByID($newsID);
    <div class="col-12">
       <div class="row m-0">
          <div class="col-12">
-            <h5>SỬA TIN TỨC</h5>
-            <p class="mb-4">SỬA TIN TỨC</p>
+            <h5>THÊM TIN TỨC</h5>
+            <p class="mb-4">Thêm tin tức mới</p>
             <hr>
          </div>
       </div>
    </div>
 
    <div class="col-12 mb-5">
-      <form action="	" method="POST" id="news_edit_form" enctype="multipart/form-data">
-         
-         <!-- news id -->
-         <input type="hidden" name="newsID" value="<?= $news['news_id']; ?>">
+      <form action="	" method="POST" id="news_add_form" enctype="multipart/form-data">
 
          <div class="row m-0">
             <div class="col-12">
@@ -40,9 +34,7 @@ $news     = getNewsByID($newsID);
                <!-- tiêu đề bài viết -->
                <div class="form-group">
                   <label for="title"><strong>Tiêu đề bài viết:</strong></label>
-                  <textarea type="text" name="title" id="title">
-                    <?= $news['news_title']; ?>
-                  </textarea>
+                  <textarea type="text" name="title" id="title"></textarea>
                   <div class="alert-danger" id="titleErr"></div>
 
                   <script>
@@ -55,9 +47,7 @@ $news     = getNewsByID($newsID);
                <!-- mô tả -->
                <div class="form-group">
                   <label for="title"><strong>Mô tả:</strong></label>
-                  <textarea type="text" name="desc" id="desc">
-                    <?= $news['news_desc']; ?>
-                  </textarea>
+                  <textarea type="text" name="desc" id="desc"></textarea>
                   <div class="alert-danger" id="descErr"></div>
 
                    <script>
@@ -72,11 +62,8 @@ $news     = getNewsByID($newsID);
                   <div class="form-group col-6">
                      <label for="image"><strong>Ảnh bài viết:</strong></label>
                      <input type="file" name="image" id="image">
-                     <input type="hidden" name="oldImage" value="<?= $news['news_img']; ?>">
 
-                     <div class="previewImage">
-                       <img src="../../image/<?= $news['news_img']; ?>" class="img-fluid">
-                     </div>
+                     <div class="previewImage"></div>
                      <script>
                         $(document).on('change', '#image', function() {
                           showImg(this, ".previewImage", 0);
@@ -89,9 +76,7 @@ $news     = getNewsByID($newsID);
                <!-- nội dung bài viết -->
               <div class="form-group">
                  <label for="content"><strong>Nội dung bài viết:</strong></label>
-                 <textarea name="content" id="content">
-                   <?= $news['news_content']; ?>
-                 </textarea>
+                 <textarea name="content" id="content"></textarea>
                  <script>
                     CKEDITOR.replace( 'content', {
                         filebrowserBrowseUrl: '../../dist/ckfinder/ckfinder.html',
@@ -108,7 +93,7 @@ $news     = getNewsByID($newsID);
               <!-- tác giả -->
               <div class="form-group">
                 <label for="auth"><strong>Tác giả:</strong></label>
-                <input type="text" name="auth" id="auth" class="form-control" value="<?= $news['create_by']; ?>">
+                <input type="text" name="auth" id="auth" class="form-control">
                 <div class="alert-danger" id="authErr"></div>
               </div>
 
@@ -119,14 +104,15 @@ $news     = getNewsByID($newsID);
                  id    ="active"
                  name  ="active"
                  class ="custom-control-input"
-                 <?= $news['news_active'] ? "checked" : ""; ?>
+                 checked
                  >
                  <label for="active" class="custom-control-label">Trạng thái</label>
               </div>
 
+                 
             </div>
 
-            <button class="btn_edit_news btn btn-block btn-success"><strong>THÊM</strong></button>
+            <button class="btn_add_pro btn btn-block btn-success"><strong>THÊM</strong></button>
               
          </div>
       </div>
@@ -143,11 +129,11 @@ $news     = getNewsByID($newsID);
 </html>
 <script>
    $(function() {
-   	$(document).on('submit', "#news_edit_form", function(e) {
+   	$(document).on('submit', "#news_add_form", function(e) {
    		e.preventDefault();
          // //validateNewsAdd();
-         console.log($(this).serializeArray());
-         editNews();
+         // console.log($(this).serializeArray());
+         addNews();
 
       });
    });
