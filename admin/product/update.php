@@ -192,8 +192,8 @@ $listCategory = db_fetch_table("db_category", 0);
 <!-- Thông số sản phẩm -->
 <div class="form-group">
  <label for="detail"><strong>Thông số sản phẩm:</strong></label>
- <textarea name="detail" id="detail" value="<?= $product['pro_detail']; ?>">
-   <?= $product['pro_price']; ?>
+ <textarea name="detail" id="detail">
+   <?= $product['pro_detail']; ?>
  </textarea>
  <script>
   CKEDITOR.replace( 'detail', {

@@ -22,11 +22,12 @@ $brand   = getBrandByID($brandID);
 
    <div class="col-12">
       <div class="row m-0">
-         <div class="col-12">
-            <h5>SỬA HÃNG</h5>
-            <p class="mb-4">Sửa hãng</p>
-            <hr>
-         </div>
+       <div class="col-12">
+         <a class="" onclick="javascript:history.go(-1)" style="cursor: pointer;">
+          <i class="fas fa-angle-left"></i> TRỞ LẠI
+        </a>
+        <hr>
+      </div>
       </div>
    </div>
 

@@ -85,7 +85,7 @@
 		$totalProduct = count($listProduct);
 
 		// chia trang
-		$proPerPage = 5;
+		$proPerPage = !empty($_POST['numRows']) ? int($_POST['numRows']) : 5;
 		$totalPage = ceil($totalProduct / $proPerPage);
 		$currentPage = !empty($_POST['currentPage']) ? (int)$_POST['currentPage'] : 1;
 		$currentPage = $currentPage > $totalPage ? $totalPage : $currentPage;
@@ -103,37 +103,35 @@
 				$checked = $product['pro_active'] ? "checked" : "";
 				$products .= '   
 				<tr>
-					<!-- mã -->
-					<td>' . $stt++ . '</td>
 
 					<!-- mã -->
-					<td>' . $product['pro_id'] . '</td>
+					<td class="align-middle">' . $product['pro_id'] . '</td>
 
 					<!-- tên sản phẩm -->
-					<td>' . $product['pro_name'] . '</td>
+					<td class="align-middle">' . $product['pro_name'] . '</td>
 
 					<!-- ảnh  -->
-					<td>
+					<td class="align-middle">
 						<img src="../../image/' . $product['pro_img'] . '" width="30px" height="30px">
 					</td>
 
 					<!-- hãng -->
-					<td>' . $product['bra_name'] . '</td>
+					<td class="align-middle">' . $product['bra_name'] . '</td>
 
 					<!-- thể loại -->
-					<td>
+					<td class="align-middle">
 						' . $product['cat_name'] . '
 					</td>
 
 					<!-- giá -->
-					<td>' . $product['pro_price'] . '</td>
+					<td class="align-middle">' . $product['pro_price'] . '</td>
 
 					<!-- số lượng -->
-					<td>' . $product['pro_qty'] . '</td>
+					<td class="align-middle">' . $product['pro_qty'] . '</td>
 					
 
 					<!-- active -->
-					<td>
+					<td class="align-middle">
 						<div class="custom-control custom-switch">
 							<input 
 								type="checkbox" 
@@ -147,8 +145,8 @@
 						</div>
 					</td>
 
-					<!-- edit -->
-					<td>
+					<!-- action -->
+					<td class="align-middle">
 						<a
 							href="
 							' . 
@@ -161,10 +159,7 @@
 							data-pro-id="' . $product['pro_id'] . '">
 							<i class="fas fa-edit"></i>
 						</a>
-					</td>
 
-					<!-- delete -->
-					<td>
 						<a 
 							class="btn_delete_pro btn btn-danger"
 							id="btn_delete_' . $product['pro_id'] . '" 

@@ -1,6 +1,10 @@
 <?php 
 	require_once '../../common.php';
 	require_once '../../dist/excel/vendor/shuchkin/simplexlsxgen/src/SimpleXLSXGen.php';
+	
+	if(!is_login() || !is_admin()) {
+		redirect('admin/form_login.php');
+	} 
 
 	$getProductSQL = "SELECT * FROM db_product JOIN db_category ON db_product.cat_id = db_category.cat_id JOIN db_brand ON db_product.bra_id = db_brand.bra_id";
 
@@ -26,5 +30,5 @@
 
 	$output[] = ['', '', '', '', 'TOTAL PRODUCT:', $totalProduct, '', ''];
 	$xlsx = SimpleXLSXGen::fromArray( $output );
-	$xlsx->downloadAs('list_product.xlsx');
+	$xlsx->downloadAs('list_product' .time(). '.xlsx');
  ?>

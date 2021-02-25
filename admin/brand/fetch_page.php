@@ -50,7 +50,7 @@
 		$totalBrand = count($listBrand);
 		
 		// chia trang
-		$braPerPage  = 5;
+		$braPerPage  = !empty($_POST['numRows']) ? int($_POST['numRows']) : 5;
 		$totalPage   = ceil($totalBrand / $braPerPage);
 		$currentPage = !empty($_POST['currentPage']) ? (int)$_POST['currentPage'] : 1;
 		$currentPage = $currentPage > $totalPage ? $totalPage : $currentPage;
@@ -69,22 +69,20 @@
 				$checked = $brand['bra_active'] ? "checked" : "";
 				$brands .= '   
 				<tr>
-					<!--stt -->
-					<td>' . $stt++ . '</td>
 
 					<!-- mã -->
-					<td>' . $brand['bra_id'] . '</td>
+					<td class="align-middle">' . $brand['bra_id'] . '</td>
 
 					<!-- tên hãng -->
-					<td>' . $brand['bra_name'] . '</td>
+					<td class="align-middle">' . $brand['bra_name'] . '</td>
 
 					<!-- ảnh  -->
-					<td>
-						<img src="../../image/' . $brand['bra_logo'] . '" width="30px" height="30px">
+					<td class="align-middle">
+						<img src="../../image/' . $brand['bra_logo'] . '" height="30px">
 					</td>
 
 					<!-- active -->
-					<td>
+					<td class="align-middle">
 						<div class="custom-control custom-switch">
 							<input 
 								type="checkbox" 
@@ -98,8 +96,8 @@
 						</div>
 					</td>
 
-					<!-- edit -->
-					<td>
+					<!-- action -->
+					<td class="align-middle">
 						<a
 							href="
 							' . 
@@ -112,10 +110,7 @@
 							data-bra-id="' . $brand['bra_id'] . '">
 							<i class="fas fa-edit"></i>
 						</a>
-					</td>
 
-					<!-- remove -->
-					<td>
 						<a 
 							class="btn_delete_bra btn btn-danger"
 							id="btn_delete_' . $brand['bra_id'] . '"
@@ -123,6 +118,7 @@
 							<i class="fas fa-trash-alt"></i>
 						</a>
 					</td>
+
 				</tr>
 				';
 			}

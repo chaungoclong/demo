@@ -1,8 +1,10 @@
 <!-- footer -->
 <!-- button top -->
-<button id="btn_top" class="btn btn-warning position-fixed p-2" style="bottom: 90px; right: 15px; border-radius: 50%; z-index: 1000;display:none;">
+<!-- <button id="btn_top" class="btn btn-warning position-fixed p-2" style="bottom: 90px; right: 15px; border-radius: 50%; z-index: 1000;display:none;">
   <i class="fas fa-arrow-up fa-2x"></i>
-</button>
+</button> -->
+
+<i class="far fa-caret-square-up fa-3x position-fixed text-warning" style="bottom: 60px; right: 10px; z-index: 1000; display: none; cursor: pointer;" id="btn_top"></i>
 <script>
   $(function() {
     $(window).scroll(function() {

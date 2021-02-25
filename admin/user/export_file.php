@@ -2,6 +2,10 @@
 	require_once '../../common.php';
 	require_once '../../dist/excel/vendor/shuchkin/simplexlsxgen/src/SimpleXLSXGen.php';
 
+	if(!is_login() || !is_admin()) {
+		redirect('admin/form_login.php');
+	} 
+
 	$listUser = db_fetch_table('db_admin', 0);
 	$field = ['ID', 'USERNAME', 'NAME', 'GENDER', 'EMAIL', 'PHONE', 'ROLE'];
 	$output[] = $field;

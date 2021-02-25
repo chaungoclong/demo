@@ -1,6 +1,11 @@
 <?php 
 	require_once '../../common.php';
 	require_once '../../dist/excel/vendor/shuchkin/simplexlsxgen/src/SimpleXLSXGen.php';
+
+	if(!is_login() || !is_admin()) {
+		redirect('admin/form_login.php');
+	} 
+	
 	$listCustomer = db_fetch_table("db_customer", 0);
 	$field = ['ID', "TÊN", "NGÀY SINH", "GIỚI TÍNH", "EMAIL", "PHONE", "TRẠNG THÁI"];
 	$output[] = $field;

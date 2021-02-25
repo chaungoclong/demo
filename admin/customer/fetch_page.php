@@ -82,7 +82,8 @@
 		if ($totalCustomer > 0) {
 			foreach ($listCustomer as $key => $customer) {
 				$checked = $customer['cus_active'] ? "checked" : "";
-				$gender = $customer['cus_gender'] ? "Nam" : "Nữ";
+				$gender = $customer['cus_gender'] ? "<span class='badge badge-success'>NAM</span>" 
+												  : "<span class='badge badge-danger'>NỮ</span>";
 				$customers .= '   
 				<tr>
 					<!-- mã -->
@@ -110,7 +111,7 @@
 					<td class="align-middle">' . $customer['cus_address'] . '</td>
 
 					<!-- active -->
-					<td>
+					<td class="align-middle">
 						<div class="custom-control custom-switch">
 							<input 
 								type="checkbox" 
@@ -125,7 +126,7 @@
 					</td>
 
 					<!-- edit -->
-					<td>
+					<td class="align-middle" width="115px">
 						<a
 							href="
 							' . 

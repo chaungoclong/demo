@@ -14,51 +14,50 @@ require_once '../include/navbar.php';
 	<div class="col-12">
 		<!-- tiêu đề -->
 		<div class="d-flex justify-content-between align-items-center mb-2">
-			<h5>DANH SÁCH KHÁCH HÀNG</h5>
-			<a class="btn_back btn btn-warning py-1 px-2" onclick="javascript:history.go(-1)">
-				<i class="fas fa-chevron-circle-left"></i>
+			<a class="" onclick="javascript:history.go(-1)" style="cursor: pointer;">
+				<i class="fas fa-angle-left"></i> TRỞ LẠI
 			</a>
 		</div>
 
 		<!-- nút thêm khách hàngvà thanh tìm kiếm -->
 		<div class="row m-0 mb-3">
 			<!-- nút thêm khách hàng-->
-			<div class="col-12 p-0 d-flex justify-content-between align-items-center bg-light p-2">
+			<div class="col-12 p-0 d-flex justify-content-between align-items-center bg-light p-2 border">
 
 				<!-- tìm kiếm -->
 				<div class="filter d-flex">
 					<!-- sắp xếp -->
-					<select id="sort" class="custom-select">
+					<select id="sort" class="custom-select mr-3">
 						<option value="1">Tên: A - Z</option>
 						<option value="2">Tên: Z - A</option>
-						<option value="3" selected>Mới nhất</option>
-						<option value="4">Cũ nhất</option>
+						<option value="3" selected>Ngày tạo: Mới nhất</option>
+						<option value="4">Ngày tạo: Cũ nhất</option>
 					</select>
 
 					<!-- giới tính -->
-					<select id="gender_opt" class="custom-select">
-						<option value="all" selected>Tất cả</option>
-						<option value="male">Nam</option>
-						<option value="female">Nữ</option>
+					<select id="gender_opt" class="custom-select mr-3">
+						<option value="all" selected>Giới tính: Tất cả</option>
+						<option value="male">Giới tính: Nam</option>
+						<option value="female">Giới tính: Nữ</option>
 					</select>
 
 					<!-- lọc trạng thái khách hàng-->
-					<select id="filter_status" class='custom-select'>
-						<option value="all" selected>Tất cả</option>
-						<option value="on">Bật</option>
-						<option value="off">Tắt</option>
+					<select id="filter_status" class='custom-select mr-3'>
+						<option value="all" selected>Trạng thái: Tất cả</option>
+						<option value="on">Trạng thái: Bật</option>
+						<option value="off">Trạng thái: Tắt</option>
 					</select>
 
 					<!-- tìm kiếm tên , id khách, địa chỉ , ngày sinh... khách hàng-->
-					<input type="text" class="form-control" id="search" placeholder="search">
+					<input type="text" class="form-control" id="search" placeholder="ID, Tên, Địa chỉ, Email..." style="width: 180px;	">
 				</div>
 
 				<!-- số hàng hiển thị -->
 				<div class="d-flex justify-content-between align-items-center">
-					<i class="far fa-file-excel fa-2x text-success mr-3" style="" onclick="window.location='export_file.php'"></i>
+					<i class="far fa-file-excel fa-2x text-success mr-3" style="" onclick="window.location='export_file.php'" data-toggle="tooltip" title="xuất file excel"></i>
 
 					<?php $option = [5, 10, 25, 50, 100]; ?>
-					<select class="custom-select" id="number_of_rows">
+					<select class="custom-select" id="number_of_rows" data-toggle="tooltip" title="số hàng hiển thị">
 						<?php foreach ($option as $key => $each): ?>
 							<option value="<?= $each; ?>"> <?= $each; ?> </option>
 						<?php endforeach ?>

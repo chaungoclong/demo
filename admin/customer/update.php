@@ -8,7 +8,14 @@ require_once '../include/sidebar.php';
 require_once '../include/navbar.php';
 // lấy thông tin khách hàng
 $customerID = data_input(input_get("cusid"));
+if(!int($customerID)) {
+	die('<h1 class="text-center text-danger m-5">KHÔNG TÌM THẤY TRANG</h1>');
+}
+
 $customer = get_user_by_id($customerID);
+if(!$customer) {
+	die('<h1 class="text-center text-danger m-5">KHÔNG TÌM KHÁCH HÀNG</h1>');
+}
 
 //vd($customer);
 ?>
@@ -18,10 +25,10 @@ $customer = get_user_by_id($customerID);
 		<form action="	" method="POST" id="cus_info_edit_form">
 			
 			<div class="row m-0">
-				<div class="col-12">
-					<h5>CHỈNH SỬA THÔNG TIN KHÁCH HÀNG</h5>
-					<p class="mb-4">Chỉnh sửa thông tin khách hàng</p>
-					<hr>
+				<div class="col-12 mb-3">
+					<a class="" onclick="javascript:history.go(-1)" style="cursor: pointer;">
+						<i class="fas fa-angle-left"></i> TRỞ LẠI
+					</a>
 				</div>
 			</div>
 			<div class="row m-0">
@@ -104,8 +111,8 @@ $customer = get_user_by_id($customerID);
 					<div class="form-group mb-3">
 						<div class="input-group">
 							<div class="input-group-prepend">
-								<label for="email" class="input-group-text">
-									<i class="fas fa-envelope fa-lg"></i>
+								<label for="email" class="input-group-text" style="min-width: 120px;">
+									<i class="fas fa-envelope fa-lg mr-2"></i>Email
 								</label>
 							</div>
 							<input type="text" id="email" name="email" class="form-control" placeholder="email"
@@ -119,8 +126,8 @@ $customer = get_user_by_id($customerID);
 					<div class="form-group mb-3">
 						<div class="input-group">
 							<div class="input-group-prepend">
-								<label for="phone" class="input-group-text">
-									<i class="fas fa-phone-alt fa-lg"></i>
+								<label for="phone" class="input-group-text" style="min-width: 120px;">
+									<i class="fas fa-phone-alt fa-lg mr-2"></i>Điện thoại
 								</label>
 							</div>
 							<input type="text" id="phone" name="phone" class="form-control" placeholder="phone"
@@ -132,6 +139,10 @@ $customer = get_user_by_id($customerID);
 					</div>
 					<!-- adddress -->
 					<div class="form-group mb-3">
+						<label for="address" class="badge badge-success" style="font-size: 15px;">
+							<strong>Địa chỉ:</strong>
+						</label>
+
 						<textarea name="address" id="address" class="form-control" placeholder="Địa chỉ"
 						value="<?= $customer['cus_address']; ?>"><?= $customer['cus_address']; ?></textarea>
 						<div id="addressErr" class="alert-danger"></div>
@@ -145,11 +156,11 @@ $customer = get_user_by_id($customerID);
 						class="custom-control-input"
 						<?= $customer['cus_active'] ? "checked" : ""; ?>
 						>
-						<label for="active" class="custom-control-label">Trạng thái</label>
+						<label for="active" class="custom-control-label badge badge-danger">Trạng thái</label>
 					</div>
 					
 					<!-- update button -->
-					<button class="btn_user_edit btn btn-primary btn-block mb-3">LƯU</button>
+					<button class="btn_user_edit btn btn-success btn-block mb-3">LƯU</button>
 				</div>
 				<div class="col-3">
 					<div class="upload w-100 bg-faded mb-3 text-center">

@@ -14,62 +14,75 @@ require_once '../include/navbar.php';
 	<div class="col-12">
 		<!-- tiêu đề -->
 		<div class="d-flex justify-content-between align-items-center mb-2">
-			<h5>DANH SÁCH HÃNG</h5>
-			<a class="btn_back btn btn-warning py-0 px-3" onclick="javascript:history.go(-1)">
-				<i class="fas fa-arrow-alt-circle-left"></i>
+			<a class="" onclick="javascript:history.go(-1)" style="cursor: pointer;">
+				<i class="fas fa-angle-left"></i> TRỞ LẠI
 			</a>
 		</div>
 
 		<!-- nút thêm hãng và thanh tìm kiếm -->
 		<div class="row m-0 mb-3">
 			<!-- nút thêm hãng -->
-			<div class="col-12 p-0 d-flex justify-content-between align-items-center">
-				<a href="
-					<?= base_url('admin/category/add.php'); ?>
-					" 
-					class="btn btn-success" 
-					data-toggle="tooltip" 
-					data-placement="top" 
-					title="Thêm hãng mới"
-				>
-					<i class="fas fa-plus"></i>
-				</a>
-
-				<!-- tìm kiếm -->
+			<div class="col-12 p-2 d-flex justify-content-between align-items-center bg-light border">
+				<!-- thêm , tìm kiếm -->
 				<div class="filter d-flex">
+					<!-- thêm -->
+					<a href="
+						<?= base_url('admin/brand/add.php'); ?>
+						"
+						class="btn btn-success mr-3"
+						data-toggle="tooltip"
+						data-placement="top"
+						title="Thêm hãng mới"
+						style="border-radius: 50%;"
+						>
+						<i class="fas fa-plus"></i>
+					</a>
+
 					<!-- sắp xếp -->
-					<select id="sort" class="custom-select">
+					<select id="sort" class="custom-select mr-2">
 						<option value="1">Tên: A - Z</option>
 						<option value="2">Tên: Z - A</option>
-						<option value="3" selected>Mới nhất</option>
-						<option value="4">Cũ nhất</option>
+						<option value="3" selected>Ngày tạo: Mới nhất</option>
+						<option value="4">Ngày tạo: Cũ nhất</option>
 					</select>
 
 					<!-- lọc trạng thái hãng -->
-					<select id="filter_status" class='custom-select'>
-						<option value="all" selected>Tất cả</option>
-						<option value="on">Bật</option>
-						<option value="off">Tắt</option>
+					<select id="filter_status" class='custom-select mr-2'>
+						<option value="all" selected>Trạng thái: Tất cả</option>
+						<option value="on">Trạng thái: Bật</option>
+						<option value="off">Trạng thái: Tắt</option>
 					</select>
 
 					<!-- tìm kiếm tên , id hãng -->
 					<input type="text" class="form-control" id="search" placeholder="search">
+				</div>
+
+				<!-- số hàng hiển thị, xuất file -->
+				<div class="d-flex align-items-center">
+					<!-- xuất file -->
+					<i class="far fa-file-excel fa-2x text-success mr-3" onclick="window.location='export_file.php'" data-toggle="tooltip" title="xuất file excel"></i>
+
+					<!-- số hàng -->
+					<?php $option = [5, 10, 25, 50, 100]; ?>
+					<select class="custom-select" id="number_of_rows" data-toggle="tooltip" title="số hàng hiển thị">
+						<?php foreach ($option as $key => $each): ?>
+							<option value="<?= $each; ?>"> <?= $each; ?> </option>
+						<?php endforeach ?>
+					</select>
 				</div>
 			</div>
 		</div>
 
 		<!-- danh sách hãng -->
 		<div>
-			<table class="table table-hover bg-white table-bordered shadow" style="font-size: 13px;">
-				<thead class="thead-dark">
+			<table class="table table-hover bg-white table-bordered shadow" style="font-size: 15px;">
+				<thead class="thead-light">
 					<tr>
-						<th>STT</th>
-						<th>Mã</th>
-						<th>Tên</th>
-						<th>Ảnh</th>
-						<th>Trạng thái</th>
-						<th>Sửa</th>
-						<th>Xóa</th>
+						<th class="align-middle">Mã</th>
+						<th class="align-middle">Tên</th>
+						<th class="align-middle">Logo</th>
+						<th class="align-middle">Trạng thái</th>
+						<th class="align-middle" width="115px">Hành động</th>
 					</tr>
 				</thead>
 
@@ -108,6 +121,11 @@ require_once '../include/navbar.php';
 			fetchPage(1);
 		});
 
+		// lấy danh sách hãng khi thay đổi số hàng hiển thị
+		$(document).on('change', '#number_of_rows', function() {
+			fetchPage(1);
+		});
+
 		// lấy danh sách hãng khi chuyển trang
 		$(document).on('click', '.page-item', function() {
 			let currentPage = parseInt($(this).data("page-number"));
@@ -139,7 +157,8 @@ require_once '../include/navbar.php';
 		let sort = $('#sort').val();
 		let status = $('#filter_status').val();
 		let action = "fetch";
-		let data = {q : q, status: status, sort: sort, currentPage: currentPage, action: action};
+		let numRows = $('#number_of_rows').val();
+		let data = {q : q, status: status, sort: sort, numRows: numRows, currentPage: currentPage, action: action};
 		let result = sendAJax("fetch_page.php", "post", "json", data);
 		$('.list_brand').html(result.brands);
 		$('.page').html(result.pagination);
@@ -165,7 +184,7 @@ require_once '../include/navbar.php';
 	}
 
 	function deleteRow(btnID) {
-		let braID = $(`#${btnID}`).data('cat-id'); 
+		let braID = $(`#${btnID}`).data('bra-id'); 
 		let action = "delete";
 		let data = {braID : braID, action: action};
 		let result = sendAJax("process_brand.php", "post", "json", data);

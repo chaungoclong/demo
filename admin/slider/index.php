@@ -15,32 +15,34 @@ require_once '../include/navbar.php';
 	<div class="col-12">
 		<!-- tiêu đề -->
 		<div class="d-flex justify-content-between align-items-center mb-2">
-			<h5>DANH SÁCH SLIDE</h5>
-			<a class="btn_back btn btn-warning py-1 px-2" onclick="javascript:history.go(-1)">
-				<i class="fas fa-chevron-circle-left"></i>
+			<a class="" onclick="javascript:history.go(-1)" style="cursor: pointer;">
+				<i class="fas fa-angle-left"></i> TRỞ LẠI
 			</a>
 		</div>
 
 		<!-- nút thêm slide và thanh tìm kiếm -->
 		<div class="row m-0 mb-3">
-			<div class="col-12 p-2 d-flex justify-content-between align-items-center bg-light">
+			<div class="col-12 p-2 d-flex justify-content-between align-items-center bg-light border">
 				<!-- lọc-->
 				<div class="filter d-flex">
+					<a class="btn btn-success mr-2 text-white" href="add.php" data-toggle="tooltip" title="Thêm slide mới"style="border-radius: 50%;">
+						<i class="fas fa-plus"></i>
+					</a>
 					<!-- sắp xếp -->
-					<select id="sort" class="custom-select">
-						<option value="1">Mới nhất</option>
-						<option value="2">Cũ nhất</option>
+					<select id="sort" class="custom-select mr-3">
+						<option value="1">Ngày tạo: Mới nhất</option>
+						<option value="2">Ngày tạo: Cũ nhất</option>
 						<option value="3" selected>Vị trí: cao - thấp</option>
 						<option value="4">Vị trí: thấp - cao</option>
 					</select>
 
 					<!-- danh mục -->
-					<select id="category_opt" class="custom-select">
+					<select id="category_opt" class="custom-select mr-3">
 						<?php $listCategory = db_fetch_table("db_category", 0); ?>
 
-						<option value="all">Tất cả</option>
+						<option value="all">Danh mục: Tất cả</option>
 						<?php foreach ($listCategory as $key => $category): ?>
-							<option value="<?= $category['cat_id'] ?>"> <?= $category['cat_name']; ?> </option>
+							<option value="<?= $category['cat_id'] ?>">Danh mục:  <?= $category['cat_name']; ?> </option>
 						<?php endforeach ?>
 					</select>
 
@@ -50,9 +52,6 @@ require_once '../include/navbar.php';
 
 				<!-- số hàng hiển thị -->
 				<div class="d-flex justify-content-between">
-					<a class="btn btn-success mr-3 text-white" href="add.php" data-toggle="tooltip" title="Thêm slide mới">
-						<i class="fas fa-plus"></i>
-					</a>
 					<?php $option = [5, 10, 25, 50, 100]; ?>
 					<select class="custom-select" id="number_of_rows">
 						<?php foreach ($option as $key => $each): ?>

@@ -23,9 +23,8 @@ $listCategory = db_fetch_table('db_category', 0);
        <div class="col-12">
          <!-- tiêu đề -->
          <div class="d-flex justify-content-between align-items-center mb-2">
-          <h5>THÊM SLIDE</h5>
-          <a class="btn_back btn btn-warning py-1 px-2" onclick="javascript:history.go(-1)">
-            <i class="fas fa-chevron-circle-left"></i>
+          <a class="" onclick="javascript:history.go(-1)" style="cursor: pointer;">
+            <i class="fas fa-angle-left"></i> TRỞ LẠI
           </a>
         </div>
       </div>

@@ -383,6 +383,10 @@ body {
 .news_vertical {
     
 }
+
+.news_content img {
+    width: 100%;
+}
 .news_vertical img {}
 /*/news*/
 /*footer*/

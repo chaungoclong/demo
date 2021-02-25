@@ -62,6 +62,26 @@
 
 				// đặt hàng thành công
 				delete_session('cart');
+
+				// tạo thông báo đã đặt hàng
+				require_once 'pusher/vendor/autoload.php';
+
+				$options = array(
+					'cluster' => 'ap1',
+					'useTLS' => true
+				);
+				$pusher = new Pusher\Pusher(
+					'73ef9c76d34ce11d7557',
+					'8058b665ee9ff426ecf8',
+					'1161826',
+					$options
+				);
+
+				$data['message'] = 'Bạn có đơn hàng mới';
+				$data['customer'] = $cus_id;
+				$data['link'] = base_url('admin/order/order_detail.php?orid=' . $orderID);
+				$pusher->trigger('notify', 'check_out', $data);
+
 				$status = 5;
 			} else {
 

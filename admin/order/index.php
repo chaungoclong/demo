@@ -15,21 +15,20 @@ require_once '../include/navbar.php';
 	<div class="col-12">
 		<!-- tiêu đề -->
 		<div class="d-flex justify-content-between align-items-center mb-2">
-			<h5>DANH SÁCH ĐƠN HÀNG</h5>
-			<a class="btn_back btn btn-warning py-1 px-2" onclick="javascript:history.go(-1)">
-				<i class="fas fa-chevron-circle-left"></i>
+			<a class="" onclick="javascript:history.go(-1)" style="cursor: pointer;">
+				<i class="fas fa-angle-left"></i> TRỞ LẠI
 			</a>
 		</div>
 
-		<!-- nút thêm đơn hàng và thanh tìm kiếm -->
+		<!-- thanh tìm kiếm -->
 		<div class="row m-0 mb-3">
-			<div class="col-12 p-2 d-flex justify-content-between align-items-center bg-light">
+			<div class="col-12 p-2 d-flex justify-content-between align-items-center bg-light border">
 				<!-- lọc-->
 				<div class="filter d-flex">
 					<!-- sắp xếp -->
-					<select id="sort" class="custom-select">
-						<option value="1" selected>Mới nhất</option>
-						<option value="2">Cũ nhất</option>
+					<select id="sort" class="custom-select mr-3">
+						<option value="1" selected>Ngày tạo: Mới nhất</option>
+						<option value="2">Ngày tạo: Cũ nhất</option>
 					</select>
 
 					<!-- tìm kiếm tên , id đơn hàng -->
@@ -37,9 +36,11 @@ require_once '../include/navbar.php';
 				</div>
 
 				<!-- số hàng hiển thị -->
-				<div>
+				<div class="d-flex align-items-center">
+					<i class="far fa-file-excel fa-2x text-success mr-3" style="" onclick="window.location='export_file.php'" data-toggle="tooltip" title="xuất file excel"></i>
+
 					<?php $option = [5, 10, 25, 50, 100]; ?>
-					<select class="custom-select" id="number_of_rows">
+					<select class="custom-select" id="number_of_rows" data-toggle="tooltip" title="số hàng hiển thị">
 						<?php foreach ($option as $key => $each): ?>
 							<option value="<?= $each; ?>"> <?= $each; ?> </option>
 						<?php endforeach ?>
@@ -71,7 +72,7 @@ require_once '../include/navbar.php';
 						<tr>
 							<th class="align-middle">ID</th>
 							<th class="align-middle">NGÀY ĐẶT</th>
-							<th class="align-middle">LỢI NHUẬN</th>
+							<th class="align-middle">TỔNG TIỀN</th>
 							<th class="align-middle">TRẠNG THÁI</th>
 							<th class="align-middle">NGƯỜI ĐẶT</th>
 							<th class="align-middle">NGƯỜI NHẬN</th>
@@ -93,12 +94,12 @@ require_once '../include/navbar.php';
 						<tr>
 							<th class="align-middle">ID</th>
 							<th class="align-middle">NGÀY ĐẶT</th>
-							<th class="align-middle">LỢI NHUẬN</th>
+							<th class="align-middle">TỔNG TIỀN</th>
 							<th class="align-middle">TRẠNG THÁI</th>
 							<th class="align-middle">NGƯỜI ĐẶT</th>
 							<th class="align-middle">NGƯỜI NHẬN</th>
 							<th class="align-middle">XEM</th>
-							<th class="align-middle">TÙY CHỌN</th>
+							<th class="align-middle" width="115px">HÀNH ĐỘNG</th>
 						</tr>
 					</thead>
 
@@ -115,7 +116,7 @@ require_once '../include/navbar.php';
 						<tr>
 							<th class="align-middle">ID</th>
 							<th class="align-middle">NGÀY ĐẶT</th>
-							<th class="align-middle">LỢI NHUẬN</th>
+							<th class="align-middle">TỔNG TIỀN</th>
 							<th class="align-middle">TRẠNG THÁI</th>
 							<th class="align-middle">NGƯỜI ĐẶT</th>
 							<th class="align-middle">NGƯỜI NHẬN</th>
@@ -137,7 +138,7 @@ require_once '../include/navbar.php';
 						<tr>
 							<th class="align-middle">ID</th>
 							<th class="align-middle">NGÀY ĐẶT</th>
-							<th class="align-middle">LỢI NHUẬN</th>
+							<th class="align-middle">TỔNG TIỀN</th>
 							<th class="align-middle">TRẠNG THÁI</th>
 							<th class="align-middle">NGƯỜI ĐẶT</th>
 							<th class="align-middle">NGƯỜI NHẬN</th>

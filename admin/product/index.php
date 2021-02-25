@@ -15,36 +15,37 @@ require_once '../include/navbar.php';
 	<div class="col-12">
 		<!-- tiêu đề -->
 		<div class="d-flex justify-content-between align-items-center mb-2">
-			<h5>DANH SÁCH SẢN PHẨM</h5>
-			<a class="btn_back btn btn-warning py-0 px-3" onclick="javascript:history.go(-1)">
-				<i class="fas fa-arrow-alt-circle-left"></i>
+			<a class="" onclick="javascript:history.go(-1)" style="cursor: pointer;">
+				<i class="fas fa-angle-left"></i> TRỞ LẠI
 			</a>
 		</div>
-		<hr>
 
 		<!-- nút thêm sản phẩm và thanh tìm kiếm -->
 		<div class="row m-0 mb-3">
 			<!-- nút thêm sản phẩm -->
 			<div class="col-12 p-0 d-flex justify-content-between align-items-center">
-				<a href="
-					<?= base_url('admin/product/add.php'); ?>
-					" 
-					class="btn btn-success" 
-					data-toggle="tooltip" 
-					data-placement="top" 
-					title="Thêm sản phẩm mới"
-				>
-					<i class="fas fa-plus"></i>
-				</a>
 
-				<!-- tìm kiếm -->
-				<div class="filter d-flex">
+				<!-- tìm kiếm, thêm -->
+				<div class="filter d-flex pr-5">
+					<!-- thêm -->
+					<a href="
+						<?= base_url('admin/product/add.php'); ?>
+						"
+						class="btn btn-success mr-2"
+						data-toggle="tooltip"
+						data-placement="top"
+						title="Thêm sản phẩm mới"
+						style="border-radius: 50%;"
+						>
+						<i class="fas fa-plus"></i>
+					</a>
+
 					<!-- sắp xếp -->
-					<select id="sort" class="custom-select">
+					<select id="sort" class="custom-select mr-1">
 						<option value="1">Tên: A - Z</option>
 						<option value="2">Tên: Z - A</option>
-						<option value="3" selected>Mới nhất</option>
-						<option value="4">Cũ nhất</option>
+						<option value="3" selected>Ngày tạo: Mới nhất</option>
+						<option value="4">Ngày tạo: Cũ nhất</option>
 						<option value="5">Giá: Tăng dần</option>
 						<option value="6">Giá: Giảm dần</option>
 						<option value="7">Số lượng: Tăng dần</option>
@@ -52,34 +53,34 @@ require_once '../include/navbar.php';
 					</select>
 
 					<!-- hãng -->
-					<select id="brand_opt" class="custom-select">
+					<select id="brand_opt" class="custom-select mr-1">
 						<?php $listBrand = db_fetch_table("db_brand", 0); ?>
 
-						<option value="all">Tất cả</option>
+						<option value="all">Hãng: Tất cả</option>
 						<?php foreach ($listBrand as $key => $brand): ?>
-							<option value="<?= $brand['bra_id'] ?>"> <?= $brand['bra_name']; ?> </option>
+							<option value="<?= $brand['bra_id'] ?>">Hãng: <?= $brand['bra_name']; ?> </option>
 						<?php endforeach ?>
 					</select>
 
 					<!-- danh mục -->
-					<select id="category_opt" class="custom-select">
+					<select id="category_opt" class="custom-select mr-1">
 						<?php $listCategory = db_fetch_table("db_category", 0); ?>
 
-						<option value="all">Tất cả</option>
+						<option value="all">Danh mục: Tất cả</option>
 						<?php foreach ($listCategory as $key => $category): ?>
-							<option value="<?= $category['cat_id'] ?>"> <?= $category['cat_name']; ?> </option>
+							<option value="<?= $category['cat_id'] ?>">Danh mục: <?= $category['cat_name']; ?> </option>
 						<?php endforeach ?>
 					</select>
 
 					<!-- lọc trạng thái sản phẩm -->
-					<select id="filter_status" class='custom-select'>
-						<option value="all" selected>Tất cả</option>
-						<option value="on">Bật</option>
-						<option value="off">Tắt</option>
+					<select id="filter_status" class='custom-select mr-1'>
+						<option value="all" selected>Trạng thái: Tất cả</option>
+						<option value="on">Trạng thái: Bật</option>
+						<option value="off">Trạng thái: Tắt</option>
 					</select>
 
 					<!-- tìm kiếm tên , id sản phẩm -->
-					<input type="text" class="form-control" id="search" placeholder="search">
+					<input type="text" class="form-control" id="search" placeholder="Search...">
 				</div>
 
 				<!-- số hàng hiển thị -->
@@ -99,19 +100,17 @@ require_once '../include/navbar.php';
 		<!-- lấy danh sách sản phẩm-->
 		<div>
 			<table class="table table-hover table-bordered" style="font-size: 15px;">
-				<thead>
+				<thead class="thead-light">
 					<tr>
-						<th>STT</th>
-						<th>Mã</th>
-						<th>Tên</th>
-						<th>Ảnh</th>
-						<th>Hãng</th>
-						<th>Thể loại</th>
-						<th>Giá</th>
-						<th>Số lượng</th>
-						<th>Trạng thái</th>
-						<th>Sửa</th>
-						<th>Xóa</th>
+						<th class="align-middle">Mã</th>
+						<th class="align-middle">Tên</th>
+						<th class="align-middle">Ảnh</th>
+						<th class="align-middle">Hãng</th>
+						<th class="align-middle">Thể loại</th>
+						<th class="align-middle">Giá</th>
+						<th class="align-middle">Số lượng</th>
+						<th class="align-middle">Trạng thái</th>
+						<th class="align-middle" width="115px">Hành động</th>
 					</tr>
 				</thead>
 
@@ -141,7 +140,14 @@ require_once '../include/navbar.php';
 		$(document).on('input', '#search', function() {
 			fetchPage(1);
 		});
+
+		// lấy danh sách sản phẩm khi lọc
 		$(document).on('change', '#filter_status, #sort, #brand_opt, #category_opt', function() {
+			fetchPage(1);
+		});
+
+		// lấy danh sách sản phẩm khi thay đổi số hàng hiển thị
+		$(document).on('change', '#number_of_rows', function() {
 			fetchPage(1);
 		});
 
@@ -179,9 +185,10 @@ require_once '../include/navbar.php';
 		let status = $('#filter_status').val();
 		let brand = $('#brand_opt').val();
 		let category = $('#category_opt').val();
+		let numRows = $('#number_of_rows').val();
 		let action = "fetch";
 		let data = {
-			q : q, status: status, sort: sort, brand: brand, category: category, currentPage: currentPage, action: action
+			q : q, status: status, sort: sort, numRows: numRows, brand: brand, category: category, currentPage: currentPage, action: action
 		};
 		let result = sendAJax("fetch_page.php", "post", "json", data);
 		$('.list_product').html(result.products);
@@ -243,6 +250,7 @@ require_once '../include/navbar.php';
 	function setPrevPageData() {
 		localStorage.setItem("search", $('#search').val());
 		localStorage.setItem("sort", $('#sort').val());
+		localStorage.setItem("numRows", $('#number_of_rows').val());
 		localStorage.setItem("brand", $('#brand_opt').val());
 		localStorage.setItem("category", $('#category_opt').val());
 		localStorage.setItem("status", $('#filter_status').val());
@@ -262,6 +270,12 @@ require_once '../include/navbar.php';
 		if(sort != null) {
 			$('#sort').val(sort);
 			localStorage.removeItem("sort");
+		}
+
+		let numRows    = localStorage.getItem("numRows");
+		if(numRows != null) {
+			$('#number_of_rows').val(numRows);
+			localStorage.removeItem("numRows");
 		}
 
 		let brand    = localStorage.getItem("brand");

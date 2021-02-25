@@ -169,13 +169,14 @@ if(!$product['pro_active']) {
 				</li>
 			</ul>
 			<!-- tab content -->
-			<div class="tab-content bg-white">
-				<div id="desc" class="active tab-pane p-3">
-					<h6><strong>MÔ TẢ</strong></h6>
+			<div class="tab-content bg-white" style="font-size: 17px;">
+				<div id="desc" class="active tab-pane p-3 px-5">
 
-					<div id="moreText" class="position-relative" style="height: 600px; overflow: hidden;">
-						<?= !empty($product['pro_desc']) ? $product['pro_desc'] : "";  ?>
-						<div class="fade_more_txt position-absolute" ></div>
+					<div class="d-flex justify-content-center">
+						<div id="moreText" class="position-relative" style="height: 600px; overflow: hidden; width: 800px;">
+							<?= !empty($product['pro_desc']) ? $product['pro_desc'] : "";  ?>
+							<div class="fade_more_txt position-absolute" ></div>
+						</div>
 					</div>
 
 					<div class="d-flex justify-content-center mt-3">
@@ -200,11 +201,16 @@ if(!$product['pro_active']) {
 						});
 					</script>
 				</div>
-				<div id="info" class="tab-pane fadt p-3">
-					<h6><strong>THÔNG SỐ KĨ THUẬT</strong></h6>
-					<?= !empty($product['pro_detail']) ? $product['pro_detail'] : "";  ?>
+
+				<div id="info" class="tab-pane fadt p-3 px-5">
+					<div class="d-flex justify-content-center">
+						<div class="" style="width: 800px;">
+							<?= !empty($product['pro_detail']) ? $product['pro_detail'] : "";  ?>
+						</div>
+					</div>
 				</div>
-				<div id="rate" class="tab-pane fade py-3">
+
+				<div id="rate" class="tab-pane fade py-3 px-5">
 					<!-- đánh giá trung bình-->
 					<div class="rate_title row m-0 mb-5">
 						<div class="col-12 p-0 rateInfo">

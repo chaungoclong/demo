@@ -23,10 +23,10 @@
       <form action="	" method="POST" id="user_add_form">
          
          <div class="row m-0">
-            <div class="col-12">
-               <h5>THÔNG TIN NHÂN VIÊN</h5>
-               <p class="mb-4">Quản lý thông tin nhân viên</p>
-               <hr>
+            <div class="col-12 mb-3">
+                <a class="" onclick="javascript:history.go(-1)" style="cursor: pointer;">
+                  <i class="fas fa-angle-left"></i> TRỞ LẠI
+               </a>
             </div>
          </div>
 
@@ -37,8 +37,8 @@
                <div class="form-group mb-3">
                   <div class="input-group">
                      <div class="input-group-prepend">
-                        <label for="uname" class="input-group-text">
-                        <i class="fas fa-user fa-lg"></i>
+                        <label for="uname" class="input-group-text" style="min-width: 145px;">
+                        <i class="fas fa-user fa-lg mr-2"></i>USERNAME
                         </label>
                      </div>
                      <input type="text" id="uname" name="uname" class="form-control" placeholder="Username">
@@ -50,11 +50,11 @@
                <div class="form-group mb-3">
                   <div class="input-group">
                      <div class="input-group-prepend">
-                        <label for="name" class="input-group-text">
-                        <i class="fas fa-user fa-lg"></i>
+                        <label for="name" class="input-group-text" style="min-width: 145px;">
+                        <i class="fas fa-user fa-lg mr-2"></i>HỌ TÊN
                         </label>
                      </div>
-                     <input type="text" id="name" name="name" class="form-control" placeholder="Name">
+                     <input type="text" id="name" name="name" class="form-control" placeholder="họ tên">
                   </div>
                   <div id="nameErr" class="alert-danger">
                   </div>
@@ -64,8 +64,8 @@
                <div class="form-group mb-3">
                   <div class="input-group">
                      <div class="input-group-prepend">
-                        <label for="dob" class="input-group-text">
-                        <i class="fas fa-calendar fa-lg"></i>
+                        <label for="dob" class="input-group-text" style="min-width: 145px;">
+                        <i class="fas fa-calendar fa-lg mr-2"></i>NGÀY SINH
                         </label>
                      </div>
                      <input type="text" id="dob" name="dob" class="form-control" placeholder="dd-mm-yyyy" autocomplete="off">
@@ -120,8 +120,8 @@
                <div class="form-group mb-3">
                   <div class="input-group">
                      <div class="input-group-prepend">
-                        <label for="email" class="input-group-text">
-                        <i class="fas fa-envelope fa-lg"></i>
+                        <label for="email" class="input-group-text" style="min-width: 145px;">
+                        <i class="fas fa-envelope fa-lg mr-2"></i>EMAIL
                         </label>
                      </div>
                      <input type="text" id="email" name="email" class="form-control" placeholder="email">
@@ -134,11 +134,11 @@
                <div class="form-group mb-3">
                   <div class="input-group">
                      <div class="input-group-prepend">
-                        <label for="pwdRegister" class="input-group-text">
-                           <i class="fas fa-lock fa-lg"></i>
+                        <label for="pwdRegister" class="input-group-text"style="min-width: 145px;">
+                           <i class="fas fa-lock fa-lg mr-2"></i>MẬT KHẨU
                         </label>
                      </div>
-                     <input type="text" id="pwdRegister" name="pwdRegister" class="form-control" placeholder="password">   
+                     <input type="text" id="pwdRegister" name="pwdRegister" class="form-control" placeholder="mật khẩu">   
                   </div>
                   <div id="pwdRegisterErr" class="alert-danger"></div>
                </div>
@@ -147,11 +147,11 @@
                <div class="form-group mb-3">
                   <div class="input-group">
                      <div class="input-group-prepend">
-                        <label for="rePwdRegister" class="input-group-text">
-                           <i class="fas fa-lock fa-lg"></i>
+                        <label for="rePwdRegister" class="input-group-text" style="min-width: 145px;">
+                           <i class="fas fa-lock fa-lg mr-2"></i>MẬT KHẨU
                         </label>
                      </div>
-                     <input type="text" id="rePwdRegister" name="rePwdRegister" class="form-control" placeholder="password">  
+                     <input type="text" id="rePwdRegister" name="rePwdRegister" class="form-control" placeholder="nhập lại mật khẩu">  
                   </div>
                   <div id="rePwdRegisterErr" class="alert-danger"></div>
                </div>
@@ -160,11 +160,11 @@
                <div class="form-group mb-3">
                   <div class="input-group">
                      <div class="input-group-prepend">
-                        <label for="phone" class="input-group-text">
-                        <i class="fas fa-phone-alt fa-lg"></i>
+                        <label for="phone" class="input-group-text" style="min-width: 145px;">
+                        <i class="fas fa-phone-alt fa-lg mr-2"></i>ĐIỆN THOẠI
                         </label>
                      </div>
-                     <input type="text" id="phone" name="phone" class="form-control" placeholder="phone">
+                     <input type="text" id="phone" name="phone" class="form-control" placeholder="số điện thoại">
                   </div>
                   <div id="phoneErr" class="alert-danger">
                   </div>
@@ -179,12 +179,12 @@
 					class="custom-control-input"
                checked
 					>
-					<label for="active" class="custom-control-label">Trạng thái</label>
+					<label for="active" class="custom-control-label badge badge-danger">Trạng thái</label>
 				</div>
 
 				<!-- role -->
 				<div class="form-group d-flex flex-column">
-					<label for="role" class="">QUYỀN:</label>
+					<label for="role" class="badge badge-warning p-2" style="width: 60px;">QUYỀN:</label>
 					<select id="role" name="role" class="mb-3 custom-select w-25">
 						<option value="1" >superAdmin</option>
 						<option value="2" selected="">Amin</option>
@@ -192,7 +192,7 @@
 				</div>
 
                <!-- ADD button -->
-               <button class="btn_user_update btn btn-primary btn-block mb-3">LƯU</button>
+               <button class="btn_user_update btn btn-success btn-block mb-3">THÊM</button>
             </div>
             <div class="col-3">
                <div class="upload w-100 bg-faded mb-3 text-center">

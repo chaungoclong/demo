@@ -111,6 +111,7 @@ if($cat) {
 					 		<label class="form-check-label">
 					 			<input  class="form-check-input filter_item brand" type="checkbox" value="<?= $brand['bra_id']; ?>" <?= $braID ? "checked disabled" : ""; ?>>
 					 			<?= $brand['bra_name']; ?>
+					 			(<img src="image/<?= $brand['bra_logo']; ?>" alt="" width="90px">)
 					 		</label>
 					 	</div>
 					 <?php endforeach ?>

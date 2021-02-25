@@ -14,42 +14,44 @@ require_once '../include/navbar.php';
 	<div class="col-12">
 		<!-- tiêu đề -->
 		<div class="d-flex justify-content-between align-items-center mb-2">
-			<h5>DANH SÁCH TIN TỨC</h5>
-			<a class="btn_back btn btn-warning py-0 px-3" onclick="javascript:history.go(-1)">
-				<i class="fas fa-arrow-alt-circle-left"></i>
+			<a class="" onclick="javascript:history.go(-1)" style="cursor: pointer;">
+				<i class="fas fa-angle-left"></i> TRỞ LẠI
 			</a>
 		</div>
 
 		<!-- nút thêm tin tức và thanh tìm kiếm -->
 		<div class="row m-0 mb-3">
 			<!-- nút thêm tin tức -->
-			<div class="col-12 p-0 d-flex justify-content-between align-items-center">
-				<a href="
-					<?= base_url('admin/news/add.php'); ?>
-					" 
-					class="btn btn-success" 
-					data-toggle="tooltip" 
-					data-placement="top" 
-					title="Thêm tin tức mới"
-				>
-					<i class="fas fa-plus"></i>
-				</a>
+			<div class="col-12 p-2 bg-light border d-flex justify-content-between align-items-center">
 
-				<!-- tìm kiếm -->
+				<!-- tìm kiếm, thêm -->
 				<div class="filter d-flex">
+					<!-- thêm -->
+					<a href="
+						<?= base_url('admin/news/add.php'); ?>
+						"
+						class="btn btn-success mr-2"
+						data-toggle="tooltip"
+						data-placement="top"
+						title="Thêm tin tức mới"
+						style="border-radius: 50%;"
+						>
+						<i class="fas fa-plus"></i>
+					</a>
+
 					<!-- sắp xếp -->
-					<select id="sort" class="custom-select">
+					<select id="sort" class="custom-select mr-3">
 						<option value="1">Tiêu đề: A - Z</option>
 						<option value="2">Tiêu đề: Z - A</option>
-						<option value="3" selected>Mới nhất</option>
-						<option value="4">Cũ nhất</option>
+						<option value="3" selected>Ngày tạo: Mới nhất</option>
+						<option value="4">Ngày tạo: Cũ nhất</option>
 					</select>
 
 					<!-- lọc trạng thái tin tức -->
-					<select id="filter_status" class='custom-select'>
-						<option value="all" selected>Tất cả</option>
-						<option value="on">Bật</option>
-						<option value="off">Tắt</option>
+					<select id="filter_status" class='custom-select mr-3'>
+						<option value="all" selected>Trạng thái: Tất cả</option>
+						<option value="on">Trạng thái: Bật</option>
+						<option value="off">Trạng thái: Tắt</option>
 					</select>
 
 					<!-- tìm kiếm tên , id tin tức -->
@@ -71,14 +73,14 @@ require_once '../include/navbar.php';
 		<!-- danh sách tin tức -->
 		<div>
 			<table class="table table-hover table-bordered" style="font-size: 15px;">
-				<thead>
+				<thead class="thead-light">
 					<tr>
 						<th class="align-midle">Ảnh</th>
 						<th class="align-midle">Tiêu đề</th>
 						<th class="align-midle">Mô tả</th>
 						<th class="align-midle">Tác giả</th>
 						<th class="align-midle">Trạng thái</th>
-						<th class="align-midle">Hành động</th>
+						<th class="align-midle" width="115px">Hành động</th>
 					</tr>
 				</thead>
 
@@ -116,6 +118,11 @@ require_once '../include/navbar.php';
 
 		// lấy danh sách tin tức khi sắp xếp
 		$(document).on('change', '#sort', function() {
+			fetchPage(1);
+		});
+
+		// lấy danh sách tin tức khi thay đổi số hàng hiển thị
+		$(document).on('change', '#number_of_rows', function() {
 			fetchPage(1);
 		});
 
@@ -245,4 +252,4 @@ require_once '../include/navbar.php';
 			fetchPage(1);
 		}
 	}
-</script>iêu đề
+</script>

@@ -156,7 +156,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "switch_active") {
 
 // xóa danh mục
 if (!empty($_POST['action']) && $_POST['action'] == "delete") {
-	$status = "success";
+	$status = "error";
 	$catID = input_post("catID");
 
 	if(hasProduct("cat_id", $catID)) {

@@ -6,7 +6,7 @@ require_once RF . '/include/navbar.php';
 
 <main>
 	<div class="all_wrapper bg-faded" style="padding: 0px 85px;">
-		<div class="row my-5 m-0">
+		<div class="row my-4 m-0">
 
 			<!-- hiển thị tin tức -->
 			<div class="col-9 p-0 py-3 bg-white shadow">

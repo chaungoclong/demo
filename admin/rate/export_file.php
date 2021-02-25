@@ -2,6 +2,10 @@
 	require_once '../../common.php';
 	require_once '../../dist/excel/vendor/shuchkin/simplexlsxgen/src/SimpleXLSXGen.php';
 
+	if(!is_login() || !is_admin()) {
+		redirect('admin/form_login.php');
+	} 
+
 	$getRateSQL = "
 	SELECT db_rate.*, db_customer.cus_name, db_customer.cus_avatar, db_customer.cus_id, db_product.pro_name, db_product.pro_img , db_product.pro_id
 	FROM db_rate

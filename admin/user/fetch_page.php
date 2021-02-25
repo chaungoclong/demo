@@ -115,7 +115,8 @@
 				$checked = $user['ad_active'] ? "checked" : "";
 
 				// giới tính
-				$gender = $user['ad_gender'] ? "Nam" : "Nữ";
+				$gender = $user['ad_gender'] ? "<span class='badge badge-success'>NAM</span>" 
+												  : "<span class='badge badge-danger'>NỮ</span>";
 
 				$users .= '   
 				<tr>

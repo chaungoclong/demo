@@ -15,41 +15,40 @@ require_once '../include/navbar.php';
 	<div class="col-12">
 		<!-- tiêu đề -->
 		<div class="d-flex justify-content-between align-items-center mb-2">
-			<h5>DANH SÁCH ĐÁNH GIÁ</h5>
-			<a class="btn_back btn btn-warning py-1 px-2" onclick="javascript:history.go(-1)">
-				<i class="fas fa-chevron-circle-left"></i>
+			<a class="" onclick="javascript:history.go(-1)" style="cursor: pointer;">
+				<i class="fas fa-angle-left"></i> TRỞ LẠI
 			</a>
 		</div>
 
 		<!-- thanh tìm kiếm -->
 		<div class="row m-0 mb-3">
-			<div class="col-12 p-2 d-flex justify-content-between align-items-center bg-light">
+			<div class="col-12 p-2 d-flex justify-content-between align-items-center bg-light border">
 				<!-- lọc-->
 				<div class="filter d-flex">
 					<!-- sắp xếp -->
-					<select id="sort" class="custom-select">
-						<option value="1" selected>Mới nhất</option>
-						<option value="2">Cũ nhất</option>
+					<select id="sort" class="custom-select mr-3">
+						<option value="1" selected>Ngày tạo: Mới nhất</option>
+						<option value="2">Ngày tạo: Cũ nhất</option>
 					</select>
 
 					<!-- số sao -->
-					<select id="star_number" class="custom-select">
-						<option value="all" selected>Tất cả sao</option>
+					<select id="star_number" class="custom-select mr-3">
+						<option value="all" selected>Sao: Tất cả</option>
 						<?php for($i = 1; $i <= 5; ++$i): ?>
-							<option value="<?= $i; ?>"> <?= $i . " sao"; ?></option>
+							<option value="<?= $i; ?>">Sao: <?= $i . " sao"; ?></option>
 						<?php endfor ?>
 					</select>
 
 					<!-- tìm kiếm tên , id đơn hàng -->
-					<input type="text" class="form-control" id="search" placeholder="Search...">
+					<input type="text" class="form-control" id="search" placeholder="Search..." style="width: 180px;	">
 				</div>
 
 				<!-- số hàng hiển thị -->
 				<div class="d-flex justify-content-between align-items-center">
-					<i class="far fa-file-excel fa-2x text-success mr-3" style="" onclick="window.location='export_file.php'"></i>
+					<i class="far fa-file-excel fa-2x text-success mr-3" style="" onclick="window.location='export_file.php'" data-toggle="tooltip" title="xuất file excel"></i>
 
 					<?php $option = [5, 10, 25, 50, 100]; ?>
-					<select class="custom-select" id="number_of_rows">
+					<select class="custom-select" id="number_of_rows" data-toggle="tooltip" title="số hàng hiển thị">
 						<?php foreach ($option as $key => $each): ?>
 							<option value="<?= $each; ?>"> <?= $each; ?> </option>
 						<?php endforeach ?>

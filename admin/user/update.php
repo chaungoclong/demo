@@ -27,9 +27,10 @@
       <form action="	" method="POST" id="user_info_edit_form">
         
          <div class="row m-0">
-            <div class="col-12">
-               <h5>THÔNG TIN NHÂN VIÊN</h5>
-               <hr>
+            <div class="col-12 mb-3">
+               <a class="" onclick="javascript:history.go(-1)" style="cursor: pointer;">
+                  <i class="fas fa-angle-left"></i> TRỞ LẠI
+               </a>
             </div>
          </div>
 
@@ -40,8 +41,8 @@
                <div class="form-group mb-3">
                   <div class="input-group">
                      <div class="input-group-prepend">
-                        <label for="uname" class="input-group-text">
-                        <i class="fas fa-user fa-lg"></i>
+                        <label for="uname" class="input-group-text" style="min-width: 145px;">
+                        <i class="fas fa-user fa-lg mr-2"></i>USERNAME
                         </label>
                      </div>
                      <input type="text" id="uname" name="uname" class="form-control" placeholder="name" value="<?= $user['ad_uname']; ?>">
@@ -53,8 +54,8 @@
                <div class="form-group mb-3">
                   <div class="input-group">
                      <div class="input-group-prepend">
-                        <label for="name" class="input-group-text">
-                        <i class="fas fa-user fa-lg"></i>
+                        <label for="name" class="input-group-text" style="min-width: 145px;">
+                        <i class="fas fa-user fa-lg mr-2"></i>HỌ TÊN
                         </label>
                      </div>
                      <input type="text" id="name" name="name" class="form-control" placeholder="name" value="<?= $user['ad_name']; ?>">
@@ -68,8 +69,8 @@
                <div class="form-group mb-3">
                   <div class="input-group">
                      <div class="input-group-prepend">
-                        <label for="dob" class="input-group-text">
-                        <i class="fas fa-calendar fa-lg"></i>
+                        <label for="dob" class="input-group-text" style="min-width: 145px;">
+                        <i class="fas fa-calendar fa-lg mr-2"></i>NGÀY SINH
                         </label>
                      </div>
                      <input type="text" id="dob" name="dob" class="form-control" placeholder="dd-mm-yyyy" autocomplete="off"
@@ -127,8 +128,8 @@
                <div class="form-group mb-3">
                   <div class="input-group">
                      <div class="input-group-prepend">
-                        <label for="email" class="input-group-text">
-                        <i class="fas fa-envelope fa-lg"></i>
+                        <label for="email" class="input-group-text" style="min-width: 145px;">
+                        <i class="fas fa-envelope fa-lg mr-2"></i>EMAIL
                         </label>
                      </div>
                      <input type="text" id="email" name="email" class="form-control" placeholder="email"
@@ -143,8 +144,8 @@
                <div class="form-group mb-3">
                   <div class="input-group">
                      <div class="input-group-prepend">
-                        <label for="phone" class="input-group-text">
-                        <i class="fas fa-phone-alt fa-lg"></i>
+                        <label for="phone" class="input-group-text" style="min-width: 145px;">
+                        <i class="fas fa-phone-alt fa-lg mr-2"></i>ĐIỆN THOẠI
                         </label>
                      </div>
                      <input type="text" id="phone" name="phone" class="form-control" placeholder="phone"
@@ -164,12 +165,12 @@
 					class="custom-control-input"
 					<?= $user['ad_active'] ? "checked" : ""; ?>
 					>
-					<label for="active" class="custom-control-label">Trạng thái</label>
+					<label for="active" class="custom-control-label badge badge-danger">Trạng thái</label>
 				</div>
 
 				<!-- role -->
 				<div class="form-group d-flex flex-column">
-					<label for="role" class="">QUYỀN:</label>
+					<label for="role" class="badge badge-warning py-2" style="width: 60px;">QUYỀN:</label>
 					<select id="role" name="role" class="mb-3 custom-select w-25">
 						<option value="1" <?= $user['ad_role'] == 1 ? "selected" : ""; ?>>superAdmin</option>
 						<option value="2" <?= $user['ad_role'] == 2 ? "selected" : ""; ?>>Amin</option>
@@ -177,7 +178,7 @@
 				</div>
 
                <!-- update button -->
-               <button class="btn_user_update btn btn-primary btn-block mb-3">LƯU</button>
+               <button class="btn_user_update btn btn-success btn-block mb-3">LƯU</button>
             </div>
             <div class="col-3">
                <div class="upload w-100 bg-faded mb-3 text-center">

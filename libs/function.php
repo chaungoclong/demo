@@ -800,12 +800,13 @@ function read_date($time) {
 
 	// hàm lấy tổng doanh thu của một đơn hàng
 	function getTotalMoneyAnOrder($orderID) {
-		$order = getOrderDetailByID($orderID);
+		//$order = getOrderDetailByID($orderID);
 		$totalMoney = 0;
 
-		foreach ($order as $key => $each) {
-			$totalMoney += ((float)$each['price'] * (int)$each['amount']);
-		}
-
+		// foreach ($order as $key => $each) {
+		// 	$totalMoney += ((float)$each['price'] * (int)$each['amount']);
+		// }
+		$getTotalMoneySQL = "SELECT SUM(IF(or_id = ?, amount * price, 0)) FROM db_order_detail";
+		$totalMoney = s_cell($getTotalMoneySQL, [$orderID], "i");
 		return $totalMoney;
 	}

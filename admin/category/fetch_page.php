@@ -50,7 +50,7 @@
 		$totalCategory = count($listCategory);
 		
 		// chia trang
-		$catPerPage  = 2;
+		$catPerPage  = !empty($_POST['numRows']) ? int($_POST['numRows']) : 5;
 		$totalPage   = ceil($totalCategory / $catPerPage);
 		$currentPage = !empty($_POST['currentPage']) ? (int)$_POST['currentPage'] : 1;
 		$currentPage = $currentPage > $totalPage ? $totalPage : $currentPage;
@@ -69,22 +69,19 @@
 				$checked = $category['cat_active'] ? "checked" : "";
 				$categories .= '   
 				<tr>
-					<!--stt -->
-					<td>' . $stt++ . '</td>
-
 					<!-- mã -->
-					<td>' . $category['cat_id'] . '</td>
+					<td class="align-middle">' . $category['cat_id'] . '</td>
 
 					<!-- tên danh mục -->
-					<td>' . $category['cat_name'] . '</td>
+					<td class="align-middle">' . $category['cat_name'] . '</td>
 
 					<!-- ảnh  -->
-					<td>
+					<td class="align-middle">
 						<img src="../../image/' . $category['cat_logo'] . '" width="30px" height="30px">
 					</td>
 
 					<!-- active -->
-					<td>
+					<td class="align-middle">
 						<div class="custom-control custom-switch">
 							<input 
 								type="checkbox" 
@@ -98,8 +95,8 @@
 						</div>
 					</td>
 
-					<!-- edit -->
-					<td>
+					<!-- action -->
+					<td class="align-middle">
 						<a
 							href="
 							' . 
@@ -112,10 +109,7 @@
 							data-cat-id="' . $category['cat_id'] . '">
 							<i class="fas fa-edit"></i>
 						</a>
-					</td>
 
-					<!-- remove -->
-					<td>
 						<a 
 							class="btn_delete_cat btn btn-danger"
 							id="btn_delete_' . $category['cat_id'] . '"
@@ -123,6 +117,7 @@
 							<i class="fas fa-trash-alt"></i>
 						</a>
 					</td>
+
 				</tr>
 				';
 			}

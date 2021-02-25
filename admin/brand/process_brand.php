@@ -152,23 +152,20 @@ if (!empty($_POST['action']) && $_POST['action'] == "switch_active") {
 
 
 // xóa hãng
-if (!empty($_POST['action']) && $_POST['action'] == "remove") {
-	$status = 5;
-
-	// mã sản phẩm
+if (!empty($_POST['action']) && $_POST['action'] == "delete") {
+	$status = "error";
 	$braID = data_input(input_post("braID"));
 
-	if($braID === false) {
-		$status = 1;
-	} else if(hasProduct("bra_id", $braID)) {
-		$status = 2;
+	if(hasProduct("bra_id", $braID)) {
+		$status = "has_product";
 	} else {
-		$removeBraSQL = "DELETE FROM db_brand WHERE bra_id = ?";
-		$runRemoveBra = db_run($removeBraSQL, [$braID], "i");
-		$status = ($runRemoveBra) ? 5 : 6;
+		$deleteBraSQL = "DELETE FROM db_brand WHERE bra_id = ?";
+		$runDeleteBra = db_run($deleteBraSQL, [$braID], "i");
+		$status       = ($runDeleteBra) ? "success" : "error" ;
 	}
 
-	echo $status;
+	$output = ['status'=>$status];
+	echo json_encode($output);
 }
 
 
