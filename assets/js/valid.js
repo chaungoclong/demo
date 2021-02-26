@@ -29,7 +29,7 @@ function isPassword(string) {
 }
 
 function isPhone(string) {
-	var pattern = /^(84|0[3|5|7|8|9])+([0-9]{8})$/;
+	var pattern = /^(84|0[1|2|3|5|6|7|8|9])+([0-9]{8})$/;
 	return pattern.test(string);
 }
 

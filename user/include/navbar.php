@@ -12,10 +12,14 @@
     </li>
 
     <!-- in danh sách danh mục -->
-    <?php  $listCategory = fetch_list("db_category", "1"); ?>
+    <?php 
+      $getCatSQL = "SELECT * FROM db_category WHERE cat_id IN (SELECT cat_id FROM db_product) AND cat_active = 1";
+      $listCategory = db_get($getCatSQL);
+     ?>
     <?php foreach ($listCategory as $key => $category): ?>
 
-      <li class="<?= $currentPage == 'product' && input_get('cat') == $category["cat_id"] ? 'nav-item dropdown active' : 'nav-item dropdown'; ?>">
+      <?php if ($category['cat_active']): ?>
+        <li class="<?= $currentPage == 'product' && input_get('cat') == $category["cat_id"] ? 'nav-item dropdown active' : 'nav-item dropdown'; ?>">
         <a href="<?= create_link(base_url('product.php'), ['cat'=>$category['cat_id']]); ?>" class="nav-link dropdown-toggle"><?php echo $category["cat_name"]; ?></a>
         <div class="dropdown-menu">
           <!-- in danh sách các hãng -->
@@ -33,6 +37,7 @@
         </div>
       </li>
 
+      <?php endif ?>
     <?php endforeach; ?>
     <!-- /in danh sách danh mục -->
     <li class="<?= $currentPage == 'about' ? 'nav-item active' : 'nav-item'; ?>">

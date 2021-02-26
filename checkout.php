@@ -32,19 +32,104 @@ require_once 'include/navbar.php';
 									 Tên người nhận
 								</label>
 								<input type="text" class="form-control" id="name" name="name" value="<?= $customer['cus_name']; ?>">
-								<div class="alert-danger" id="rcvNameErr"></div>
+								<div class="alert-danger" id="nameErr"></div>
 							</div>
 
 							<div class="form-group">
 								<label for="phone"><span><i class="fas fa-phone-alt"></i></span> Số điện thoại người nhận</label>
 								<input type="text" class="form-control" id="phone" name="phone" value="<?= $customer['cus_phone']; ?>">
-								<div class="alert-danger" id="rcvPhoneErr"></div>
+								<div class="alert-danger" id="phoneErr"></div>
 							</div>
 
 							<div class="form-group">
 								<label for="address"><span><i class="fas fa-id-card"></i></span> Địa chỉ người nhận</label>
-								<input type="text" class="form-control" id="address" name="address" value="<?= $customer['cus_address']; ?>">
-								<div class="alert-danger" id="rcvAddErr"></div>
+
+
+								<?php 
+									$address = $customer['cus_address'];
+									$address = explode('-', $address);
+
+									$ten_tinh = $address[3];
+									$id_tinh = s_cell("select matp from db_tinh where name=?", [$ten_tinh], "s");
+
+									$ten_huyen = $address[2];
+									$id_huyen = s_cell("select maqh from db_huyen where name=?", [$ten_huyen], "s");
+									// echo $id_tinh. "-" . $id_huyen;
+
+									$ten_xa = $address[1];
+
+									$street = $address[0];
+								?>
+								<div class="form-row mb-3">
+									<div class="col-4">
+										<select name="tinh" id="tinh" class="custom-select" value="<?= $ten_tinh; ?>">
+											<option value="" hidden>Tỉnh/Thành phố</option>
+											<?php 
+											$ds_tinh = db_fetch_table('db_tinh', 0);
+											foreach ($ds_tinh as $key => $tinh) {
+												if($tinh['name'] == $ten_tinh) {
+													echo '
+													<option value="'.$tinh['name'].'" data-id-tinh="'.$tinh['matp'].'" selected>'.$tinh['name'].'</option>
+													';
+												} else {
+													echo '
+													<option value="'.$tinh['name'].'" data-id-tinh="'.$tinh['matp'].'">'.$tinh['name'].'</option>
+													';
+												}
+											}
+											?>
+										</select>
+										<div id="tinhErr" class="alert-danger"></div>
+									</div>
+
+									<div class="col-4">
+										<select name="huyen" id="huyen" class="custom-select" value="<?= $ten_huyen; ?>">
+											<option value="" hidden>Quận/Huyện</option>
+											<?php 
+											$ds_huyen = db_get("select * from db_huyen where matp = ?", 0, [$id_tinh], "i"); 
+											foreach ($ds_huyen as $key => $huyen) {
+												if($huyen['name'] == $ten_huyen) {
+													echo '  
+													<option value="'.$huyen['name'].'" data-id-huyen="'.$huyen['maqh'].'" selected>'.$huyen['name'].'</option>
+													';
+												} else {
+													echo '  
+													<option value="'.$huyen['name'].'" data-id-huyen="'.$huyen['maqh'].'">'.$huyen['name'].'</option>
+													';
+												}
+											}
+											?>
+										</select>
+										<div id="huyenErr" class="alert-danger"></div>
+									</div>
+
+									<div class="col-4">
+										<select name="xa" id="xa" class="custom-select" value="<?= $ten_xa; ?>">
+											<option value="" hidden>Phường/Xã</option>
+											<?php 
+											$ds_xa = db_get("select * from db_xa where maqh = ?", 0, [$id_huyen], "i"); 
+											foreach ($ds_xa as $key => $xa) {
+												if($xa['name'] == $ten_xa) {
+													echo '  
+													<option value="'.$xa['name'].'" selected>'.$xa['name'].'</option>
+													';
+												} else {
+													echo '  
+													<option value="'.$xa['name'].'">'.$xa['name'].'</option>
+													';
+												}
+											}
+											?>
+										</select>
+										<div id="xaErr" class="alert-danger"></div>
+									</div>
+								</div>
+
+								<input type="text" name="street" id="street" class="form-control" placeholder="Thôn, xóm, đường..." value="<?= $street; ?>">
+								<div class="alert-danger" id="streetErr"></div>
+
+								<!-- địa chỉ đầy đủ -->
+								<input type="hidden" name="address" id="address">
 							</div>
 
 							<div class="form-group">
@@ -160,51 +245,97 @@ require_once 'include/navbar.php';
 
 <script>
 	$(function() {
+		// lấy quận, huyện
+		$(document).on('change', '#tinh', function() {
+			let id_tinh = $(this).find("option:selected").data('id-tinh');
+			$('#huyen').load("fetch_unit.php", {id_tinh: id_tinh}, function() {
+				$('#xa').html('<option value="">Phường/Xã</option>');
+			});
+		});
+
+		// phường, xã
+		$(document).on('change', '#huyen', function() {
+			let id_huyen = $(this).find("option:selected").data('id-huyen');
+			$('#xa').load("fetch_unit.php", {id_huyen: id_huyen});
+		});
+
+		// validate -> đặt hàng
 		$(document).on('click', '#btn_order', function() {
+			joinAddress();
+			//console.log($)
 			let test = true;
 
 			// xóa các class lỗi khỏi thẻ input
 			$('#name').removeClass('error_field');
 			$('#phone').removeClass('error_field');
 			$('#address').removeClass('error_field');
+			$('#tinh').removeClass('error_field');
+			$('#huyen').removeClass('error_field');
+			$('#xa').removeClass('error_field');
 
 			// đặt giá trị trong ô thông báo lỗi về ''
-			$('#rcvNameErr').text('');
-			$('#rcvPhoneErr').text('');
+			$('#nameErr').text('');
+			$('#phoneErr').text('');
 			$('#rcvAddErr').text('');
+			$('#tinhErr').text('');
+			$('#huyenErr').text('');
+			$('#xaErr').text('');
 
 			// lấy giá trị
-			let name    = $('#name').val().trim();
-			let phone   = $('#phone').val().trim();
-			let address = $('#address').val().trim();
-
+			let name   = $('#name').val().trim();
+			let phone  = $('#phone').val().trim();
+			let street = $('#street').val().trim();
+			let tinh   = $('#tinh').val().trim();
+			let huyen  = $('#huyen').val().trim();
+			let xa     = $('#xa').val().trim();
 
 			// validate name
 			if(name == '') {
-				$('#rcvNameErr').text('Name is required');
+				$('#nameErr').text('không được để trống');
 				$('#name').addClass('error_field');
 				test = false;
 			} else if(!isName(name)) {
-				$('#rcvNameErr').text('Name is wrong');
+				$('#nameErr').text('sai định dạng');
 				$('#name').addClass('error_field');
 				test = false;
 			}
 
 			// validate phone
 			if(phone == '') {
-				$('#rcvPhoneErr').text('Phone is required');
+				$('#phoneErr').text('không được để trống');
 				$('#phone').addClass('error_field');
 				test = false;
 			} else if(!isPhone(phone)) {
-				$('#rcvPhoneErr').text('Phone is wrong');
+				$('#phoneErr').text('sai định dạng');
 				$('#phone').addClass('error_field');
 				test = false;
 			}
 
-			// validate address
-			if(address == '') {
-				$('#rcvAddErr').text('Address is required');
-				$('#address').addClass('error_field');
+			// tỉnh
+			if(tinh == '') {
+				$('#tinhErr').text('không được để trống');
+				$('#tinh').addClass('error_field');
+				test = false;
+			}
+
+			// huyện
+			if(huyen == '') {
+				$('#huyenErr').text('không được để trống');
+				$('#huyen').addClass('error_field');
+				test = false;
+			}
+
+			// xã
+			if(xa == '') {
+				$('#xaErr').text('không được để trống');
+				$('#xa').addClass('error_field');
+				test = false;
+			}
+
+			// street
+			if(street == '') {
+				$('#streetErr').text('không được để trống');
+				$('#street').addClass('error_field');
 				test = false;
 			}
 
@@ -261,4 +392,13 @@ require_once 'include/navbar.php';
 
 		});
 	});
+
+	function joinAddress() {
+		let tinh = $('#tinh').val();
+		let huyen = $('#huyen').val();
+		let xa = $('#xa').val();
+		let street = $('#street').val().trim();
+		let address = [street, xa, huyen, tinh];
+		$('#address').val(address.join("-"));
+	}
 </script>

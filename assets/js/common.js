@@ -58,7 +58,7 @@ function showImg(input, storeImg, mode = 0, storeNameImg = "") {
             if (mode) {
                 img.attr('src', url).css({borderRadius: "5px", width: "80px"});
             } else {
-                img.attr('src', url).css("width", "250px");
+                img.attr('src', url).css("width", "230px");
             }
             if (storeNameImg) {
                 $(storeNameImg).text(name);

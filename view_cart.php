@@ -1,7 +1,14 @@
 <?php
 require_once 'common.php';
+
+if(!is_login() || is_admin()) {
+	redirect("login_form.php");
+}
+
 require_once 'include/header.php';
 require_once 'include/navbar.php';
+
+
 ?>
 
 <main>
@@ -64,7 +71,7 @@ require_once 'include/navbar.php';
 									); 
 									?>
 									">
-									<img src="<?= $product['pro_img'] ?>" alt="" width="100%" class="img-thumbnail">
+									<img src="image/<?= $product['pro_img'] ?>" alt="" width="100%" class="img-thumbnail">
 								</a>
 							</td>
 							<td>

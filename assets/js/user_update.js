@@ -7,8 +7,11 @@ function validateUserUpdate() {
 	$('#gender').removeClass("error_field");
 	$('#email').removeClass("error_field");
 	$('#phone').removeClass("error_field");
-	$('#address').removeClass("error_field");
+	$('#street').removeClass("error_field");
 	$('#avatar').removeClass("error_field");
+	$('#tinh').removeClass("error_field");
+	$('#huyen').removeClass("error_field");
+	$('#xa').removeClass("error_field");
 
 	// xóa thông báo lỗi
 	$('#nameErr').text("");
@@ -16,39 +19,44 @@ function validateUserUpdate() {
 	$('#genderErr').text("");
 	$('#emailErr').text("");
 	$('#phoneErr').text("");
-	$('#addressErr').text("");
+	$('#streetErr').text("");
 	$('#avatarErr').text("");
+	$('#tinhErr').text("");
+	$('#huyenErr').text("");
+	$('#xaErr').text("");
 
 	//lấy dữ liệu
-	let name    =  $('#name').val().trim();
-	let dob     =  $('#dob').val().trim();
-	let gender  =  Object.values($('#user_info_update_form')[0]['gender']);
-	let email   =  $('#email').val().trim();
-	let phone   =  $('#phone').val().trim();
-	let address =  $('#address').val().trim();
-	let avatar  =  $('#avatar')[0].files[0];
-
+	let name   =  $('#name').val().trim();
+	let dob    =  $('#dob').val().trim();
+	let gender =  Object.values($('#user_info_update_form')[0]['gender']);
+	let email  =  $('#email').val().trim();
+	let phone  =  $('#phone').val().trim();
+	let street =  $('#street').val().trim();
+	let avatar =  $('#avatar')[0].files[0];
+	let tinh   =  $('#tinh').val().trim();
+	let huyen  =  $('#huyen').val().trim();
+	let xa     =  $('#xa').val().trim();
 
 	//VALIDATE
 	//name
 	if(name == "") {
 		$('#name').addClass("error_field");
-		$('#nameErr').text("name is required");
+		$('#nameErr').text("không được để trống");
 		test = false;
 	} else if(!isName(name)) {
 		$('#name').addClass("error_field");
-		$('#nameErr').text("name is wrong");
+		$('#nameErr').text("sai định dạng");
 		test = false;
 	}
 
 	//dob
 	if(dob == "") {
 		$('#dob').addClass("error_field");
-		$('#dobErr').text("date is required");
+		$('#dobErr').text("không được để trống");
 		test = false;
 	} else if(!isDate(formatDate(dob))) {
 		$('#dob').addClass("error_field");
-		$('#dobErr').text("date is wrong");
+		$('#dobErr').text("sai định dạng");
 		test = false;
 	}
 
@@ -57,35 +65,57 @@ function validateUserUpdate() {
 	if(!check) {
 		test = false;
 		$('#gender').addClass("error_field");
-		$('#genderErr').text("gender is required");
+		$('#genderErr').text("không được để trống");
 	}
 
 	//email
 	if(email == "") {
 		$('#email').addClass("error_field");
-		$('#emailErr').text("email is required");
+		$('#emailErr').text("không được để trống");
 		test = false;
 	} else if(!isEmail(email)) {
 		$('#email').addClass("error_field");
-		$('#emailErr').text("email is wrong");
+		$('#emailErr').text("sai định dạng");
 		test = false;
 	}
 
 	//phone
 	if(phone == "") {
 		$('#phone').addClass("error_field");
-		$('#phoneErr').text("phone is required");
+		$('#phoneErr').text("không được để trống");
 		test = false;
 	} else if(!isPhone(phone)) {
 		$('#phone').addClass("error_field");
-		$('#phoneErr').text("phone is wrong");
+		$('#phoneErr').text("sai định dạng");
 		test = false;
 	}
 
-	//addressErr
-	if(address == "") {
-		$('#address').addClass("error_field");
-		$('#addressErr').text("address is required");
+	// tỉnh
+	if(tinh == "") {
+		$('#tinh').addClass("error_field");
+		$('#tinhErr').text("không được để trống");
+		test = false;
+	}
+	console.log(tinh+huyen+xa);
+
+	// huyện
+	if(huyen == "") {
+		$('#huyen').addClass("error_field");
+		$('#huyenErr').text("không được để trống");
+		test = false;
+	}
+
+	// xã
+	if(xa == "") {
+		$('#xa').addClass("error_field");
+		$('#xaErr').text("không được để trống");
+		test = false;
+	}
+
+	//street
+	if(street == "") {
+		$('#street').addClass("error_field");
+		$('#streetErr').text("không được để trống");
 		test = false;
 	}
 
@@ -98,11 +128,11 @@ function validateUserUpdate() {
 
 		if(!listExt.some(val => val == ext)) {
 			$('#avatar').addClass("error_field");
-			$('#avatarErr').text("extention not match");
+			$('#avatarErr').text("file không hợp lệ");
 			test = false;
-		} else if(size > 500000){
+		} else if(size > 5000000){
 			$('#avatar').addClass("error_field");
-			$('#avatarErr').text("size is very big");
+			$('#avatarErr').text("file quá lớn");
 			test = false;
 		}
 	}
@@ -129,21 +159,21 @@ function validateUpdatePassword() {
 	//validate
 	if(oldPwd == "") {
 		$('#oldPwd').addClass('error_field');
-		$('#oldPwdErr').text("required");
+		$('#oldPwdErr').text("");
 		test = false;
 	} else if(!isPassword(oldPwd)) {
 		$('#oldPwd').addClass('error_field');
-		$('#oldPwdErr').text("password is wrong");
+		$('#oldPwdErr').text("không được để trống");
 		test = false;
 	}
 
 	if(newPwd == "") {
 		$('#newPwd').addClass('error_field');
-		$('#newPwdErr').text("required");
+		$('#newPwdErr').text("không được để trống");
 		test = false;
 	} else if(!isPassword(newPwd)) {
 		$('#newPwd').addClass('error_field');
-		$('#newPwdErr').text("password is wrong");
+		$('#newPwdErr').text("sai định dạng");
 		test = false;
 	}
 

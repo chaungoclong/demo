@@ -85,7 +85,10 @@ function validateRegister() {
 	$('#gender').removeClass("error_field");
 	$('#email').removeClass("error_field");
 	$('#phone').removeClass("error_field");
-	$('#address').removeClass("error_field");
+	$('#tinh').removeClass("error_field");
+	$('#huyen').removeClass("error_field");
+	$('#xa').removeClass("error_field");
+	$('#street').removeClass("error_field");
 	$('#pwdRegister').removeClass("error_field");
 	$('#rePwdRegister').removeClass("error_field");
 	$('#avatar').removeClass("error_field");
@@ -96,43 +99,49 @@ function validateRegister() {
 	$('#genderErr').text("");
 	$('#emailErr').text("");
 	$('#phoneErr').text("");
-	$('#addressErr').text("");
+	$('#tinhErr').text("");
+	$('#huyenErr').text("");
+	$('#xaErr').text("");
+	$('#streetErr').text("");
 	$('#pwdRegisterErr').text("");
 	$('#rePwdRegisterErr').text("");
 	$('#avatarErr').text("");
 
 	//lấy dữ liệu
-	var name    =  $('#name').val().trim();
-	var dob     =  $('#dob').val().trim();
-	var gender  =  Object.values($('#registerForm')[0]['gender']);
-	var email   =  $('#email').val().trim();
-	var phone   =  $('#phone').val().trim();
-	var address =  $('#address').val().trim();
-	var pwd     =  $('#pwdRegister').val().trim();
-	var rePwd   =  $('#rePwdRegister').val().trim();
-	var avatar  =  $('#avatar')[0].files[0];
+	let name    =  $('#name').val().trim();
+	let dob     =  $('#dob').val().trim();
+	let gender  =  Object.values($('#registerForm')[0]['gender']);
+	let email   =  $('#email').val().trim();
+	let phone   =  $('#phone').val().trim();
+	let tinh    =  $('#tinh').val();
+	let huyen   =  $('#huyen').val();
+	let xa      =  $('#xa').val();
+	let street =  $('#street').val().trim();
+	let pwd     =  $('#pwdRegister').val().trim();
+	let rePwd   =  $('#rePwdRegister').val().trim();
+	let avatar  =  $('#avatar')[0].files[0];
 	//console.log(avatar);
 
 	//VALIDATE
 	//name
 	if(name == "") {
 		$('#name').addClass("error_field");
-		$('#nameErr').text("name is required");
+		$('#nameErr').text("không được dể trống");
 		test = false;
 	} else if(!isName(name)) {
 		$('#name').addClass("error_field");
-		$('#nameErr').text("name is wrong");
+		$('#nameErr').text("sai định dạng");
 		test = false;
 	}
 
 	//dob
 	if(dob == "") {
 		$('#dob').addClass("error_field");
-		$('#dobErr').text("date is required");
+		$('#dobErr').text("không được để trống");
 		test = false;
 	} else if(!isDate(formatDate(dob))) {
 		$('#dob').addClass("error_field");
-		$('#dobErr').text("date is wrong");
+		$('#dobErr').text("sai định dạng");
 		test = false;
 	}
 
@@ -141,53 +150,74 @@ function validateRegister() {
 	if(!check) {
 		test = false;
 		$('#gender').addClass("error_field");
-		$('#genderErr').text("gender is required");
+		$('#genderErr').text("không được để trống");
 	}
 
 	//email
 	if(email == "") {
 		$('#email').addClass("error_field");
-		$('#emailErr').text("email is required");
+		$('#emailErr').text("không được để trống");
 		test = false;
 	} else if(!isEmail(email)) {
 		$('#email').addClass("error_field");
-		$('#emailErr').text("email is wrong");
+		$('#emailErr').text("sai định dạng");
 		test = false;
 	}
 
 	//phone
 	if(phone == "") {
 		$('#phone').addClass("error_field");
-		$('#phoneErr').text("phone is required");
+		$('#phoneErr').text("không được để trống");
 		test = false;
 	} else if(!isPhone(phone)) {
 		$('#phone').addClass("error_field");
-		$('#phoneErr').text("phone is wrong");
+		$('#phoneErr').text("sai định dạng");
+		test = false;
+	}
+
+	// tỉnh
+	if(tinh == "") {
+		$('#tinh').addClass("error_field");
+		$('#tinhErr').text("không được dể trống");
+		test = false;
+	}
+
+	// huyện
+	if(huyen == "") {
+		$('#huyen').addClass("error_field");
+		$('#huyenErr').text("không được dể trống");
+		test = false;
+	}
+
+	// xã
+	if(xa == "") {
+		$('#xa').addClass("error_field");
+		$('#xaErr').text("không được dể trống");
 		test = false;
 	}
 
 	//addressErr
-	if(address == "") {
-		$('#address').addClass("error_field");
-		$('#addressErr').text("address is required");
+	if(street == "") {
+		$('#street').addClass("error_field");
+		$('#streetErr').text("không được dể trống");
 		test = false;
 	}
 
 	//password
 	if(pwd == "") {
 		$('#pwdRegister').addClass("error_field");
-		$('#pwdRegisterErr').text("password is required");
+		$('#pwdRegisterErr').text("không được dể trống");
 		test = false;
 	} else if(!isPassword(pwd)) {
 		$('#pwdRegister').addClass("error_field");
-		$('#pwdRegisterErr').text("password is wrong");
+		$('#pwdRegisterErr').text("sai định dạng");
 		test = false;
 	}
 
 	//repassword
 	if(rePwd != pwd) {
 		$('#rePwdRegister').addClass("error_field");
-		$('#rePwdRegisterErr').text("password not match");
+		$('#rePwdRegisterErr').text("mật khẩu không khớp");
 		test = false;
 	}
 
