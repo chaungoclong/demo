@@ -134,7 +134,7 @@ require_once RF . "/include/navbar.php";
 									</label>
 								</div>
 
-								<input type="text" name="street" id="street" class="form-control" placeholder="Địa chỉ">
+								<input type="text" name="street" id="street" class="form-control" placeholder="Thôn, xóm, đường...">
 							</div>	
 							<div id="streetErr" class="alert-danger"></div>
 						</div>

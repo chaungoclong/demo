@@ -56,8 +56,8 @@
       <div id="headerMidleContent" class="container-fluid">
         <div class="row m-0">
           <!-- logo -->
-          <div class="col-3 p-0">
-            <a id="headerLogo" href="<?= base_url('index.php'); ?>" class="navbar-brand">LongVietMobile</a>
+          <div class="col-3 p-0 d-flex align-items-center">
+            <a id="headerLogo" href="<?= base_url('index.php'); ?>" class="navbar-brand">LVMOBILE</a>
           </div>
           <!-- search box -->
           <div id="headerSearch" class="col-4 d-flex align-items-center p-0">

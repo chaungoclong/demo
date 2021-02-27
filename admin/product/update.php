@@ -28,10 +28,10 @@ $listCategory = db_fetch_table("db_category", 0);
 
    <div class="col-12">
       <div class="row m-0">
-         <div class="col-12">
-            <h5>SỬA SẢN PHẨM</h5>
-            <p class="mb-4">Sửa sản phẩm</p>
-            <hr>
+         <div class="col-12 mb-2">
+          <a class="" onclick="window.location='<?= base_url('admin/product/'); ?>'" style="cursor: pointer;">
+            <i class="fas fa-angle-left"></i> TRỞ LẠI
+          </a>
          </div>
       </div>
    </div>

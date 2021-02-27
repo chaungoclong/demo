@@ -1,7 +1,7 @@
 <?php
 require_once '../common.php';
 //check is login
-if(!is_login()) {
+if(!is_login() || is_admin()) {
 	redirect("login_form.php");
 } else {
 	$user = getUserById($_SESSION['user_token']['id']);
@@ -33,7 +33,7 @@ require_once RF . '/user/include/navbar.php';
 										<i class="fas fa-lock fa-lg"></i>
 									</label>
 								</div>
-								<input type="text" id="oldPwd" name="oldPwd" class="form-control" placeholder="mật khẩu cũ">
+								<input type="password" id="oldPwd" name="oldPwd" class="form-control" placeholder="mật khẩu cũ">
 							</div>
 							<div id="oldPwdErr" class="alert-danger"></div>
 						</div>
@@ -47,7 +47,7 @@ require_once RF . '/user/include/navbar.php';
 										<i class="fas fa-lock fa-lg"></i>
 									</label>
 								</div>
-								<input type="text" id="newPwd" name="newPwd" class="form-control" placeholder="mật khẩu mới">
+								<input type="password" id="newPwd" name="newPwd" class="form-control" placeholder="mật khẩu mới">
 							</div>
 							<div id="newPwdErr" class="alert-danger"></div>
 						</div>

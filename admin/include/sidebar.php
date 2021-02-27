@@ -5,7 +5,7 @@
     <div class="left_col shadow position-fixed bg-dark">
       <h2 class="logo_sidebar mt-1 mb-4 bg-dark">
       <a href="<?= base_url('admin/index.php'); ?>" class=" btn btn-primary w-50 mr-2">ADMIN</a>
-      <a href="<?= base_url('admin/index.php'); ?>" class=" btn btn-danger w-50">NHÀ</a>
+      <a href="<?= base_url('index.php'); ?>" class=" btn btn-danger w-50">NHÀ</a>
       </h2>
       <!-- sidebar -->
       <ul class="sidebar nav flex-column">
@@ -193,3 +193,16 @@
       <!-- /sidebar -->
     </div>
     <!-- /left-col -->
+    <script>
+      let url = window.location.pathname;
+      let newUrl = url.replace(/\//g, '');
+      let regex = new RegExp(`${newUrl}$`, 'g');
+
+      let link = $('.sidebar li.nav-item a');
+      link.each(function(){
+        if(regex.test(this.href.replace(/\//g, ''))) {
+          $(this).closest('li').addClass('active');
+          $(this).css('color', 'red');
+        }
+      }) ;
+    </script>

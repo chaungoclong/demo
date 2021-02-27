@@ -17,10 +17,10 @@ require_once 'include/navbar.php';
 	<div class="col-12">
 		<form action="	" method="POST" id="user_info_update_form">
 			<div class="row m-0">
-				<div class="col-12">
-					<h5>HỒ SƠ CỦA TÔI</h5>
-					<p class="mb-4">Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
-					<hr>
+				<div class="col-12 mb-2">
+					<a class="" onclick="window.location='<?= base_url('admin/index.php'); ?>'" style="cursor: pointer;">
+						<i class="fas fa-angle-left"></i> TRỞ LẠI
+					</a>
 				</div>
 			</div>
 			<div class="row m-0">

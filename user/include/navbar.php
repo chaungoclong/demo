@@ -4,10 +4,10 @@
   $currentPage = basename($_SERVER["PHP_SELF"], ".php");
   ?>
   <ul class="navbar-nav">
-    <li class="<?= $currentPage == 'index' ? 'nav-item active' : 'nav-item'; ?>">
+    <li class="nav-item">
       <a href="<?= base_url('index.php'); ?>" class="nav-link">TRANG CHỦ</a>
     </li>
-    <li  class="<?= $currentPage == 'product' && !input_get('cat') ? 'nav-item active' : 'nav-item'; ?>">
+    <li  class="nav-item">
       <a href="<?= base_url('product.php'); ?>" class="nav-link">SHOP</a>
     </li>
 
@@ -19,7 +19,7 @@
     <?php foreach ($listCategory as $key => $category): ?>
 
       <?php if ($category['cat_active']): ?>
-        <li class="<?= $currentPage == 'product' && input_get('cat') == $category["cat_id"] ? 'nav-item dropdown active' : 'nav-item dropdown'; ?>">
+        <li class="nav-item dropdown">
         <a href="<?= create_link(base_url('product.php'), ['cat'=>$category['cat_id']]); ?>" class="nav-link dropdown-toggle"><?php echo $category["cat_name"]; ?></a>
         <div class="dropdown-menu">
           <!-- in danh sách các hãng -->
@@ -40,15 +40,26 @@
       <?php endif ?>
     <?php endforeach; ?>
     <!-- /in danh sách danh mục -->
-    <li class="<?= $currentPage == 'about' ? 'nav-item active' : 'nav-item'; ?>">
+    <li class="nav-item">
       <a href="<?= base_url('about.php'); ?>" class="nav-link">GIỚI THIỆU</a>
     </li>
-    <li class="<?= $currentPage == 'news' ? 'nav-item active' : 'nav-item'; ?>">
+    <li class="nav-item">
       <a href="<?= base_url('news.php'); ?>" class="nav-link">TIN TỨC</a>
     </li>
-    <li class="<?= $currentPage == 'contact' ? 'nav-item active' : 'nav-item'; ?>">
+    <li class="nav-item">
       <a href="<?= base_url('contact.php'); ?>" class="nav-link">LIÊN HỆ</a>
     </li>
   </ul>
 </nav>
 <!-- /navbar -->
+<script>
+  let url = window.location.href;
+
+  let link = $('#navbar li.nav-item a');
+  link.each(function(){
+    if(this.href == url) {
+      $(this).closest('li').addClass('active');
+      $(this).css('color', 'red');
+    }
+  }) ;
+</script>

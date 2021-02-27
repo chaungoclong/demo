@@ -65,7 +65,7 @@ body {
                 position: absolute;
                 top: 90%;
                 width: 100%;
-                z-index: 200;
+                z-index: 201;
             }
 
             #ajaxSearch li a {
@@ -134,7 +134,7 @@ body {
        background: #fed101;
        padding-left: 85px;
        padding-right: 85px;
-       z-index: 100;
+       z-index: 200;
     }
 
     #navbar .navbar-nav .dropdown .dropdown-menu {

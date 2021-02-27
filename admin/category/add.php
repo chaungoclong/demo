@@ -19,7 +19,7 @@ require_once '../include/navbar.php';
    <div class="col-12">
       <div class="row m-0">
         <div class="col-12">
-          <a class="" onclick="javascript:history.go(-1)" style="cursor: pointer;">
+          <a class="" onclick="window.location='<?= base_url('admin/category/'); ?>'" style="cursor: pointer;">
             <i class="fas fa-angle-left"></i> TRỞ LẠI
           </a>
           <hr>

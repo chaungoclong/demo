@@ -19,10 +19,10 @@ $news     = getNewsByID($newsID);
 
    <div class="col-12">
       <div class="row m-0">
-         <div class="col-12">
-            <h5>SỬA TIN TỨC</h5>
-            <p class="mb-4">SỬA TIN TỨC</p>
-            <hr>
+         <div class="col-12 mb-2">
+          <a class="" onclick="window.location='<?= base_url('admin/news/'); ?>'" style="cursor: pointer;">
+            <i class="fas fa-angle-left"></i> TRỞ LẠI
+          </a>
          </div>
       </div>
    </div>

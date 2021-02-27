@@ -113,6 +113,10 @@ body {
 	cursor: pointer;
 }
 
+.sidebar li.nav-item.active>a {
+	color: red !important;
+}
+
 .right_col {
 	margin-left: 250px;	
 }

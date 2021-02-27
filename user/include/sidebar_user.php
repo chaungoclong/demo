@@ -36,3 +36,14 @@
 		</li>
 	</ul>
 </div>
+
+<script>
+	let url_sidebar = window.location.href;
+	let link_sidebar = $('#side_bar li.nav-item a');
+	
+	link_sidebar.each(function(){
+		if(this.href == url_sidebar) {
+			$(this).css('color', 'red');
+		}
+	}) ;
+</script>

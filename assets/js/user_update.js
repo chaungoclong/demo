@@ -159,7 +159,7 @@ function validateUpdatePassword() {
 	//validate
 	if(oldPwd == "") {
 		$('#oldPwd').addClass('error_field');
-		$('#oldPwdErr').text("");
+		$('#oldPwdErr').text("không được để trống");
 		test = false;
 	} else if(!isPassword(oldPwd)) {
 		$('#oldPwd').addClass('error_field');

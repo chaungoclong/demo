@@ -22,7 +22,7 @@ if(!$order) {
 <div class="main_content bg-white row m-0 pt-4">
 	<div class="col-12">
 		<div class="d-flex justify-content-between align-items-center">
-			<a class="" onclick="javascript:history.go(-1)" style="cursor: pointer;">
+			<a class="" onclick="window.location='<?= base_url('admin/order/'); ?>'" style="cursor: pointer;">
 				<i class="fas fa-angle-left"></i> TRỞ LẠI
 			</a>
 			<span>ID ĐƠN HÀNG: <?= $orderID; ?> | 

@@ -15,7 +15,7 @@ require_once '../include/navbar.php';
 		<!-- tiêu đề -->
 		<div class="d-flex justify-content-between align-items-center mb-2">
 			<!-- <h5>DANH SÁCH DANH MỤC</h5> -->
-			<a class="" onclick="javascript:history.go(-1)" style="cursor: pointer;">
+			<a class="" onclick="window.location='<?= base_url('admin/'); ?>'" style="cursor: pointer;">
 				<i class="fas fa-angle-left"></i> TRỞ LẠI
 			</a>
 		</div>

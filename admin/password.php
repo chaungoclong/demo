@@ -12,10 +12,10 @@ require_once 'include/navbar.php';
 <!-- main content -row -->
 <div class="main_content bg-white row m-0 pt-4">
 	<div class="col-12">
-		<div>
-			<h5>ĐỔI MẬT KHẨU</h5>
-			<p class="mb-4">Đổi mật khẩu thường xuyên giúp tài khoản của bạn an toàn hơn</p>
-			<hr>
+		<div class="mb-2">
+			<a class="" onclick="window.location='<?= base_url('admin/index.php'); ?>'" style="cursor: pointer;">
+				<i class="fas fa-angle-left"></i> TRỞ LẠI
+			</a>
 		</div>
 		<div>
 			<form action="" id="change_pwd_form">
