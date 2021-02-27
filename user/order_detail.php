@@ -161,19 +161,6 @@ require_once RF . '/user/include/navbar.php';
 
 				<!-- CHI TIẾT ĐƠN HÀNG -->
 
-				<!-- in đơn hàng -->
-				<div class="mb-4 d-flex justify-content-sm-end">
-					<button class="btn btn-primary" id="btn_print">
-						<i class="fas fa-print"></i> In hóa đơn
-					</button>
-					<script>
-						$(function() {
-							$(document).on('click', '#btn_print', function() {
-								printElement('.content_table');
-							});
-						});
-					</script>
-				</div>
 			</div>
 			
 			<!-- /column -->

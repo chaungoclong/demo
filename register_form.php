@@ -150,7 +150,7 @@ require_once RF . "/include/navbar.php";
 										<i class="fas fa-lock fa-lg"></i>
 									</label>
 								</div>
-								<input type="text" id="pwdRegister" name="pwdRegister" class="form-control" placeholder="password">	
+								<input type="password" id="pwdRegister" name="pwdRegister" class="form-control" placeholder="Nhập mật khẩu">	
 							</div>
 							<div id="pwdRegisterErr" class="alert-danger"></div>
 						</div>
@@ -164,7 +164,7 @@ require_once RF . "/include/navbar.php";
 									</label>
 								</div>
 
-								<input type="text" id="rePwdRegister" name="rePwdRegister" class="form-control" placeholder="password">	
+								<input type="password" id="rePwdRegister" name="rePwdRegister" class="form-control" placeholder="Nhập lại mật khẩu">	
 							</div>
 
 							<div id="rePwdRegisterErr" class="alert-danger"></div>

@@ -37,6 +37,8 @@ function validateLogin() {
         $('#userErr').text("Email / Phone is required");
         test = false;
     } else if (!isPhone(user) && !isEmail(user) && !checkWord(user)) {
+        console.log(isPhone(user) +"" + isEmail(user) + ""+ checkWord(user) + "" + user);
+        console.log(checkWord("nhanvien1"));
         $('#user').addClass("error_field");
         $('#userErr').text("Email / Phone is wrong");
         test = false;
@@ -64,37 +66,23 @@ function validateLogin() {
 // đăng nhập admin
 function login() {
     if (validateLogin()) {
-        var data = $('#loginForm').serialize();
-        var sendLogin = $.ajax({
-            url: 'process_login.php',
-            method: "POST",
-            data: data,
-            dataType: "text"
-        });
+        let data = $('#loginForm').serialize();
+        let result = sendAJax('process_login.php', 'post', 'json', data);
+        let status = result.status;
+        let error = result.error;
+        let msg = "";
 
-        sendLogin.done(function(res) {
-            switch (res) {
-                case "1":
-                    $('#backErr').text("Thiếu dữ liệu");
-                    break;
-                case "2":
-                    $('#backErr').text("Dữ liệu sai");
-                    break;
-                case "5":
-                    window.location = "index.php";
-                    break;
-                case "6":
-                    $('#backErr').text("Đăng nhập thất bại. Hãy thử lại");
-                    break;
-                case "8":
-                    $('#backErr').text("Tài khoản của bạn bị khóa");
-                    break;
+        if(status == "success") {
+            msg = "ĐĂNG NHẬP THÀNH CÔNG";
+            alert(msg);
+            window.location = "index.php";
+        } else {
+            msg = "ĐĂNG NHẬP THẤT BẠI";
+            if(error.length) {
+                msg += "\n" + error.join('\n');
             }
-        });
-
-        sendLogin.fail(function(a, b, c) {
-            console.log(a, b, c);
-        })
+            alert(msg);
+        }
     }
 }
 
@@ -139,7 +127,7 @@ function validateUserUpdate() {
         $('#uname').addClass("error_field");
         $('#unameErr').text("user name is required");
         test = false;
-    } else if (!isName(uname)) {
+    } else if (!checkWord(uname)) {
         $('#uname').addClass("error_field");
         $('#unameErr').text("user name is wrong");
         test = false;
@@ -374,61 +362,91 @@ function validateEditCustomer() {
     let test = true;
 
     // xóa class lỗi 
-    $('#address').removeClass("error_field");
+    $('#street').removeClass("error_field");
     $('#name').removeClass("error_field");
     $('#dob').removeClass("error_field");
     $('#gender').removeClass("error_field");
     $('#email').removeClass("error_field");
     $('#phone').removeClass("error_field");
     $('#avatar').removeClass("error_field");
+    $('#tinh').removeClass("error_field");
+    $('#huyen').removeClass("error_field");
+    $('#xa').removeClass("error_field");
 
     // xóa thông báo lỗi
-    $('#addressErr').text("");
+    $('#streetErr').text("");
     $('#nameErr').text("");
     $('#dobErr').text("");
     $('#genderErr').text("");
     $('#emailErr').text("");
     $('#phoneErr').text("");
     $('#avatarErr').text("");
+    $('#tinhErr').text("");
+    $('#huyenErr').text("");
+    $('#xaErr').text("");
 
     //lấy dữ liệu
-    let address = $('#address').val().trim();
+    let street = $('#street').val().trim();
     let name    = $('#name').val().trim();
     let dob     = $('#dob').val().trim();
     let gender  = Object.values($('#cus_info_edit_form')[0]['gender']);
     let email   = $('#email').val().trim();
     let phone   = $('#phone').val().trim();
     let avatar  = $('#avatar')[0].files[0];
+    let tinh = $('#tinh').val().trim();
+    let huyen = $('#huyen').val().trim();
+    let xa = $('#xa').val().trim();
 
 
     //VALIDATE
+    
+    //tỉnh
+    if (tinh == "") {
+        $('#tinh').addClass("error_field");
+        $('#tinhErr').text("không được để trống");
+        test = false;
+    }
 
-    //address
-    if (address == "") {
-        $('#address').addClass("error_field");
-        $('#addressErr').text("address is required");
+    //huyện
+    if (huyen == "") {
+        $('#huyen').addClass("error_field");
+        $('#huyenErr').text("không được để trống");
+        test = false;
+    }
+
+    //xã
+    if (xa == "") {
+        $('#xa').addClass("error_field");
+        $('#xaErr').text("không được để trống");
+        test = false;
+    }
+
+    //street
+    if (street == "") {
+        $('#street').addClass("error_field");
+        $('#streetErr').text("không được để trống");
         test = false;
     }
 
     //name
     if (name == "") {
         $('#name').addClass("error_field");
-        $('#nameErr').text("name is required");
+        $('#nameErr').text("không được để trống");
         test = false;
     } else if (!isName(name)) {
         $('#name').addClass("error_field");
-        $('#nameErr').text("name is wrong");
+        $('#nameErr').text("sai định dạng");
         test = false;
     }
 
     //dob
     if (dob == "") {
         $('#dob').addClass("error_field");
-        $('#dobErr').text("date is required");
+        $('#dobErr').text("không được để trống");
         test = false;
     } else if (!isDate(formatDate(dob))) {
         $('#dob').addClass("error_field");
-        $('#dobErr').text("date is wrong");
+        $('#dobErr').text("sai định dạng");
         test = false;
     }
 
@@ -437,28 +455,28 @@ function validateEditCustomer() {
     if (!check) {
         test = false;
         $('#gender').addClass("error_field");
-        $('#genderErr').text("gender is required");
+        $('#genderErr').text("không được để trống");
     }
 
     //email
     if (email == "") {
         $('#email').addClass("error_field");
-        $('#emailErr').text("email is required");
+        $('#emailErr').text("không được để trống");
         test = false;
     } else if (!isEmail(email)) {
         $('#email').addClass("error_field");
-        $('#emailErr').text("email is wrong");
+        $('#emailErr').text("sai định dạng");
         test = false;
     }
 
     //phone
     if (phone == "") {
         $('#phone').addClass("error_field");
-        $('#phoneErr').text("phone is required");
+        $('#phoneErr').text("không được để trống");
         test = false;
     } else if (!isPhone(phone)) {
         $('#phone').addClass("error_field");
-        $('#phoneErr').text("phone is wrong");
+        $('#phoneErr').text("sai định dạng");
         test = false;
     }
 
@@ -471,11 +489,11 @@ function validateEditCustomer() {
 
         if (!listExt.some(val => val == ext)) {
             $('#avatar').addClass("error_field");
-            $('#avatarErr').text("extention not match");
+            $('#avatarErr').text("file không hợp lệ");
             test = false;
         } else if (size > 5000000) {
             $('#avatar').addClass("error_field");
-            $('#avatarErr').text("size is very big");
+            $('#avatarErr').text("file quá lớn");
             test = false;
         }
     }
@@ -483,6 +501,7 @@ function validateEditCustomer() {
     if (!test) {
         $('.error_field').first().focus();
     }
+    console.log(test);
     return test;
 }
 
@@ -495,6 +514,7 @@ function editCustomerInfo() {
 
         // biến chứa thông tin lấy từ form
         let infoByForm = $('#cus_info_edit_form').serializeArray();
+        console.log(infoByForm);
 
         // thêm thông tin từ form vào biến chứa dữ liệu
         $.each(infoByForm, function(k, obj) {
@@ -746,7 +766,7 @@ function validateUserAdd() {
         $('#uname').addClass("error_field");
         $('#unameErr').text("user name is required");
         test = false;
-    } else if (!isUname(uname)) {
+    } else if (!checkWord(uname)) {
         $('#uname').addClass("error_field");
         $('#unameErr').text("user name is wrong");
         test = false;
@@ -1317,7 +1337,7 @@ function editProduct() {
             msg = "CẬP NHẬT SẢN PHẨM THÀNH CÔNG";
 
             if(error['library'].length) {
-                msg += "\n CHÚ Ý:n" + error['library'].join(", ");
+                msg += "\n CHÚ Ý:\n" + error['library'].join(", ");
             }
             alert(msg);
             window.location = "index.php";

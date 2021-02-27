@@ -34,6 +34,7 @@ if(!$customer) {
 			<div class="row m-0">
 				<div class="col-9">
 					<div  id="backErr" class="alert-danger"></div>
+
 					<!-- name -->
 					<div class="form-group mb-3">
 						<div class="input-group">
@@ -47,8 +48,10 @@ if(!$customer) {
 						<div id="nameErr" class="alert-danger">
 						</div>
 					</div>
+
 					<!-- id -->
 					<input type="hidden" name="cusID" value="<?= $customer['cus_id']; ?>">
+
 					<!-- date of birth -->
 					<div class="form-group mb-3">
 						<div class="input-group">
@@ -137,16 +140,96 @@ if(!$customer) {
 						<div id="phoneErr" class="alert-danger">
 						</div>
 					</div>
-					<!-- adddress -->
-					<div class="form-group mb-3">
-						<label for="address" class="badge badge-success" style="font-size: 15px;">
-							<strong>Địa chỉ:</strong>
-						</label>
 
-						<textarea name="address" id="address" class="form-control" placeholder="Địa chỉ"
-						value="<?= $customer['cus_address']; ?>"><?= $customer['cus_address']; ?></textarea>
-						<div id="addressErr" class="alert-danger"></div>
+						<?php 
+							$address = $customer['cus_address'];
+							$address = explode('-', $address);
+
+							$ten_tinh = $address[3];
+							$id_tinh = s_cell("select matp from db_tinh where name=?", [$ten_tinh], "s");
+
+							$ten_huyen = $address[2];
+							$id_huyen = s_cell("select maqh from db_huyen where name=?", [$ten_huyen], "s");
+							// echo $id_tinh. "-" . $id_huyen;
+
+							$ten_xa = $address[1];
+
+							$street = $address[0];
+						 ?>
+						<!-- địa chỉ -->
+						<div class="form-group">
+						<select name="tinh" id="tinh" class="custom-select" value="<?= $ten_tinh; ?>">
+							<option value="" hidden>Tỉnh/Thành phố</option>
+							<?php 
+								$ds_tinh = db_fetch_table('db_tinh', 0);
+								foreach ($ds_tinh as $key => $tinh) {
+									if($tinh['name'] == $ten_tinh) {
+										echo '
+										<option value="'.$tinh['name'].'" data-id-tinh="'.$tinh['matp'].'" selected>'.$tinh['name'].'</option>
+										';
+									} else {
+										echo '
+										<option value="'.$tinh['name'].'" data-id-tinh="'.$tinh['matp'].'">'.$tinh['name'].'</option>
+										';
+									}
+								}
+							 ?>
+						</select>
+						<div id="tinhErr" class="alert-danger"></div>
 					</div>
+
+					<div class="form-group">
+						<select name="huyen" id="huyen" class="custom-select" value="<?= $ten_huyen; ?>">
+							<option value="" hidden>Quận/Huyện</option>
+							<?php 
+								$ds_huyen = db_get("select * from db_huyen where matp = ?", 0, [$id_tinh], "i"); 
+								foreach ($ds_huyen as $key => $huyen) {
+									if($huyen['name'] == $ten_huyen) {
+										echo '  
+										<option value="'.$huyen['name'].'" data-id-huyen="'.$huyen['maqh'].'" selected>'.$huyen['name'].'</option>
+										';
+									} else {
+										echo '  
+										<option value="'.$huyen['name'].'" data-id-huyen="'.$huyen['maqh'].'">'.$huyen['name'].'</option>
+										';
+									}
+								}
+							?>
+						</select>
+						<div id="huyenErr" class="alert-danger"></div>
+					</div>
+
+					<div class="form-group">
+						<select name="xa" id="xa" class="custom-select" value="<?= $ten_xa; ?>">
+							<option value="" hidden>Phường/Xã</option>
+							<?php 
+								$ds_xa = db_get("select * from db_xa where maqh = ?", 0, [$id_huyen], "i"); 
+								foreach ($ds_xa as $key => $xa) {
+									if($xa['name'] == $ten_xa) {
+										echo '  
+										<option value="'.$xa['name'].'" selected>'.$xa['name'].'</option>
+										';
+									} else {
+										echo '  
+										<option value="'.$xa['name'].'">'.$xa['name'].'</option>
+										';
+									}
+								}
+							?>
+						</select>
+						<div id="xaErr" class="alert-danger"></div>
+					</div>
+
+					<div class="form-group mb-3">
+						<div class="input-group">
+							<input type="text" name="street" id="street" class="form-control" placeholder="Thôn, xóm, đường..." value="<?= $street; ?>">
+						</div>	
+						<div id="streetErr" class="alert-danger"></div>
+					</div>
+
+					<!-- địa chỉ đầy đủ -->
+					<input type="hidden" name="address" id="address">
+
 					<!-- active -->
 					<div class="custom-control custom-switch mb-3">
 						<input
@@ -197,9 +280,37 @@ if(!$customer) {
 </html>
 <script>
 	$(function() {
+
+		// lấy quận, huyện
+		$(document).on('change', '#tinh', function() {
+			let id_tinh = $(this).find("option:selected").data('id-tinh');
+			$('#huyen').load("../../fetch_unit.php", {id_tinh: id_tinh}, function() {
+				$('#xa').html('<option value="">Phường/Xã</option>');
+			});
+		});
+
+		// phường, xã
+		$(document).on('change', '#huyen', function() {
+			let id_huyen = $(this).find("option:selected").data('id-huyen');
+			$('#xa').load("../../fetch_unit.php", {id_huyen: id_huyen});
+		});
+
+		// submit
 		$(document).on('submit', "#cus_info_edit_form", function(e) {
 			e.preventDefault();
+			joinAddress();
 			editCustomerInfo();
+			
+			// console.log($(this).serializeArray());
 		});
 	});
+
+	function joinAddress() {
+		let tinh = $('#tinh').val();
+		let huyen = $('#huyen').val();
+		let xa = $('#xa').val();
+		let street = $('#street').val().trim();
+		let address = [street, xa, huyen, tinh];
+		$('#address').val(address.join("-"));
+	}
 </script>

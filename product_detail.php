@@ -97,7 +97,7 @@ if(!$product['pro_active']) {
 							<!-- product name -->
 							<h2 style="color:blue;" class="card-title">
 								<strong>
-									<?= ucwords(strtolower($product['pro_name'])); ?>
+									<?= $product['pro_name']; ?>
 								</strong>
 							</h2>
 

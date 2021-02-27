@@ -82,7 +82,7 @@ if(!empty($_POST['action']) && $_POST['action'] == "fetch") {
 		$time = strtotime($news['create_at']);
 
 		$news_right .= '
-		<div class="row" style="height: 60px;">
+		<div class="row" style="max-height: 80px;">
 			<div class="row m-0 mb-4 news_vertical" >
 				<div class="col-4">
 					<a href="news_detail.php?newsid=' . $news['news_id'] . '">

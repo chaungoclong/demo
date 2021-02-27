@@ -167,11 +167,14 @@ body {
 /*slide*/
     #slide {
         position: relative;
+        padding: 0px 85px;
+
     }
 
     #slide img {
         width: 100% !important;
-        height: 280px !important;
+        height: 236px !important;
+        border-radius: 5px;
     }
 
     .carousel-indicators li {

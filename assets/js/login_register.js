@@ -50,22 +50,22 @@ function validateLogin() {
 	//user
 	if(user == "") {
 		$('#user').addClass("error_field");
-		$('#userErr').text("Email / Phone is required");
+		$('#userErr').text("không được để trống");
 		test = false;
 	} else if(!isPhone(user) && !isEmail(user)) {
 		$('#user').addClass("error_field");
-		$('#userErr').text("Email / Phone is wrong");
+		$('#userErr').text("sai định dạng");
 		test = false;
 	}
 
 	//password
 	if(pwd == "") {
 		$('#pwdLogin').addClass("error_field");
-		$('#pwdLoginErr').text("password is required");
+		$('#pwdLoginErr').text("không được để trống");
 		test = false;
 	} else if(!isPassword(pwd)) {
 		$('#pwdLogin').addClass("error_field");
-		$('#pwdLoginErr').text("password is wrong");
+		$('#pwdLoginErr').text("sai định dạng");
 		test = false;
 	}
 
@@ -232,7 +232,7 @@ function validateRegister() {
 			$('#avatar').addClass("error_field");
 			$('#avatarErr').text("extention not match");
 			test = false;
-		} else if(size > 500000){
+		} else if(size > 5000000){
 			$('#avatar').addClass("error_field");
 			$('#avatarErr').text("size is very big");
 			test = false;
@@ -272,45 +272,25 @@ function register() {
 			data.append(obj.name, obj.value);
 		});
 
+		data.append("action", "register");
+
 		//gửi ajax lấy về phản hòi -> hiển thị thông báo
-		var sendRegister = $.ajax({
-			url: "process_register.php",
-			type: "POST",
-			data: data,
-			dataType:"text",
-			cache: false,
-			contentType: false,
-			processData: false,
-		});
+		let result = sendAJax('process_register.php', 'post', 'json', data, 1);
+		let status = result.status;
+		let error = result.error;
+		let msg = "";
 
-		sendRegister.done(function(res) {
-			console.log(res);
-			switch(res) {
-				case "1":
-					$('#backErr').text("Thiếu dữ liệu");
-					break;
-				case "2":
-					$('#backErr').text("Dữ liệu sai");
-					break;
-				case "3":
-					$('#backErr').text("Email đã tồn tại");
-					break;
-				case "4":
-					$('#backErr').text("Số điện thoại đã tồn tại");
-					break;
-				case "5":
-					$('#backErr').text("Đăng kí thành công");
-					window.location = "login_form.php";
-					break;
-				case "6":
-					$('#backErr').text("Đăng ký thất bại. Hãy thử lại");
-					break;
+		if(status == "success") {
+			msg = "ĐĂNG KÍ THÀNH CÔNG";
+			alert(msg);
+			window.location = "login_form.php";
+		} else {
+			msg = "ĐĂNG KÝ THẤT BẠI";
+			if(error.length) {
+				msg += "\n" + error.join("\n");
 			}
-		});
-
-		sendRegister.fail(function(a, b, c) {
-			console.log(a, b, c);
-		});
+			alert(msg);
+		}
 	}
 
 }
@@ -318,37 +298,23 @@ function register() {
 
 function login() {
 	if(validateLogin()) {
-		var data = $('#loginForm').serialize();
-		var sendLogin = $.ajax({
-			url: 'process_login.php',
-			method: "POST",
-			data: data,
-			dataType: "text"
-		});
+		let data = $('#loginForm').serialize();
+		
+		let result = sendAJax('process_login.php', 'post', 'json', data);
+		let status = result.status;
+		let error = result.error;
+		let msg = "";
 
-		sendLogin.done(function(res) {
-			switch(res) {
-				case "1":
-					$('#backErr').text("Thiếu dữ liệu");
-					break;
-				case "2":
-					$('#backErr').text("Dữ liệu sai");
-					break;
-				case "5":
-					let prevPage = $('#loginForm #from').val();
-					window.location = prevPage;
-					break;
-				case "6":
-					$('#backErr').text("Đăng nhập thất bại. Hãy thử lại");
-					break;
-				case "8":
-					$('#backErr').text("Tài khoản của bạn bị khóa");
-					break;
+		if(status == "success") {
+			msg = "ĐĂNG NHẬP THÀNH CÔNG";
+			alert(msg);
+			window.location = "index.php";
+		} else {
+			msg = "ĐĂNG NHẬP THẤT BẠI";
+			if(error.length) {
+				msg += "\n" + error.join('\n');
 			}
-		});
-
-		sendLogin.fail(function(a, b, c) {
-			console.log(a, b, c);
-		})
+			alert(msg);
+		}
 	}
 }

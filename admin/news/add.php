@@ -16,10 +16,10 @@ require_once '../include/navbar.php';
 
    <div class="col-12">
       <div class="row m-0">
-         <div class="col-12">
-            <h5>THÊM TIN TỨC</h5>
-            <p class="mb-4">Thêm tin tức mới</p>
-            <hr>
+         <div class="col-12 mb-3">
+          <a class="" onclick="javascript:history.go(-1)" style="cursor: pointer;">
+            <i class="fas fa-angle-left"></i> TRỞ LẠI
+          </a>
          </div>
       </div>
    </div>
@@ -93,7 +93,7 @@ require_once '../include/navbar.php';
               <!-- tác giả -->
               <div class="form-group">
                 <label for="auth"><strong>Tác giả:</strong></label>
-                <input type="text" name="auth" id="auth" class="form-control">
+                <input type="text" name="auth" id="auth" class="form-control" value="<?= $user['ad_name']; ?>">
                 <div class="alert-danger" id="authErr"></div>
               </div>
 

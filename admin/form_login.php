@@ -45,7 +45,7 @@ require_once 'include/header.php';
 							<i class="fas fa-lock fa-lg"></i>
 						</label>
 					</div>
-					<input type="text" id="pwdLogin" name="pwdLogin" class="form-control" placeholder="password"
+					<input type="password" id="pwdLogin" name="pwdLogin" class="form-control" placeholder="password"
 					value="<?= $_COOKIE['ad_pwd'] ?? ""; ?>" >
 				</div>
 				<div id="pwdLoginErr" class="alert-danger"></div>

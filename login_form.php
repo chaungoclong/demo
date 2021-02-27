@@ -1,8 +1,6 @@
 <?php
 require_once 'common.php';
 
-$from = input_get("from") ?? "index.php";
-
 //nếu đã đăng nhập thì về index.php
 if(is_login() && !is_admin()) {
 	header("Location:index.php");
@@ -17,7 +15,7 @@ require_once RF . "/include/navbar.php";
 		<div class="card-body">
 			<form action="	" method="POST" id="loginForm" style="width: 400px;">
 				<div id="backErr" class="alert-danger"></div>
-				<input type="hidden" name="from" id="from" value="<?= $from; ?>">
+		
 				<!-- email/phone number -->
 				<div class="form-group mb-3">
 					<div class="input-group">
@@ -42,7 +40,7 @@ require_once RF . "/include/navbar.php";
 								<i class="fas fa-lock fa-lg"></i>
 							</label>
 						</div>
-						<input type="text" id="pwdLogin" name="pwdLogin" class="form-control" placeholder="password"
+						<input type="password" id="pwdLogin" name="pwdLogin" class="form-control" placeholder="password"
 						value="<?= $_COOKIE['cus_pwd'] ?? ""; ?>" >
 					</div>
 					<div id="pwdLoginErr" class="alert-danger"></div>

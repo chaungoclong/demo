@@ -298,9 +298,9 @@ if (!empty($_POST['action']) && $_POST['action'] == "edit") {
 				$totalCurrentImg  = count(getImageProduct($proID));
 
 				if($totalImgInsert > $limitImg) {
-					$error['library'][] = "Số lượng ảnh tải lên vượt quá giới hạn cho phép $totalImgInsert";
+					$error['library'][] = "Số lượng ảnh tải lên vượt quá giới hạn cho phép. Ảnh sẽ không được tải lên";
 				} elseif(($totalImgInsert < $limitImg) && ($totalImgInsert + $totalCurrentImg > $limitImg)) {
-					$error['library'][] = "Kho ảnh đã đầy";
+					$error['library'][] = "Kho ảnh đã đầy. Ảnh sẽ không được tải lên";
 				}
 
 				if(!$error['library']) {

@@ -2,7 +2,7 @@
   <div style="padding-left: 85px; padding-right: 85px;">
     <!--===========================================category ===================================================-->
     <section id="category" class="py-5">
-      <h2 class="text-center mb-3">Danh mục</h2>
+      <h2 class="text-center mb-3">DANH MỤC</h2>
       <?php
       $getListCatSQL = "SELECT * FROM db_category WHERE cat_id IN(
         SELECT cat_id FROM db_product
@@ -127,7 +127,7 @@
   <!--===================================== /product ===================================-->
   <!-- =====================================news =================================================== -->
   <section  id="news" class="py-5">
-    <h2 class="text-center mb-3">Tin tức</h2>
+    <h2 class="text-center mb-3 text-primary">TIN TỨC</h2>
     <?php
       $getNewsSQL = "
       SELECT * FROM db_news

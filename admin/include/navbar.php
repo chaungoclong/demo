@@ -1,7 +1,7 @@
 <!-- right-col -->
 <div class="right_col bg-faded p-0">
   <!--navbar row -->
-  <div class="navtop row m-0 bg-secondary">
+  <div class="navtop row m-0 bg-dark">
     <!-- col -->
     <div class="col-7 d-flex align-items-center justify-content-end w-25">
     </div>

@@ -71,7 +71,7 @@ require_once 'include/navbar.php';
 									); 
 									?>
 									">
-									<img src="image/<?= $product['pro_img'] ?>" alt="" width="100%" class="img-thumbnail">
+									<img src="image/<?= $product['pro_img']; ?>" alt="" width="100%" class="img-thumbnail">
 								</a>
 							</td>
 							<td>

@@ -27,7 +27,7 @@ require_once 'include/navbar.php';
 								<i class="fas fa-lock fa-lg"></i>
 							</label>
 						</div>
-						<input type="text" id="oldPwd" name="oldPwd" class="form-control" placeholder="mật khẩu cũ">
+						<input type="password" id="oldPwd" name="oldPwd" class="form-control" placeholder="mật khẩu cũ">
 					</div>
 					<div id="oldPwdErr" class="alert-danger"></div>
 				</div>
@@ -40,7 +40,7 @@ require_once 'include/navbar.php';
 								<i class="fas fa-lock fa-lg"></i>
 							</label>
 						</div>
-						<input type="text" id="newPwd" name="newPwd" class="form-control" placeholder="mật khẩu mới">
+						<input type="password" id="newPwd" name="newPwd" class="form-control" placeholder="mật khẩu mới">
 					</div>
 					<div id="newPwdErr" class="alert-danger"></div>
 				</div>

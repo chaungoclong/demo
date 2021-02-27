@@ -137,7 +137,7 @@ if(isset($_POST)) {
 									['proid' => $product['pro_id']]
 								) .
 								"'>
-								<img src=" . $product['pro_img'] . " width='100%' class='img-thumbnail'>
+								<img src='image/" . $product['pro_img'] . "' width='100%' class='img-thumbnail'>
 							</a>
 						</td>
 						<td>

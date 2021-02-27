@@ -1,5 +1,5 @@
 <!-- navbar -->
-<nav id="navbar" class="navbar-expand-sm navbar-light sticky-top py-2">
+<nav id="navbar" class="navbar-expand-sm navbar-light sticky-top py-2 mb-3">
   <?php
   $currentPage = basename($_SERVER["PHP_SELF"], ".php");
   ?>

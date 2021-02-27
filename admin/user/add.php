@@ -87,7 +87,7 @@
                         			console.log(input, inst);
                         			setTimeout(function () {
                         				inst.dpDiv.css({
-                        					top: 310,
+                        					top: 258,
                         					left: 280
                         				});
                         			},0);
@@ -138,7 +138,7 @@
                            <i class="fas fa-lock fa-lg mr-2"></i>MẬT KHẨU
                         </label>
                      </div>
-                     <input type="text" id="pwdRegister" name="pwdRegister" class="form-control" placeholder="mật khẩu">   
+                     <input type="password" id="pwdRegister" name="pwdRegister" class="form-control" placeholder="mật khẩu">   
                   </div>
                   <div id="pwdRegisterErr" class="alert-danger"></div>
                </div>
@@ -151,7 +151,7 @@
                            <i class="fas fa-lock fa-lg mr-2"></i>MẬT KHẨU
                         </label>
                      </div>
-                     <input type="text" id="rePwdRegister" name="rePwdRegister" class="form-control" placeholder="nhập lại mật khẩu">  
+                     <input type="password" id="rePwdRegister" name="rePwdRegister" class="form-control" placeholder="nhập lại mật khẩu">  
                   </div>
                   <div id="rePwdRegisterErr" class="alert-danger"></div>
                </div>
