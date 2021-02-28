@@ -65,7 +65,7 @@ require_once '../include/navbar.php';
 						<th class="align-middle">Khách hàng</th>
 						<th class="align-middle">Sản phẩm</th>
 						<th class="align-middle">Nội dung</th>
-						<th class="align-middle">Số sao</th>
+						<th class="align-middle" width="110px">Số sao</th>
 						<th class="align-middle">Ngày tạo</th>
 					</tr>
 				</thead>
@@ -88,6 +88,15 @@ require_once '../include/navbar.php';
 </html>
 <script>
 	$(function() {
+
+		channel.bind('add_rate', function(data) {
+			fetchPage(1);
+		});
+
+		channel.bind('update_rate', function(data) {
+			fetchPage(1);
+		});
+
 		fetchPage(1);
 
 		// lấy danh sách đơn hàng khi nhập tìm kiếm

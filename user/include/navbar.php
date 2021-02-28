@@ -40,14 +40,9 @@
       <?php endif ?>
     <?php endforeach; ?>
     <!-- /in danh sách danh mục -->
+  
     <li class="nav-item">
-      <a href="<?= base_url('about.php'); ?>" class="nav-link">GIỚI THIỆU</a>
-    </li>
-    <li class="nav-item">
-      <a href="<?= base_url('news.php'); ?>" class="nav-link">TIN TỨC</a>
-    </li>
-    <li class="nav-item">
-      <a href="<?= base_url('contact.php'); ?>" class="nav-link">LIÊN HỆ</a>
+      <a href="<?= base_url('news.php'); ?>" class="nav-link">BLOG</a>
     </li>
   </ul>
 </nav>

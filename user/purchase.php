@@ -24,9 +24,8 @@ require_once RF . '/user/include/navbar.php';
 			<div class="col-9 bg-white py-3">
 				<!-- tiêu đề -->
 				<div class="d-flex justify-content-between align-items-center mb-2">
-					<h5>DANH SÁCH ĐƠN HÀNG</h5>
-					<a class="btn_back btn btn-warning py-1 px-2" onclick="javascript:history.go(-1)">
-						<i class="fas fa-chevron-circle-left"></i>
+					<a class="" onclick="window.location='<?= base_url('user/profile.php'); ?>'" style="cursor: pointer;">
+						<i class="fas fa-angle-left"></i> TRỞ LẠI
 					</a>
 				</div>
 				

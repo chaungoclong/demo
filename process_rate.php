@@ -23,6 +23,14 @@
 			if($runSQL) {
 				$status = 1;
 				$msg    = "THÊM ĐÁNH GIÁ THÀNH CÔNG";
+
+				// tạo thông báo
+				$channel = "notify";
+				$event = 'add_rate';
+				$message = "Có đánh giá mới";
+				$url = base_url('admin/rate/');
+				createMessage($channel, $event, $message, $url);
+
 			} else {
 				$status = 0;
 				$msg    = "THÊM ĐÁNH GIÁ KHÔNG THÀNH CÔNG";
@@ -56,6 +64,14 @@
 			if($runSQL) {
 				$status = 1;
 				$msg    = "CẬP NHẬT ĐÁNH GIÁ THÀNH CÔNG";
+
+				// tạo thông báo
+				$channel = "notify";
+				$event = 'update_rate';
+				$message = "Một khách hàng đã cập nhật đánh giá";
+				$url = base_url('admin/rate/');
+				createMessage($channel, $event, $message, $url);
+				
 			} else {
 				$status = 0;
 				$msg    = "CẬP NHẬT ĐÁNH GIÁ KHÔNG THÀNH CÔNG";

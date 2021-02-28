@@ -20,53 +20,16 @@
     <script src="<?= base_url('dist/ckeditor/ckeditor.js'); ?>"></script>
     <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
     <script>
-      // lấy thông báo
+      // khởi tạo lấy thông báo
       Pusher.logToConsole = true;
       var pusher = new Pusher('73ef9c76d34ce11d7557', {
         cluster: 'ap1'
       });
       var channel = pusher.subscribe('notify');
-     $(function() {
-       channel.bind('check_out', function(data) {
-        // alert(data.link);
-          $('#msgModal').show();
-          $('#msg_title').text(data.message);
-          $('#msg_link').attr('href', data.link);
-      });
-
-       // đóng thông báo
-       $(document).on('click', function() {
-        $('#msgModal').hide();
-       });
-     });
     </script>
   </head>
   <body>
-    <div class="modal" id="msgModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-
-          <!-- Modal Header -->
-          <div class="modal-header">
-            <h4 class="modal-title">THÔNG BÁO</h4>
-          </div>
-
-          <!-- Modal body -->
-          <div class="modal-body">
-           <div id="msg_title"></div>
-           <div>
-             <a href="" id="msg_link">Link</a>
-           </div>
-          </div>
-
-          <!-- Modal footer -->
-          <div class="modal-footer">
-            <button type="button" id="btn_close_msg" class="btn btn-danger">Close</button>
-          </div>
-
-        </div>
-      </div>
-    </div>
+    
 
     <!-- xác thực -->
   <?php 

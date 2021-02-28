@@ -6,6 +6,7 @@ define('RF', realpath(__DIR__));
 require_once RF . "/libs/session.php";
 require_once RF . "/libs/database.php";
 require_once RF . "/libs/function.php";
+require_once RF . "/pusher/vendor/autoload.php";
 
 //đặt múi giờ
 date_default_timezone_set('Asia/Ho_Chi_Minh');

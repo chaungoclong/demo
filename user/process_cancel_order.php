@@ -26,6 +26,15 @@
 		$runCancel = db_run($cancelSQL, [$orderID], 'i');
 		$ok = $runCancel ? true : false;
 
+		// tạo thông báo
+		if($ok) {
+			$channel = "notify";
+			$event = 'cancel_order';
+			$message = "Một khách hàng đã hủy đơn";
+			$url = base_url('admin/order/order_detail.php?orid='.$orderID);
+			createMessage($channel, $event, $message, $url);
+		}
+
 		$output = ['ok'=>$ok];
 		echo json_encode($output);
 	}

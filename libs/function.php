@@ -810,3 +810,27 @@ function read_date($time) {
 		$totalMoney = s_cell($getTotalMoneySQL, [$orderID], "i");
 		return $totalMoney;
 	}
+
+	function createMessage($channel, $event, $message, $url) {
+		// taọ đối tượng pusher
+		$options = array(
+			'cluster' => 'ap1',
+			'useTLS' => true
+		);
+		$pusher = new Pusher\Pusher(
+			'73ef9c76d34ce11d7557',
+			'8058b665ee9ff426ecf8',
+			'1161826',
+			$options
+		);
+
+		$data = [
+			'message' => $message,
+			'link' => $url
+		];
+
+		$pusher->trigger($channel, $event, $data);
+
+		// lưu thông báo
+		db_run("INSERT INTO db_notify_admin(message, url) VALUES(?, ?)", [$message, $url], 'ss');
+	}

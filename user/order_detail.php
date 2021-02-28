@@ -32,7 +32,7 @@ require_once RF . '/user/include/navbar.php';
 				?>
 
 				<div class="d-flex justify-content-between align-items-center">
-					<a class="" onclick="javascript:history.go(-1)" style="cursor: pointer;">
+					<a class="" onclick="window.location='<?= base_url('user/purchase.php'); ?>'" style="cursor: pointer;">
 						<i class="fas fa-angle-left"></i> TRỞ LẠI
 					</a>
 					<span>ID ĐƠN HÀNG: <?= $orderID; ?> | 

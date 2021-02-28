@@ -11,7 +11,7 @@ require_once RF . '/include/navbar.php';
 			<!-- hiển thị tin tức -->
 			<div class="col-9 p-0 py-3 bg-white shadow">
 				<div class="container mb-3 d-flex justify-content-between align-items-center">
-					<h5 class="p-0 m-0	">TIN TỨC</h5>
+					<h5 class="p-0 m-0	">BÀI VIẾT</h5>
 
 					<div class="d-flex">
 						<input type="text" id="q" class="form-control" placeholder="Tên bài viết">

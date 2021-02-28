@@ -180,6 +180,15 @@ if(!empty($_POST['action']) && $_POST['action'] == "register") {
 		$runRegister = db_run($registerSQL, $param, "ssisssss");
 
 		$status = $runRegister ? "success" : "fail";
+
+		// tạo đánh giá
+		if($status == "success") {
+			$channel = "notify";
+			$event = 'register_account';
+			$message = "Bạn có khách hàng mới";
+			$url = base_url('admin/customer/');
+			createMessage($channel, $event, $message, $url);
+		}
 	}
 
 	$output = ['status'=>$status, 'error'=>$error];

@@ -164,6 +164,14 @@ require_once '../include/navbar.php';
 </html>
 <script>
 	$(function() {
+		channel.bind('check_out', function(data) {
+			fetchPage(1);
+		});
+
+		channel.bind('cancel_order', function(data) {
+			fetchPage(1);
+		});
+
 		fetchPage(1);
 
 		// lấy danh sách đơn hàng khi nhập tìm kiếm
