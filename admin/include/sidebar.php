@@ -160,7 +160,6 @@
           </div>
            <hr class="m-0 bg-white">
         </li>
-        <?php endif ?>
 
         <!-- người dùng -->
         <li class="nav-item mb-2 dropdown">
@@ -170,6 +169,7 @@
           </a>
            <hr class="m-0 bg-white">
         </li>
+        <?php endif ?>
         
         <!-- đánh giá -->
         <li class="nav-item mb-2">

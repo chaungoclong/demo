@@ -2,8 +2,15 @@
 require_once '../../common.php';
 require_once '../include/header.php';
 if(!is_login() || !is_admin()) {
-	redirect('admin/form_login.php');
-}
+   	redirect('admin/form_login.php');
+   } elseif ($_SESSION['user_token']['role'] > 1) {
+      die("
+        <div class='m-5 p-5'>
+           <h1 class='text-danger'>KHÔNG ĐỦ QUYỀN</h1>
+           <a class='btn btn-warning' onclick='javascript:history.go(-1)'>QUAY LẠI</a>
+        </div>
+      ");
+   }
 require_once '../include/sidebar.php';
 require_once '../include/navbar.php';
 // lấy thông tin khách hàng
