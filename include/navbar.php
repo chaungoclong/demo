@@ -5,7 +5,7 @@
   ?>
   <ul class="navbar-nav">
     <li class="nav-item">
-      <a href="<?= base_url('index.php'); ?>" class="nav-link">TRANG CHỦ</a>
+      <a href="<?= base_url(''); ?>" class="nav-link">TRANG CHỦ</a>
     </li>
     <li  class="nav-item">
       <a href="<?= base_url('product.php'); ?>" class="nav-link">SHOP</a>

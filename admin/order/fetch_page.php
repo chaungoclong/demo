@@ -166,10 +166,14 @@
 			}
 		}
 		
+		// đếm số lượng các loại đơn hàng
+		$countSQL = "SELECT COUNT(IF(or_status = 1, 1, NULL)) as success,  COUNT(IF(or_status = 0, 1, NULL)) AS pending,  COUNT(IF(or_status = 2, 1, NULL)) AS fail FROM db_order";
+		$resultCount = s_row($countSQL);
+		
 		// nút phân trang
 		$pagination = paginateAjax($totalPage, $currentPage);
 
 		// trả về danh sách đơn hàng(html) và nút phâm trang(html)
-		$output = ['orders'=>$orders, 'pagination'=>$pagination];
+		$output = ['orders'=>$orders, 'pagination'=>$pagination, 'count'=>$resultCount];
 		echo json_encode($output);	
 	}

@@ -222,8 +222,8 @@ require_once RF . "/include/navbar.php";
 							console.log(input, inst);
 							setTimeout(function () {
 								inst.dpDiv.css({
-									top: 391,
-									left: 475
+									top: 386,
+									left: 382
 								});
 							},0);
 						}

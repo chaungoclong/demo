@@ -4,7 +4,7 @@ function isEmail(string){
 }
 
 function isDate(string) {
-	var pattern = /^[12]\d{3}-(0[1-9]|1[12])-(0[1-9]|[12]\d|3[01])$/;
+	var pattern = /^[12]\d{3}\-(0[1-9]|1[12])\-(0[1-9]|[12]\d|3[01])$/;
 	return pattern.test(string);
 }
 

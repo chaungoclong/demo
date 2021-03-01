@@ -51,16 +51,16 @@ require_once '../include/navbar.php';
 
 		<ul class="nav nav-tabs px-2" role="tablist" id="list_name_tab">
 			<li class="nav-item">
-				<a class="nav-link active" data-toggle="tab" href="#all" data-status="all">TẤT CẢ</a>
+				<a class="nav-link active" data-toggle="tab" href="#all" data-status="all">TẤT CẢ <span class="badge badge-secondary" id="count_all">10</span></a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" data-toggle="tab" href="#pending" data-status="pending">ĐANG CHỜ</a>
+				<a class="nav-link" data-toggle="tab" href="#pending" data-status="pending">ĐANG CHỜ <span class="badge badge-primary" id="count_pending">10</span></a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" data-toggle="tab" href="#success" data-status="success">ĐÃ XỬ LÝ</a>
+				<a class="nav-link" data-toggle="tab" href="#success" data-status="success">ĐÃ XỬ LÝ <span class="badge badge-success" id="count_success">10</span></a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" data-toggle="tab" href="#fail" data-status="fail">ĐÃ HỦY</a>
+				<a class="nav-link" data-toggle="tab" href="#fail" data-status="fail">ĐÃ HỦY <span class="badge badge-danger" id="count_fail">10</span></a>
 			</li>
 		</ul>
 
@@ -227,6 +227,15 @@ require_once '../include/navbar.php';
 		let result = sendAJax("fetch_page.php", "post", "json", data);
 		$('.list_order').html(result.orders);
 		$('.page').html(result.pagination);
+
+		let num_pending = parseInt(result.count['pending']);
+		let num_success = parseInt(result.count['success']);
+		let num_fail = parseInt(result.count['fail']);
+
+		$('#count_all').text(num_pending + num_success + num_fail);
+		$('#count_pending').text(num_pending);
+		$('#count_success').text(num_success);
+		$('#count_fail').text(num_fail);
 	}
 
 	// hàm thay đổi trạng thái của đơn hàng

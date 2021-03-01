@@ -219,6 +219,7 @@ require_once '../include/navbar.php';
 	function setPrevPageData() {
 		localStorage.setItem("search", $('#search').val());
 		localStorage.setItem("sort", $('#sort').val());
+		localStorage.setItem("numRows", $('#number_of_rows').val());
 		localStorage.setItem("status", $('#filter_status').val());
 		localStorage.setItem("oldPage", parseInt($('li.page-item.active').data('page-number')));
 	}
@@ -236,6 +237,12 @@ require_once '../include/navbar.php';
 		if(sort != null) {
 			$('#sort').val(sort);
 			localStorage.removeItem("sort");
+		}
+
+		let numRows    = localStorage.getItem("numRows");
+		if(numRows != null) {
+			$('#number_of_rows').val(numRows);
+			localStorage.removeItem("numRows");
 		}
 
 		let status  = localStorage.getItem("status");

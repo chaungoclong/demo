@@ -19,6 +19,7 @@
     <script src="<?= base_url('dist/bootstrap/js/bootstrap.js'); ?>"></script>
     <script src="<?= base_url('dist/ckeditor/ckeditor.js'); ?>"></script>
     <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
       // khởi tạo lấy thông báo
       Pusher.logToConsole = true;
