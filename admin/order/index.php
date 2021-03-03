@@ -229,8 +229,13 @@ require_once '../include/navbar.php';
 		$('.page').html(result.pagination);
 
 		let num_pending = parseInt(result.count['pending']);
+		num_pending = !isNaN(num_pending) ? num_pending : 0;
+
 		let num_success = parseInt(result.count['success']);
+		num_success = !isNaN(num_success) ? num_success : 0;
+
 		let num_fail = parseInt(result.count['fail']);
+		num_fail = !isNaN(num_fail) ? num_fail : 0;
 
 		$('#count_all').text(num_pending + num_success + num_fail);
 		$('#count_pending').text(num_pending);

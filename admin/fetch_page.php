@@ -23,7 +23,7 @@
 		$to_day   = !empty($_POST['to_day']) ? formatDate($_POST['to_day']) : "";
 
 		if($from_day && $to_day) {
-			$getOrderSQL .= " AND DATE(db_order.or_create_at) BETWEEN DATE(?) AND DATE(?)";
+			$getOrderSQL .= " AND DATE(db_order.or_update_at) BETWEEN DATE(?) AND DATE(?)";
 			$param = [...$param, $from_day, $to_day];
 			$format .= "ss";
 		}
@@ -32,13 +32,13 @@
 		$quick_search = !empty($_POST['quick_search']) ? $_POST['quick_search'] : "";
 		switch ($quick_search) {
 			case 'day':
-				$getOrderSQL .= " AND DATE(db_order.or_create_at) = CURDATE()";
+				$getOrderSQL .= " AND DATE(db_order.or_update_at) = CURDATE()";
 				break;
 			case 'week':
-				$getOrderSQL .= " AND YEARWEEK(db_order.or_create_at, 1) = YEARWEEK(CURDATE(), 1)";
+				$getOrderSQL .= " AND YEARWEEK(db_order.or_update_at, 1) = YEARWEEK(CURDATE(), 1)";
 				break;
 			case 'month':
-				$getOrderSQL .= " AND MONTH(db_order.or_create_at) = MONTH(CURDATE()) AND YEAR(db_order.or_create_at) = YEAR(CURDATE())";
+				$getOrderSQL .= " AND MONTH(db_order.or_update_at) = MONTH(CURDATE()) AND YEAR(db_order.or_update_at) = YEAR(CURDATE())";
 				break;
 
 			default:
@@ -225,9 +225,9 @@
 		";
 
 		if($from_day && $to_day) {
-			$countOrderSQL .= " AND DATE(db_order.or_create_at) BETWEEN DATE(?) AND DATE(?)";
-			$countSalesSQL .= " AND DATE(db_order.or_create_at) BETWEEN DATE(?) AND DATE(?)";
-			$countProductSoldSQL .= " AND DATE(db_order.or_create_at) BETWEEN DATE(?) AND DATE(?)";
+			$countOrderSQL .= " AND DATE(db_order.or_update_at) BETWEEN DATE(?) AND DATE(?)";
+			$countSalesSQL .= " AND DATE(db_order.or_update_at) BETWEEN DATE(?) AND DATE(?)";
+			$countProductSoldSQL .= " AND DATE(db_order.or_update_at) BETWEEN DATE(?) AND DATE(?)";
 
 			$param = [...$param, $from_day, $to_day];
 			$format .= "ss";
@@ -236,19 +236,19 @@
 		if($quick_search) {
 			switch ($quick_search) {
 				case 'day':
-					$countOrderSQL .= " AND DATE(db_order.or_create_at) = CURDATE()";
-					$countProductSoldSQL .= " AND DATE(db_order.or_create_at) = CURDATE()";
-					$countSalesSQL .= " AND DATE(db_order.or_create_at) = CURDATE()";
+					$countOrderSQL .= " AND DATE(db_order.or_update_at) = CURDATE()";
+					$countProductSoldSQL .= " AND DATE(db_order.or_update_at) = CURDATE()";
+					$countSalesSQL .= " AND DATE(db_order.or_update_at) = CURDATE()";
 				break;
 				case 'week':
-					$countOrderSQL .= " AND YEARWEEK(db_order.or_create_at, 1) = YEARWEEK(CURDATE(), 1)";
-					$countProductSoldSQL .= " AND YEARWEEK(db_order.or_create_at, 1) = YEARWEEK(CURDATE(), 1)";
-					$countSalesSQL .= " AND YEARWEEK(db_order.or_create_at, 1) = YEARWEEK(CURDATE(), 1)";
+					$countOrderSQL .= " AND YEARWEEK(db_order.or_update_at, 1) = YEARWEEK(CURDATE(), 1)";
+					$countProductSoldSQL .= " AND YEARWEEK(db_order.or_update_at, 1) = YEARWEEK(CURDATE(), 1)";
+					$countSalesSQL .= " AND YEARWEEK(db_order.or_update_at, 1) = YEARWEEK(CURDATE(), 1)";
 				break;
 				case 'month':
-					$countOrderSQL .= " AND MONTH(db_order.or_create_at) = MONTH(CURDATE()) AND YEAR(db_order.or_create_at) = YEAR(CURDATE())";
-					$countProductSoldSQL .= " AND MONTH(db_order.or_create_at) = MONTH(CURDATE()) AND YEAR(db_order.or_create_at) = YEAR(CURDATE())";
-					$countSalesSQL .= " AND MONTH(db_order.or_create_at) = MONTH(CURDATE()) AND YEAR(db_order.or_create_at) = YEAR(CURDATE())";
+					$countOrderSQL .= " AND MONTH(db_order.or_update_at) = MONTH(CURDATE()) AND YEAR(db_order.or_update_at) = YEAR(CURDATE())";
+					$countProductSoldSQL .= " AND MONTH(db_order.or_update_at) = MONTH(CURDATE()) AND YEAR(db_order.or_update_at) = YEAR(CURDATE())";
+					$countSalesSQL .= " AND MONTH(db_order.or_update_at) = MONTH(CURDATE()) AND YEAR(db_order.or_update_at) = YEAR(CURDATE())";
 				break;
 
 				default:
@@ -268,18 +268,24 @@
 		// LẤY DỮ LIỆU CHI TIẾT ĐỂ VẼ BIỂU ĐỒ VỀ DOANH THU THEO TỪNG NGÀY TRONG MỘT KHOẢNG THỜI GIAN
 		$param = [];
 		$format = "";
+
+		// lấy danh sách các ngày có sự thay đổi về doanh thu
 		$getSalesByDaySQL = "  
 		SELECT 
-		date(db_order.or_create_at) as thoi_gian,
+		date(db_order.or_update_at) as thoi_gian,
 		sum(if(db_order.or_status = 1, db_order_detail.amount * db_order_detail.price, 0)) as doanh_thu_da_nhan,
-		sum(if(db_order.or_status = 0, db_order_detail.amount * db_order_detail.price, 0)) as doanh_thu_du_kien,
+		
 		sum(if(db_order.or_status = 2, db_order_detail.amount * db_order_detail.price, 0)) as doanh_thu_bi_mat
 		from db_order join db_order_detail on db_order.or_id = db_order_detail.or_id
 		where 1
 		";
 
+		// lấy danh sách các ngày không có sự thay đổi về doanh thu
+		$getDayNotChangeSQL = 'SELECT DISTINCT date(or_create_at) as tg from db_order where date(or_create_at) not in(select date(or_update_at) from db_order )';
+
 		if($from_day && $to_day) {
-			$getSalesByDaySQL .= " AND DATE(db_order.or_create_at) BETWEEN DATE(?) AND DATE(?)";
+			$getSalesByDaySQL .= " AND DATE(db_order.or_update_at) BETWEEN DATE(?) AND DATE(?)";
+			$getDayNotChangeSQL .= " AND DATE(db_order.or_create_at) BETWEEN DATE(?) AND DATE(?)";
 			$param = [...$param, $from_day, $to_day];
 			$format .= "ss";
 		}
@@ -287,26 +293,46 @@
 		if($quick_search) {
 			switch ($quick_search) {
 				case 'day':
-					$getSalesByDaySQL .= " AND DATE(db_order.or_create_at) = CURDATE()";
+					$getSalesByDaySQL .= " AND DATE(db_order.or_update_at) = CURDATE()";
+					$getDayNotChangeSQL .= " AND DATE(db_order.or_create_at) = CURDATE()";
 				break;
 				case 'week':
-					$getSalesByDaySQL .= " AND YEARWEEK(db_order.or_create_at, 1) = YEARWEEK(CURDATE(), 1)";
+					$getSalesByDaySQL .= " AND YEARWEEK(db_order.or_update_at, 1) = YEARWEEK(CURDATE(), 1)";
+					$getDayNotChangeSQL .= " AND YEARWEEK(db_order.or_create_at, 1) = YEARWEEK(CURDATE(), 1)";
 				break;
 				case 'month':
-					$getSalesByDaySQL .= " AND MONTH(db_order.or_create_at) = MONTH(CURDATE()) AND YEAR(db_order.or_create_at) = YEAR(CURDATE())";
+					$getSalesByDaySQL .= " AND MONTH(db_order.or_update_at) = MONTH(CURDATE()) AND YEAR(db_order.or_update_at) = YEAR(CURDATE())";
+					$getDayNotChangeSQL .= " AND MONTH(db_order.or_create_at) = MONTH(CURDATE()) AND YEAR(db_order.or_create_at) = YEAR(CURDATE())";
 				break;
 
 				default:
 				break;
 			}
 		}
-		$getSalesByDaySQL .= " group by(date(db_order.or_create_at)) order by date(db_order.or_create_at) ASC";
+		$getSalesByDaySQL .= " group by(date(db_order.or_update_at)) order by date(db_order.or_update_at) ASC";
 		// echo $getSalesByDaySQL;
 
+		// TRỤC THỜI GIAN = TẤT CẢ THỜI GIAN ĐẶT và THỜI GIAN UPDATE (tìm kiếm theo khoảng thời gian update vì thời gian update được đặt mặc định bằng thời gian hiện tại -> nếu chưa cập nhật thì = thời gian đặt)
+		// danh sách các ngày có sự biến động về doanh thu(nhận được, mất đi) kèm doanh thu(nhận được, mất đi)
 		$dataSales = db_get($getSalesByDaySQL, 0, $param, $format);
+
+		// danh sách các ngày không có sự biến động về doanh thu: không có đơn hàng được xác nhận hoặc hủy
+		
+		$dayNotChange = db_get($getDayNotChangeSQL, 0, $param, $format);
+		
+		// cộng thêm dữ liệu những ngày không có sự thay đổi về doanh thu
+		foreach ($dayNotChange as $key => $value) {
+			$dataSales[] = ['thoi_gian'=>$value['tg'], 'doanh_thu_da_nhan'=>0, 'doanh_thu_da_mat'=>0];
+		}
+
+		// sắp xếp dữ liệu trả về theo thời gian tăng dần
+		usort($dataSales, function($a, $b) {
+			return strtotime($a['thoi_gian']) - strtotime($b['thoi_gian']);
+		});
 		
 		// nút phân trang
 		$pagination = paginateAjax($totalPage, $currentPage);
+
 
 		// trả về danh sách đơn hàng(html) và nút phâm trang(html)
 		$output = [

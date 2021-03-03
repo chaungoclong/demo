@@ -75,7 +75,7 @@
 
           <!-- lưu trữ chế độ tìm theo thời gian(theo khoảng hay tìm kiếm nhanh có sẵn) -->
           <input type="hidden" id="mode_filter" value="0">
-          <button type="submit" class="btn btn-primary">LỌC</button>
+          <button type="submit" class="btn btn-warning"><i class="fas fa-filter text-danger"></i></button>
         </form>
 
         <!-- tìm kiếm nhanh có sẵn -->
@@ -460,7 +460,7 @@
     // VẼ BIẾU ĐỒ
     let dataSales = result.dataSales; 
     let drawn = [
-        ["Ngày", "đã nhận", "dự kiến", "đã mất"]
+        ["Ngày", "đã nhận", "đã mất"]
     ];
 
     // xử lý dữ liệu
@@ -565,8 +565,13 @@
    
     // đặt giá trị cho các nút hiển thị số lượng các loại đơn hàng
     let num_pending = parseInt(result.count['so_don_dang_cho']);
+    num_pending = !isNaN(num_pending) ? num_pending : 0;
+
     let num_success = parseInt(result.count['so_don_hoan_thanh']);
+    num_success = !isNaN(num_success) ? num_success : 0;
+
     let num_fail = parseInt(result.count['so_don_da_huy']);
+    num_fail = !isNaN(num_fail) ? num_fail : 0;
 
     $('#count_all').text(num_pending + num_success + num_fail);
     $('#count_pending').text(num_pending);
