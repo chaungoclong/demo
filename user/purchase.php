@@ -202,6 +202,7 @@ require_once RF . '/user/include/footer.php';
 		// hủy 1 đơn hàng
 		$(document).on('click', '.btn_cancel', function() {
 			cancelOrder(this.id, "cancel");
+			sendEmailWhenChangeStatusOrder($(this).data('order-id'), 'email_cus_cancel_order');
 		});
 	});
 
@@ -226,7 +227,7 @@ require_once RF . '/user/include/footer.php';
 		let data = {orID: orID, action: action};
 		let result = sendAJax("process_cancel_order.php", "post", "json", data);
 		if(!result.ok) {
-			alert("KHÔNG THỂ HỦY ĐƠN HÀNG");
+			alert("KHÔNG THỂ CẬP NHẬT TRẠNG THÁI ĐƠN HÀNG");
 		}
 		// cập nhật lại sau khi thay đổi
 		let currentPage = parseInt($('li.page-item.active').data('page-number'));
@@ -234,5 +235,10 @@ require_once RF . '/user/include/footer.php';
 			currentPage = 1;
 		};
 		fetchPage(currentPage);
+	}
+	function sendEmailWhenChangeStatusOrder(orderID, action) {
+		let data = {orderID: orderID, action: action};
+		let url = '<?= base_url("admin/email/process_email.php"); ?>';
+		$.post(url, data);
 	}
 </script>	

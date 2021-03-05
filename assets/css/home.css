@@ -9,6 +9,25 @@ body {
     line-height: 18px;
 }
 
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey; 
+  border-radius: 10px;
+  background-clip: content-box;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #43FCB0; 
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px grey; 
+}
+
 /*header*/
 #header .container-fluid {
     padding-left: 85px;

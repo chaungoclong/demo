@@ -70,6 +70,9 @@
 				// tạo thông báo
 				createMessage('notify', 'check_out', 'đơn hàng mới', base_url('admin/order/order_detail.php?orid=' . $orderID));
 
+				// tạo tín hiệu gửi thông báo email đơn hàng mới
+				sendEmailOrder('email', 'email_new_order', $orderID, $cus_id);
+
 				$status = 5;
 			} else {
 

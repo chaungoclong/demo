@@ -26,7 +26,22 @@
       var pusher = new Pusher('73ef9c76d34ce11d7557', {
         cluster: 'ap1'
       });
+      // Kênh thông báo
       var channel = pusher.subscribe('notify');
+
+      // kênh gửi email
+      var channel2 = pusher.subscribe('email');
+      
+      // nhận tín hiệu có đơn hàng mới
+      $(function() {
+        channel2.bind('email_new_order', function(data) {
+          let customerID_email = data.customerID;
+          let orderID_email = data.orderID;
+          let url = '<?= base_url("admin/email/process_email.php"); ?>';
+          let data_email_new_order = {customerID: customerID_email, orderID: orderID_email, action: "send_email_new_order"};
+          sendAJax(url, 'post', 'json', data_email_new_order);
+        });
+      })
     </script>
   </head>
   <body>

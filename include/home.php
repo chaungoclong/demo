@@ -35,12 +35,87 @@
       </div>
     </section>
     <!--=======================================/category ===========================================--->
+
+    <!-- SẢN PHẨM BÁN CHẠY -->
+    <section class="product">
+       <h2 class="text-center mb-3">SẢN PHẨM BÁN CHẠY</h2>
+       <?php
+         $getSpeedProductSQL = "   
+          SELECT db_product.*
+          FROM db_order 
+          JOIN db_order_detail ON db_order.or_id = db_order_detail.or_id
+          JOIN db_product ON db_order_detail.pro_id = db_product.pro_id
+          WHERE db_order.or_status = 1 AND db_product.pro_active = 1
+          GROUP BY db_order_detail.pro_id
+          ORDER BY sum(db_order_detail.amount) DESC
+          LIMIT 5
+         ";
+
+         $listSpeedProduct = db_get($getSpeedProductSQL, 0);
+        ?>
+
+        <div class="owl-carousel owl-theme">
+          <?php foreach ($listSpeedProduct as $key => $oneProduct): ?>
+           <div class="card text-center" style="padding: 0px 15px;">
+            <?php if ($oneProduct['pro_qty'] == 0): ?>
+              <span class="product_status badge badge-warning"><strong>Bán hết</strong></span>
+            <?php endif ?>
+            <a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $oneProduct["pro_id"]]); ?>' class="d-flex justify-content-center">
+              <img src="image/<?= $oneProduct['pro_img']; ?>" alt="" class="card-img-top">
+            </a>
+            <div class="card-body">
+
+              <!-- tên -->
+              <h5 class="card-title">
+                <a href="<?= create_link(base_url("product_detail.php"), ['proid' => $oneProduct['pro_id']]); ?>">
+                  <?= $oneProduct['pro_name']; ?>
+                </a>
+              </h5>
+
+              <!-- giá -->
+              <h5 class="badge badge-danger py-1" style="font-size: 15px;">
+                <?= number_format($oneProduct['pro_price'], 0, ',', '.'); ?> &#8363;
+              </h5>
+
+              <!-- sao đánh giá -->
+              <div>
+                <?php $star = getStar($oneProduct['pro_id']);?>
+                <?php if ($star['timeRate']): ?>
+                  <span class="" style="color: yellow;">
+                    <?php showStar($star['star']); ?>
+                  </span>
+                  <span>
+                    <?php echo "(" . $star['timeRate'] . " đánh giá)"; ?>
+                  </span>
+                <?php endif ?>
+              </div>
+
+              <hr class="my-2">
+
+              <!-- thêm vào giỏ hàng -->
+              <?php if ($oneProduct['pro_qty']): ?>
+                <a class="btn_add_cart_out btn btn-success text-light" data-pro-id="<?= $oneProduct['pro_id']; ?>"
+                  data-toggle="tooltip" data-placement="top" title="Thêm vào giỏ hàng"
+                  >
+                  <i class="fas fa-cart-plus fa-lg"></i>
+                </a>
+              <?php endif ?>
+
+              <!-- xem chi tiết sản phẩm -->
+              <a href='<?= create_link(base_url("product_detail.php"), ["proid"=> $oneProduct["pro_id"]]); ?>' class="btn btn-default btn-primary" data-toggle="tooltip" data-placement="top" title="chi tiết sản phẩm">
+                <i class="far fa-eye fa-lg"></i>
+              </a>
+            </div>
+          </div>
+        <?php endforeach ?>
+      </div>
+    </section>
     <!--=========================================== product =========================================-->
     <?php foreach ($listCategory as $key => $category): ?>
       <!-- nếu active thì hiển thị danh mục -->
       <?php if ($category['cat_active']): ?>
         <section class="product py-5">
-          <h2 class="text-center mb-3"><?= $category['cat_name']; ?></h2>
+          <h2 class="text-center mb-3"><?= $category['cat_name']; ?> MỚI</h2>
           <div class="list_product_body">
             <?php
               $catID   = $category['cat_id'];
@@ -49,6 +124,7 @@
               WHERE cat_id = ?
               AND pro_active = 1
               ORDER BY pro_id DESC
+              LIMIT 10
               ";
               $listPro = db_get($getProSQL, 0, [$catID], "i");
               $proQty = count($listPro);

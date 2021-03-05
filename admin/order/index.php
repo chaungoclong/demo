@@ -207,11 +207,13 @@ require_once '../include/navbar.php';
 		// duyệt 1 đơn hàng
 		$(document).on('click', '.btn_confirm', function() {
 			changeStatus(this.id, "confirm");
+			sendEmailWhenChangeStatusOrder($(this).data('order-id'), 'email_ad_confirm_order');
 		});
 
 		// hủy 1 đơn hàng
 		$(document).on('click', '.btn_cancel', function() {
 			changeStatus(this.id, "cancel");
+			sendEmailWhenChangeStatusOrder($(this).data('order-id'), 'email_ad_cancel_order');
 		});
 	});
 
@@ -257,5 +259,11 @@ require_once '../include/navbar.php';
 			currentPage = 1;
 		};
 		fetchPage(currentPage);
+	}
+
+	function sendEmailWhenChangeStatusOrder(orderID, action) {
+		let data = {orderID: orderID, action: action};
+		let url = '<?= base_url("admin/email/process_email.php"); ?>';
+		$.post(url, data);
 	}
 </script>	

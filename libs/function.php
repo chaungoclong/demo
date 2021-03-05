@@ -431,6 +431,7 @@ function read_date($time) {
 		return $result;
 	}
 
+
 	// hàm lấy đơn hàng chi tiết theo mã người dùng
 	function getOrderDetailByID($orderID) {
 		$getOrderSQL = "
@@ -833,4 +834,25 @@ function read_date($time) {
 
 		// lưu thông báo
 		db_run("INSERT INTO db_notify_admin(message, url) VALUES(?, ?)", [$message, $url], 'ss');
+	}
+
+	function sendEmailOrder($channel, $event, $orderID, $customerID) {
+		// taọ đối tượng pusher
+		$options = array(
+			'cluster' => 'ap1',
+			'useTLS' => true
+		);
+		$pusher = new Pusher\Pusher(
+			'73ef9c76d34ce11d7557',
+			'8058b665ee9ff426ecf8',
+			'1161826',
+			$options
+		);
+
+		$data = [
+			'orderID' => $orderID,
+			'customerID' => $customerID
+		];
+
+		$pusher->trigger($channel, $event, $data);
 	}

@@ -29,12 +29,12 @@ if($cat) {
 	<div style="padding-left: 85px; padding-right: 85px;">
 		<div class="row m-0 mt-3">
 			<!-- filter -->
-			<div class="col-3 pl-0	" id="pro-filter">
+			<div class="col-3 pl-0" id="pro-filter">
 				<h4></h4>
 
 				<!-- price -->
 				<div class="list-group mb-3">
-					<h5>Giá</h5>
+					<h5 class="text-primary">GIÁ</h5>
 					<p id="show_price">Mức giá</p>
 					<input type="hidden" id="min_price" class="price">
 					<input type="hidden" id="max_price" class="price">
@@ -43,7 +43,7 @@ if($cat) {
 
 				<!-- category -->
 				<div class="list-group mb-3" id="cat_filter">
-					<h5>Danh mục</h5>
+					<h5 class="text-primary">DANH MỤC</h5>
 					<!-- danh sách danh mục -->
 					<?php 
 						$catID = input_get('cat');
@@ -78,7 +78,7 @@ if($cat) {
 
 				<!-- brand -->
 				<div class="list-group">
-					<h5>Hãng</h5>
+					<h5 class="text-primary">HÃNG</h5>
 					<!-- danh sách hãng -->
 					<?php 
 						$braID = input_get('bra');

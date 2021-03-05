@@ -157,15 +157,17 @@ if(!$order) {
 		<?php if ($order['or_status'] == 1): ?>
 			<div class="mb-4 d-flex justify-content-sm-end">
 				<button class="btn btn-primary" id="btn_print">
-					<i class="fas fa-print"></i> In hóa đơn
+					<a href="print_bill.php?orid=<?= $orderID; ?>" class="text-white" style="text-decoration: none;">
+						<i class="fas fa-print"></i> In hóa đơn
+					</a>
 				</button>
-				<script>
+				<!-- <script>
 					$(function() {
 						$(document).on('click', '#btn_print', function() {
 							printElement('.content_table');
 						});
 					});
-				</script>
+				</script> -->
 			</div>
 		<?php endif ?>
 	</div>
