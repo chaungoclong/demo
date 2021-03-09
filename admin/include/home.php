@@ -482,7 +482,7 @@
     console.log(drawn.length);
     console.log(drawn);
     if(drawn.length == 1) {
-      drawn.push(["0", 0, 0, 0]);
+      drawn.push(["0", 0, 0]);
     }
    
    // vẽ biểu đồ
