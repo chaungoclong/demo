@@ -117,16 +117,16 @@
         <li class="nav-item mb-2 dropdown">
           <a class="dropdown-toggle">
             <i class="fas fa-newspaper mr-1"></i>
-            <strong>Tin tức</strong>
+            <strong>Bài viết</strong>
           </a>
           <div class="dropdown_menu border-0">
             <a href="<?= base_url('admin/news/'); ?>" class="dropdown-item">
               <i class="fas fa-sliders-h mr-1"></i>
-              Danh sách tin tức
+              Danh sách bài viết
             </a>
             <a href="<?= base_url('admin/news/add.php'); ?>" class="dropdown-item">
               <i class="fas fa-plus-circle mr-1"></i>
-              Thêm tin tức
+              Thêm bài viết
             </a>
           </div>
            <hr class="m-0 bg-white">
