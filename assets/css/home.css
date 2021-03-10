@@ -159,7 +159,7 @@ body {
     #navbar .navbar-nav .dropdown .dropdown-menu {
         position: absolute;
         top: 90%;
-        z-index: 10000;
+        z-index: 100000;
     }
 
      #navbar ul li {
