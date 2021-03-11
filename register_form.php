@@ -1,5 +1,9 @@
 <?php 
 require_once 'common.php';
+
+if(is_login() && !is_admin()) {
+	header("Location: index.php");
+}
 require_once RF . "/include/header.php";
 require_once RF . "/include/navbar.php";
 ?>
