@@ -1,6 +1,6 @@
 <?php 
 	require_once 'common.php';
-	var_dump($_SESSION);
+	vd($_SESSION);
 // 	$period = new DatePeriod(
 //      new DateTime('2010-10-01'),
 //      new DateInterval('P1D'),

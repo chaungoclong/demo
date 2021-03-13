@@ -128,7 +128,7 @@ body {
             #account .dropdown-menu {
                 position: absolute;
                 top: 80%;
-                z-index: 5000;
+                z-index: 50000;
             }
 
             #shoppingCartIndex {

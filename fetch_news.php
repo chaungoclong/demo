@@ -75,7 +75,7 @@ if(!empty($_POST['action']) && $_POST['action'] == "fetch") {
 	}
 
 	// tin tức cột bên phải
-	$getNewsSQL = "SELECT * FROM db_news WHERE news_active = 1 ORDER BY create_at DESC";
+	$getNewsSQL = "SELECT * FROM db_news WHERE news_active = 1 ORDER BY create_at DESC LIMIT 10";
 	$listNews = db_get($getNewsSQL, 0);
 
 	foreach ($listNews as $key => $news) {

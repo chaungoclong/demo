@@ -30,7 +30,7 @@
 
 		// pagination
 		$numRate = count($totalRate);
-		$ratePerPage = 10;
+		$ratePerPage = 5;
 		$totalPage = ceil($numRate / $ratePerPage);
 		$currentPage = !empty($_POST['currentPage']) ? (int)$_POST['currentPage'] : 1;
 		$offset = ($currentPage - 1) * $ratePerPage;

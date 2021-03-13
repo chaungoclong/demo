@@ -5,9 +5,16 @@ $(document).ready(function() {
     
     //dropdown hover
     var dropdown = $('#navbar .dropdown, #account');
-    $(dropdown).hover(function(e) {
-        console.log(e);
-        $(this).find('.dropdown-menu').slideToggle(0);
+    // $(dropdown).hover(function(e) {
+    //     console.log(e);
+    //     $(this).find('.dropdown-menu').slideToggle(0);
+    // });
+    $(dropdown).mouseenter(function(event) {
+        $(this).find('.dropdown-menu').slideDown(0);
+    });
+
+    $(dropdown).mouseleave(function(event) {
+        $(this).find('.dropdown-menu').slideUp(0);
     });
 
     //search
