@@ -131,7 +131,6 @@
             ?>
             <!-- list products bar -->
             <div class="product_bar bg-info px-2 py-2 d-flex justify-content-between">
-              <span class="badge  bg-faded"><?= $proQty; ?> sản phẩm</span>
               <a href="<?= create_link(base_url("product.php"), ["cat"=> $catID]); ?>" class="badge badge-pill bg-danger">Xem tất cả</a>
             </div>
             <!-- ?hiển thị danh sách sản phẩm của danh mục? -->
@@ -203,7 +202,7 @@
   <!--===================================== /product ===================================-->
   <!-- =====================================news =================================================== -->
   <section  id="news" class="py-5">
-    <h2 class="text-center mb-3 text-primary">TIN TỨC</h2>
+    <h2 class="text-center mb-3 text-primary">BÀI VIẾT</h2>
     <?php
       $getNewsSQL = "
       SELECT * FROM db_news
